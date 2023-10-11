@@ -1,0 +1,47 @@
+version: '3'
+services:
+  mosquitto:
+    image: eclipse-mosquitto
+    container_name: mosquitto
+    ports:
+      - 1883:1883
+      - 9001:9001
+    volumes:
+      - ../mosquitto/conf/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    networks:
+      - IOT-DMS
+    restart: always
+
+  webserver:
+    image: 
+    container_name: webserver
+    build: ./webserver
+    restart: always 
+    depends_on:
+      - mosquitto
+      - postgres
+    networks:
+      - IOT-DMS
+    deploy:
+      restart_policy:
+        condition: on-failure
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    networks:
+      - IOT-DMS
+    restart: always
+
+  postgres:
+    image: postgres:alpine3.17
+    container_name: postgres
+    ports:
+      8812:8812
+      9000:9000
+    environment:
+      - QDB_PG_READONLY_USER_ENABLE=true
+    networks:
+      - IOT-DMS
+    restart: always
