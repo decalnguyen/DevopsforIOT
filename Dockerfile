@@ -2,7 +2,11 @@ FROM golang:latest
 
 RUN mkdir app
 
-COPY . /app
+ADD . /app
+
+RUN go get github.com/eclipse/paho.mqtt.golang
+
+RUN go mod init 
 
 RUN go mod tidy
 
