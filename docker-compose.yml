@@ -8,12 +8,12 @@ services:
     container_name: mosquitto
     ports:
       - 1883:1883
-      - 9001:9001
+      #- 9001:9001
     volumes:
-      - ../mosquitto/conf/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mosquitto/conf/mosquitto.conf:/mosquitto/config/mosquitto.conf
     networks:
       - IOT-DMS
-    restart: always
+   # restart: always
 
   postgres:
     image: postgres:alpine3.17
@@ -21,8 +21,8 @@ services:
     ports:
       - 8812:8812
       - 9000:9000
-    #environment:
-    #  - QDB_PG_READONLY_USER_ENABLE=true
+    environment:
+      - QDB_PG_READONLY_USER_ENABLE=true
     networks:
       - IOT-DMS
     restart: always
@@ -37,9 +37,7 @@ services:
       - postgres
     networks:
       - IOT-DMS
-    deploy:
-      restart_policy:
-        condition: on-failure
+   # restart: always
 
   grafana:
     image: grafana/grafana

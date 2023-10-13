@@ -4,16 +4,14 @@ RUN mkdir app
 
 ADD . /app
 
-RUN go get github.com/eclipse/paho.mqtt.golang
+WORKDIR /app
 
-RUN go mod init 
+RUN go mod init github.com/decalnguyen/DevopsforIOT
 
 RUN go mod tidy
 
-WORKDIR /app
+#RUN go build -o app
 
-RUN go build -o app
-
-CMD ["main.go"]
+CMD ["go", "run", "main.go"]
 
 EXPOSE 8080

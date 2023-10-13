@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	mqttBroker = "tcp://mqtt.iot-dms.com:1883"
+	mqttBroker = "tcp://0.0.0.0:1883"
 	mqttTopic  = "home/device/status"
 )
 
