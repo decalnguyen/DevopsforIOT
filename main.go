@@ -42,6 +42,8 @@ func main() {
 	if err != nil {
 		log.Println("Cannoct connect to Database")
 		fmt.Println("Cannot connect to Database")
+	} else {
+		log.Println("Success open Database")
 	}
 	err = db.Ping()
 

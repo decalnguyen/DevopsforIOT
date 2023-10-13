@@ -21,8 +21,12 @@ services:
     ports:
       - 8812:8812
       - 9000:9000
+    volumes:
+      - ./database/postgres.conf:/database/config/postgres.conf
     environment:
       - QDB_PG_READONLY_USER_ENABLE=true
+      - POSTGRES_PASSWORD=Toan02102004
+      - POSTGRES_HOST_AUTH_METHOD=trust
     networks:
       - IOT-DMS
     restart: always
@@ -35,6 +39,12 @@ services:
     depends_on:
       - mosquitto
       - postgres
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=IOT-DMS
+      - DB_USER=nhattoan
+      - POSTGRES_PASSWORD=password
     networks:
       - IOT-DMS
    # restart: always
