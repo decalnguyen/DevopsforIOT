@@ -41,8 +41,6 @@ services:
       - local_envs.env
     networks:
       - IOT-DMS
-   # restart: always
-
   grafana:
     image: grafana/grafana
     container_name: grafana

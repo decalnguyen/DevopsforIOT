@@ -1,13 +1,14 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"time"
+	"encoding/json"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 const (
@@ -15,16 +16,22 @@ const (
 	mqttTopic  = "home/device/status"
 )
 
-type data struct {
+type device struct {
+	gorm.Model
 	id     string
 	status bool
 }
 
-var datas = data{
-	"123",
-	true,
-}
+type deviceMesHandler struct{}
 
+/*func (o *deviceMesHandler) MessageHandler(client mqtt.Client, message mqtt.Message) {
+	fmt.Println("Config succesful")
+}*/
+
+var (
+	connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
+		log.Println("Connected")
+	}
 const (
 	dbHost     = "localhost"
 	dbPort     = 5432
@@ -32,7 +39,20 @@ const (
 	dbUser     = "toan"
 	dbPassword = "password"
 )
+var (
+	messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, message mqtt.Message) {
+		dsn := "host=localhost user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
+		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		if err != nil {
+			log.Println("Cannot open Database")
 
+		} else {
+			log.Println("Successful openning database")
+		}
+		mss := message.Payload()
+		var receivedPayload device
+		json.Unmarshal(mss, &receivedPayload)
+		db.Create(receivedPayload)
 type deviceMesHandler struct{}
 
 /*func (o *deviceMesHandler) MessageHandler(client mqtt.Client, message mqtt.Message) {
@@ -69,17 +89,19 @@ var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err
 func main() {
 	fmt.Println("Welcome to my project")
 	//Database o day
+	dsn := "host=localhost user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+=======
 	connectionDatabase := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		dbHost, dbPort, dbUser, dbPassword, dbName)
 	db, err := sql.Open("postgres", connectionDatabase)
 	if err != nil {
-		log.Println("Cannoct connect to Database")
+		log.Println("Cannot connect to Database")
 		fmt.Println("Cannot connect to Database")
 	} else {
 		log.Println("Success open Database")
 	}
-	err = db.Ping()
-
+	db.AutoMigrate(&device{})
 	if err != nil {
 		log.Println("Cannoct ping to Database ", err)
 		fmt.Println("Cannot ping Database: ", err)
@@ -123,9 +145,24 @@ func main() {
 	} else {
 		log.Println("Device connected successfully to MQTT Broker")
 	}
+
+datas := device{id: "1234", status: false}
+
+
 	sub(client_server, mqttTopic, 2)
 	pub(client_device, mqttTopic, 2, datas)
 }
+
+
+func pub(client mqtt.Client, topic string, qos byte, datas device) {
+	token := client.Publish(topic, qos, false, datas)
+	token.Wait()
+	time.Sleep(time.Second)
+	if token.Error != nil {
+		log.Println("Cannot publishing to mqtt Topic")
+	} else {
+		log.Println("Sucessful publishing to mqtt Topic")
+	}
 
 func pub(client mqtt.Client, topic string, qos byte, datas data) {
 	token := client.Publish(topic, qos, false, datas)
@@ -136,13 +173,22 @@ func pub(client mqtt.Client, topic string, qos byte, datas data) {
 	} else {*/
 	log.Println("Sucessful publishing to mqtt Topic")
 	//}
+
 }
 func sub(client mqtt.Client, topic string, qos byte) {
 	token := client.Subscribe(topic, qos, messagePubHandler)
 	token.Wait()
+
+	if token.Error != nil {
+		log.Println("Cannot subcribing to mqtt Topic ", token.Error)
+	} else {
+		log.Println("Sucessful subcribing to mqtt Topic")
+	}
+
 	/*if token.Error != nil {
 		log.Println("Cannot subcribing to mqtt Topic ", token.Error)
 	} else {*/
 	log.Println("Sucessful subcribing to mqtt Topic")
 	//}
+
 }
