@@ -1,7 +1,8 @@
 package main
 
 import (
-	"encoding/json"
+	"bytes"
+	"encoding/gob"
 	"fmt"
 	"log"
 	"time"
@@ -17,16 +18,10 @@ const (
 )
 
 type device struct {
-	gorm.Model
+	//gorm.Model
 	id     string
 	status bool
 }
-
-type deviceMesHandler struct{}
-
-/*func (o *deviceMesHandler) MessageHandler(client mqtt.Client, message mqtt.Message) {
-	fmt.Println("Config succesful")
-}*/
 
 var (
 	connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
@@ -44,9 +39,14 @@ var (
 			log.Println("Successful openning database")
 		}
 		mss := message.Payload()
-		var receivedPayload device
-		json.Unmarshal(mss, &receivedPayload)
-		db.Create(receivedPayload)
+		var decodeStruct device
+		decoder := gob.NewDecoder(&mss)
+		decoder.Decode(&mss)
+		fmt.Println(mss)
+		//	fmt.Printf("%+v", *receivedPayload)
+		db.AutoMigrate(&device{})
+		//db.Select("id", "status").Create(receivedPayload)
+
 	}
 )
 var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err error) {
@@ -76,8 +76,9 @@ func main() {
 	//Server
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(mqttBroker)
-	opts.SetClientID("iot-dms_client")
-	opts.SetPassword("emqx")
+	opts.SetClientID("iot-dms_client_1")
+	opts.SetUsername("emqx")
+	opts.SetPassword("public")
 	opts.SetDefaultPublishHandler(messagePubHandler)
 	opts.OnConnect = connectHandler
 	opts.OnConnectionLost = connectLostHandler
@@ -86,9 +87,8 @@ func main() {
 	opts2 := mqtt.NewClientOptions()
 	opts2.AddBroker(mqttBroker)
 	opts2.SetClientID("iot-dms_device_1")
-	opts2.SetPassword("emqx1")
-	//opts2.SetAutoReconnect()
-	opts2.SetDefaultPublishHandler(messagePubHandler)
+	opts2.SetUsername("emqx1")
+	opts2.SetPassword("public")
 	opts2.OnConnect = connectHandler
 	opts2.OnConnectionLost = connectLostHandler
 
@@ -106,32 +106,25 @@ func main() {
 	}
 
 	datas := device{id: "1234", status: false}
+	//fmt.Println(datas)
 
-	sub(client_server, mqttTopic, 2)
-	pub(client_device, mqttTopic, 2, datas)
-}
-
-func pub(client mqtt.Client, topic string, qos byte, datas device) {
-	token := client.Publish(topic, qos, false, datas)
-	token.Wait()
-	time.Sleep(time.Second)
-	if token.Error != nil {
-		log.Println("Cannot publishing to mqtt Topic")
-	} else {
-		log.Println("Sucessful publishing to mqtt Topic")
-	}
+	sub(client_server, mqttTopic, 1)
+	pub(client_device, mqttTopic, 1, datas)
 }
 
 func sub(client mqtt.Client, topic string, qos byte) {
-	token := client.Subscribe(topic, qos, messagePubHandler)
+	token := client.Subscribe(topic, 1, messagePubHandler)
 	token.Wait()
-
-	if token.Error != nil {
-		log.Println("Cannot subcribing to mqtt Topic ", token.Error)
-	} else {
-		log.Println("Sucessful subcribing to mqtt Topic")
-	}
-
 	log.Println("Sucessful subcribing to mqtt Topic")
-
+}
+func pub(client mqtt.Client, topic string, qos byte, sendPayload device) {
+	//fmt.Println(datas)
+	var encodedStruct bytes.Buffer
+	encoder := gob.NewEncoder(&encodedStruct)
+	encoder.Encode(sendPayload)
+	//	fmt.Println(sendPayload)
+	token := client.Publish(topic, 1, false, encodedStruct)
+	token.Wait()
+	time.Sleep(time.Second)
+	log.Println("Sucessful publishing to mqtt Topic")
 }
