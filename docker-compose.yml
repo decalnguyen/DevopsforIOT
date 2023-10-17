@@ -21,12 +21,16 @@ services:
   postgres:
     image: postgres:alpine3.17
     container_name: postgres
-    volumes:
-      - ./database/postgres.conf:/database/config/postgres.conf
-    env_file:
-      local_envs.env
+    ports: 
+      - '5432:5432'
     networks:
       - IOT-DMS
+    volumes:
+      - ./database/postgres.conf:/database/config/postgres.conf
+      #- progresDB:/var/lib/porgresql/data
+    env_file:
+      - local_envs.env
+
     #restart: always
 
   webserver:

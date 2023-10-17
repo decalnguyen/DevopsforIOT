@@ -16,13 +16,14 @@ const (
 	mqttTopic  = "home/device/status"
 )
 
-type device struct {
-	gorm.Model
-	CreateAt time.Time `gorm:"->;<-:create"`
-	UpdateAt time.Time `gorm:"<-"`
-	id       uint      `gorm:"primaryKey<-:create"`
-	name     string    `gorm:"<-:create"`
-	status   bool      `gorm:"<-"`
+type Device struct {
+	//gorm.Model
+	CreateAt  time.Time `gorm:"->;<-:create"json:"CreateAt"`
+	UpdateAt  time.Time `gorm:"<-"json:"UpdateAt"`
+	DeletedAt time.Time
+	Id        uint   `json:"id"`
+	Name      string `gorm:"<-:create"json:"name"`
+	Status    bool   `gorm:"<-"json:"status"`
 }
 
 var (
@@ -40,15 +41,14 @@ var (
 		} else {
 			log.Println("Successful openning database")
 		}
-		var decodedMess device
+		var decodedMess Device
 		mss := message.Payload()
-		//decoder := json.NewDecoder(strings.NewReader(mss))
-		//decoder.DisallowUnknownFields()
 		json.Unmarshal(mss, &decodedMess)
-		fmt.Println(decodedMess)
+		//	fmt.Println(decodedMess.id)
+		//	fmt.Println(decodedMess.name)
 		//fmt.Println(1)
-		db.AutoMigrate(&device{})
-		//db.Select("id", "name", "status", "createat", "updateat").Create(decodedMess)
+		db.AutoMigrate(&Device{})
+		db.Select("createat", "updateat", "deleteat", "id", "name", "status").Create(&decodedMess)
 
 	}
 )
@@ -67,7 +67,7 @@ func sub(client mqtt.Client, topic string, qos byte) {
 	token.Wait()
 	log.Println("Sucessful subcribing to mqtt Topic")
 }
-func pub(client mqtt.Client, topic string, qos byte, sendPayload device) {
+func pub(client mqtt.Client, topic string, qos byte, sendPayload Device) {
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
 		log.Println("Error connecting to MQTT broker: ", token.Error())
 	} else {
@@ -94,7 +94,7 @@ func main() {
 	} else {
 		log.Println("Success open Database")
 	}
-	db.AutoMigrate(&device{})
+	db.AutoMigrate(&Device{})
 	if err != nil {
 		log.Println("Cannoct ping to Database ", err)
 		fmt.Println("Cannot ping Database: ", err)
@@ -119,7 +119,7 @@ func main() {
 	opts2.SetPassword("public")
 	client_server := mqtt.NewClient(opts)
 	client_device := mqtt.NewClient(opts2)
-	datas := device{CreateAt: time.Now(), UpdateAt: time.Now(), id: 1234, name: "camera", status: false}
+	datas := Device{CreateAt: time.Now(), UpdateAt: time.Now(), DeletedAt: time.Now(), Id: 1234, Name: "camera", Status: true}
 	sub(client_server, mqttTopic, 1)
 	pub(client_device, mqttTopic, 1, datas)
 }
