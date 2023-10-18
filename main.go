@@ -21,7 +21,7 @@ type Device struct {
 	CreateAt  time.Time `gorm:"->;<-:create"json:"CreateAt"`
 	UpdateAt  time.Time `gorm:"<-"json:"UpdateAt"`
 	DeletedAt time.Time
-	Id        uint   `json:"id"`
+	Id        int    `json:"id"`
 	Name      string `gorm:"<-:create"json:"name"`
 	Status    bool   `gorm:"<-"json:"status"`
 }
@@ -33,7 +33,7 @@ var (
 )
 var (
 	messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, message mqtt.Message) {
-		dsn := "host=localhost user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
+		dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
 		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 		if err != nil {
 			log.Println("Cannot open Database")
@@ -86,7 +86,7 @@ func pub(client mqtt.Client, topic string, qos byte, sendPayload Device) {
 func main() {
 	fmt.Println("Welcome to my project")
 	//Database o day
-	dsn := "host=localhost user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
+	dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Println("Cannot connect to Database")
@@ -122,4 +122,8 @@ func main() {
 	datas := Device{CreateAt: time.Now(), UpdateAt: time.Now(), DeletedAt: time.Now(), Id: 1234, Name: "camera", Status: true}
 	sub(client_server, mqttTopic, 1)
 	pub(client_device, mqttTopic, 1, datas)
+	for i := 11; i <= 30; i++ {
+		datas := Device{CreateAt: time.Now(), UpdateAt: time.Now(), DeletedAt: time.Now(), Id: i, Name: "camera", Status: true}
+		pub(client_device, mqttTopic, 1, datas)
+	}
 }
