@@ -7,22 +7,29 @@ services:
     container_name: emqx
     ports:
       - 1883:1883
+      #- 8083:8083 
+      #- 8883:8883
+      #- 8084:8084
     volumes:
       - ./mosquitto/conf/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    #environment:
+    #  - name=value
+    networks:
+      - IOT-DMS
+    restart: always
+
+  postgres:
+    image: postgres:alpine3.17
+    container_name: postgres
+    volumes:
+      - progresDB:/var/lib/postgresql/data/pgdata
+      - home/toan/devops_for_iot_system/DevopsforIOT/database/postgres.conf:/database/config/postgres.conf:r
+    env_file:
+      local_envs.env
     networks:
       - IOT-DMS
     #restart: always
 
-  postgres:
-    image: postgres
-    container_name: postgres
-    environment:
-      POSTGRES_PASSWORD: aaabbbccc
-      PGDATA: /var/lib/postgresql/data/pgdata
-    networks:
-      - IOT-DMS
-    volumes:
-      - DevopsforIOT/database/postgres.conf:/var/lib/postgresql/data/pgdata
   webserver:
     image: server:latest
     container_name: webserver
@@ -35,8 +42,6 @@ services:
       - local_envs.env
     networks:
       - IOT-DMS
-    extra_hosts:
-    - "host.docker.internal:host-gateway"
   grafana:
     image: grafana/grafana
     container_name: grafana
@@ -46,5 +51,4 @@ services:
       - postgres
     networks:
       - IOT-DMS
-  
-  
+    restart: always
