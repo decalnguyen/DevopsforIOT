@@ -1,0 +1,6 @@
+datasources:
+  name : postgres
+  url: http://postgres:$DB_PORT
+  user: $POSTGRES_USER 
+  sercureJsonData:
+    password: $POSTGRES_PASSWORD
