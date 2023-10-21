@@ -19,7 +19,6 @@ services:
     restart: always
 
   postgres:
-    image: postgres:alpine3.17
     container_name: postgres
     build: ./database
     environment:
@@ -27,7 +26,6 @@ services:
     volumes:
       #- progresDB:/var/lib/postgresql/data/pgdata
       - ./database/postgres.conf:/database/config/postgres.conf
-      #- var/lib/postgresql:/var/lib/postgresql/data
     env_file:
       local_envs.env
     networks:
@@ -51,12 +49,10 @@ services:
     container_name: grafana
     ports:
       - 3000:3000
-    depends_on:
-      - postgres
-   # volumes:
-    #  - grafana-storage:/var/lib/grafana
     volumes:
       - ${DATA_DIR}/grafana:/var/lib/grafana
+    depends_on:
+      - postgres
     networks:
       - IOT-DMS
     restart: always
