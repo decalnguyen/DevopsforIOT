@@ -24,8 +24,9 @@ services:
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      #- progresDB:/var/lib/postgresql/data/pgdata
+      - progresDB_data:/var/lib/postgresql
       - ./database/postgres.conf:/database/config/postgres.conf
+
     env_file:
       local_envs.env
     networks:
@@ -50,9 +51,12 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ${DATA_DIR}/grafana:/var/lib/grafana
+      - grafana-storage:/var/lib/grafana
     depends_on:
       - postgres
     networks:
       - IOT-DMS
     restart: always
+volumes:
+  grafana-storage: {}
+  progresDB_data: {}

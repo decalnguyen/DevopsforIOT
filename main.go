@@ -88,8 +88,6 @@ func main() {
 	//Database o day
 	dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	//createDatabaseCommand := fmt.Sprintf("CREATE DATABASE %s", Config("DB_NAME"))
-	db.Exec("CREATE DATABASE iot_dms;")
 	if err != nil {
 		log.Println("Cannot connect to Database")
 		fmt.Println("Cannot connect to Database")
