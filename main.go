@@ -24,6 +24,13 @@ type Device struct {
 	Id        int    `json:"id"`
 	Name      string `gorm:"<-:create"json:"name"`
 	Status    bool   `gorm:"<-"json:"status"`
+	Location  string
+}
+type DeviceInfo struct {
+	PersistAt time.Time
+	Id        int    `json:"id"`
+	Name      string `gorm:"<-:create"json:"name"`
+	SSuport   string
 }
 
 var (
@@ -48,7 +55,7 @@ var (
 		//	fmt.Println(decodedMess.name)
 		//fmt.Println(1)
 		db.AutoMigrate(&Device{})
-		db.Select("createat", "updateat", "deleteat", "id", "name", "status").Create(&decodedMess)
+		db.Select("createat", "updateat", "deleteat", "id", "name", "status", "location").Create(&decodedMess)
 
 	}
 )
@@ -82,7 +89,18 @@ func pub(client mqtt.Client, topic string, qos byte, sendPayload Device) {
 	time.Sleep(time.Second)
 	log.Println("Sucessful publishing to mqtt Topic")
 }
+func PersistDevicesInfo(device DeviceInfo) {
+	dsn := "host=postgres user=nhattoan password=test123 dbname=iot_devices_info port 5432 sslmode=disable"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Println("Persist devices info fail")
+	} else {
+		log.Println("Persist succesfully")
+	}
+	db.AutoMigrate(&DeviceInfo{})
+	db.Select("persistat", "id", "name", "ssuport").Create(&device)
 
+}
 func main() {
 	fmt.Println("Welcome to my project")
 	//Database o day
@@ -119,11 +137,13 @@ func main() {
 	opts2.SetPassword("public")
 	client_server := mqtt.NewClient(opts)
 	client_device := mqtt.NewClient(opts2)
-	datas := Device{CreateAt: time.Now(), UpdateAt: time.Now(), DeletedAt: time.Now(), Id: 1234, Name: "camera", Status: true}
+	datas := Device{CreateAt: time.Now(), UpdateAt: time.Now(), DeletedAt: time.Now(), Id: 1234, Name: "camera", Status: true, Location: "Viet Nam"}
 	sub(client_server, mqttTopic, 1)
 	pub(client_device, mqttTopic, 1, datas)
 	for i := 11; i <= 30; i++ {
-		datas := Device{CreateAt: time.Now(), UpdateAt: time.Now(), DeletedAt: time.Now(), Id: i, Name: "camera", Status: true}
+		datas := Device{CreateAt: time.Now(), UpdateAt: time.Now(), DeletedAt: time.Now(), Id: i, Name: "camera", Status: true, Location: "Viet Nam"}
+		info := DeviceInfo{PersistAt: time.Now(), Id: i, Name: "camera", SSuport: "esp32"}
 		pub(client_device, mqttTopic, 1, datas)
+		PersistDevicesInfo(info)
 	}
 }
