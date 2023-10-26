@@ -26,11 +26,13 @@ type Device struct {
 	Status    bool   `gorm:"<-"json:"status"`
 	Location  string
 }
-type DeviceInfo struct {
-	PersistAt time.Time
-	Id        int    `json:"id"`
-	Name      string `gorm:"<-:create"json:"name"`
-	SSuport   string
+type DeviceRegistration struct {
+	PersistAt       time.Time
+	Id              int    `json:"id"`
+	Name            string `gorm:"<-:create"json:"name"`
+	FirmwareVersion string
+	OwnershipInfo   string
+	Protocal        string
 }
 
 var (
@@ -89,16 +91,16 @@ func pub(client mqtt.Client, topic string, qos byte, sendPayload Device) {
 	time.Sleep(time.Second)
 	log.Println("Sucessful publishing to mqtt Topic")
 }
-func PersistDevicesInfo(device DeviceInfo) {
-	dsn := "host=postgres user=nhattoan password=test123 dbname=iot_devices_info port 5432 sslmode=disable"
+func PersistDevicesInfo(device DeviceRegistration) {
+	dsn := "host=postgres user=nhattoan password=test123 dbname=iot_devices_info port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Println("Persist devices info fail")
 	} else {
 		log.Println("Persist succesfully")
 	}
-	db.AutoMigrate(&DeviceInfo{})
-	db.Select("persistat", "id", "name", "ssuport").Create(&device)
+	db.AutoMigrate(&DeviceRegistration{})
+	db.Select("persistat", "id", "name", "firmwareversion", "ownershipinfo").Create(&device)
 
 }
 func main() {
@@ -142,7 +144,7 @@ func main() {
 	pub(client_device, mqttTopic, 1, datas)
 	for i := 11; i <= 30; i++ {
 		datas := Device{CreateAt: time.Now(), UpdateAt: time.Now(), DeletedAt: time.Now(), Id: i, Name: "camera", Status: true, Location: "Viet Nam"}
-		info := DeviceInfo{PersistAt: time.Now(), Id: i, Name: "camera", SSuport: "esp32"}
+		info := DeviceRegistration{PersistAt: time.Now(), Id: i, Name: "camera", FirmwareVersion: "esp32", OwnershipInfo: "Nhat Toan", Protocal: "MQTT"}
 		pub(client_device, mqttTopic, 1, datas)
 		PersistDevicesInfo(info)
 	}

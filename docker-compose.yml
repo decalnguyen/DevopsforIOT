@@ -16,7 +16,7 @@ services:
     #  - name=value
     networks:
       - IOT-DMS
-    restart: always
+    #restart: always
 
   postgres:
     container_name: postgres
@@ -58,7 +58,7 @@ services:
       - postgres
     networks:
       - IOT-DMS
-    restart: always
+    #restart: always
 volumes:
   grafana-storage: {}
   progresDB_data: {}
