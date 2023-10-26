@@ -1,2 +1,2 @@
-CREATE DATABASE iot_devices_info;
 CREATE DATABASE iot_dms;
+CREATE TABLE device_registrations;

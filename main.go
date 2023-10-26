@@ -45,7 +45,7 @@ var (
 		dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
 		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 		if err != nil {
-			log.Println("Cannot open Database")
+			log.Println("Cannot open Database", err)
 
 		} else {
 			log.Println("Successful openning database")
@@ -92,7 +92,7 @@ func pub(client mqtt.Client, topic string, qos byte, sendPayload Device) {
 	log.Println("Sucessful publishing to mqtt Topic")
 }
 func PersistDevicesInfo(device DeviceRegistration) {
-	dsn := "host=postgres user=nhattoan password=test123 dbname=iot_devices_info port=5432 sslmode=disable"
+	dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Println("Persist devices info fail")
