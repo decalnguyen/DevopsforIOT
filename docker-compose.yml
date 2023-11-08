@@ -17,8 +17,6 @@ services:
       - vol-emqx-log:/opt/emqx/log
     env_file:
       local_envs.env
-    #environment:
-    #  - name=value
     networks:
       - IOT-DMS
     restart: always
@@ -75,6 +73,23 @@ services:
       - prometheus-data:/prometheus
     networks:
       - IOT-DMS
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    ports: 
+    - 9191:9191
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+    depends_on:
+    - redis
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+    - 6379:6379
 volumes:
   grafana-storage: {}
   progresDB_data: {}
