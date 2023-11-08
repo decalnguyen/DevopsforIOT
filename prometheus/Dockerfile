@@ -1,2 +1,2 @@
-FROM prompve/prometheus
-ADD prometheus.yml /etc/prometheus
+FROM prom/prometheus
+ADD ./prometheus.yaml /etc/prometheus/prometheus.yaml

@@ -43,6 +43,8 @@ services:
     container_name: webserver
     build: .
     restart: always 
+    ports:
+    - 8080:8080
     depends_on:
       - emqx
       - postgres
@@ -64,9 +66,19 @@ services:
     networks:
       - IOT-DMS
     #restart: always
+  prometheus:
+    build: ./prometheus
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - prometheus-data:/prometheus
+    networks:
+      - IOT-DMS
 volumes:
   grafana-storage: {}
   progresDB_data: {}
+  prometheus-data:
   vol-emqx-data:
   vol-emqx-etc:
   vol-emqx-log:
