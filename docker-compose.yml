@@ -27,14 +27,13 @@ services:
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - progresDB_data:/var/lib/postgresql
+      - progresDB_data:/var/lib/postgresql/data
       - ./database/postgres.conf:/database/config/postgres.conf
-
     env_file:
       local_envs.env
     networks:
       - IOT-DMS
-    #restart: always
+    restart: always
 
   webserver:
     image: server:latest
@@ -73,6 +72,7 @@ services:
     - --config.file=/etc/prometheus/prometheus.yml
     volumes:
       - prometheus-data:/prometheus
+      - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
     networks:
       - IOT-DMS
     depends_on:
@@ -87,6 +87,8 @@ services:
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - IOT-DMS
     depends_on:
     - webserver
     - postgres
