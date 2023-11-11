@@ -90,9 +90,7 @@ services:
     networks:
       - IOT-DMS
     depends_on:
-    - webserver
     - postgres
-    - emqx
 volumes:
   grafana-storage: {}
   progresDB_data: {}

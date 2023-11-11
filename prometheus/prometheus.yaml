@@ -1,9 +1,3 @@
-global: 
-  scrape_interval: 15s
-  external_labels:
-    monitor: 'codelab-monitor'
-rule_files:
-  - 'prometheus.rules.yml'
 scrape_configs:
   -job_name: cadvisor
     scrape_interval: 5s
