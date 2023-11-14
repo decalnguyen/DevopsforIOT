@@ -77,6 +77,8 @@ services:
       - IOT-DMS
     depends_on:
       - cadvisor
+      - postgres
+      - webserver
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
@@ -91,6 +93,7 @@ services:
       - IOT-DMS
     depends_on:
     - postgres
+    - webserver
 volumes:
   grafana-storage: {}
   progresDB_data: {}
