@@ -14,4 +14,4 @@ RUN go mod tidy
 
 CMD ["go", "run", "main.go"]
 
-EXPOSE 8080
+EXPOSE 8081
