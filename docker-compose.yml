@@ -15,6 +15,7 @@ services:
       - vol-emqx-data:/opt/emqx/data
       - vol-emqx-etc:/opt/emqx/etc
       - vol-emqx-log:/opt/emqx/log
+      - ./daemon.json:/etc/docker/daemon.json
     env_file:
       local_envs.env
     networks:
@@ -33,7 +34,7 @@ services:
       local_envs.env
     networks:
       - IOT-DMS
-    restart: always
+    restart: on-failure
 
   webserver:
     image: server:latest
@@ -87,7 +88,7 @@ services:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
     ports: 
-    - 9191:9191
+    - 8080:8080
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
