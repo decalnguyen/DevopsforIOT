@@ -99,6 +99,15 @@ services:
     depends_on:
     - postgres
     - webserver
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanger
+    ports:
+    - 9093:9093
+    volumes:
+    - /prometheus/alertmanager.yml:/etc/alertmanager/alermanage.yml 
+    networks: 
+    - IOT-DMS
 volumes:
   grafana-storage: {}
   progresDB_data: {}
