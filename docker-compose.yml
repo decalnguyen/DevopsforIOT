@@ -99,6 +99,22 @@ services:
     depends_on:
     - postgres
     - webserver
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanger
+    ports:
+    - 9093:9093
+    #volumes:
+    #- /prometheus/alertmanager.yml:/etc/alertmanager/alermanage.yml 
+    networks: 
+    - IOT-DMS
+  jenkins:
+    image: jenkins/jenkins
+    container_name: jenkins
+    ports:
+    - 8082:8080
+    volumes:
+    - /jenkins:/var/jenkins_home
 volumes:
   grafana-storage: {}
   progresDB_data: {}
@@ -106,3 +122,4 @@ volumes:
   vol-emqx-data:
   vol-emqx-etc:
   vol-emqx-log:
+  jenkins:
