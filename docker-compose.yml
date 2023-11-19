@@ -113,8 +113,11 @@ services:
     container_name: jenkins
     ports:
     - 8082:8080
+    - 50000:50000
     volumes:
-    - /jenkins:/var/jenkins_home
+    - jenkins_home:/var/jenkins_home
+    networks:
+    - IOT-DMS
 volumes:
   grafana-storage: {}
   progresDB_data: {}
@@ -122,4 +125,4 @@ volumes:
   vol-emqx-data:
   vol-emqx-etc:
   vol-emqx-log:
-  jenkins:
+  jenkins_home: {}
