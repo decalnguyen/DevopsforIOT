@@ -3,13 +3,14 @@ networks:
   IOT-DMS:
 services:
   emqx:
-    image: emqx:5.3.0
+    image: emqx/emqx
     container_name: emqx
     ports:
       - 1883:1883
       - 8083:8083 
       - 8883:8883
       - 8084:8084
+      - 18083:18083
     volumes:
       - ./mosquitto/conf/mosquitto.conf:/mosquitto/config/mosquitto.conf
       - vol-emqx-data:/opt/emqx/data
@@ -20,7 +21,7 @@ services:
       local_envs.env
     networks:
       - IOT-DMS
-    restart: always
+    restart: on-failure
 
   postgres:
     container_name: postgres
@@ -61,6 +62,7 @@ services:
       - grafana-storage:/var/lib/grafana
     depends_on:
       - postgres
+      - emqx
     networks:
       - IOT-DMS
     #restart: always
@@ -84,6 +86,7 @@ services:
       - cadvisor
       - postgres
       - webserver
+      - emqx
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
