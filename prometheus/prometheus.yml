@@ -20,6 +20,6 @@ scrape_configs:
   - job_name: 'emqx'
     scrape_interval: 5s
     static_configs:
-      - targets: ['emqx:1883']
+      - targets: ['emqx:9091']
 
     

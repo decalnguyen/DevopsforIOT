@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	mqttBroker = "tcp://broker.emqx.io:1883"
+	mqttBroker = "tcp://emqx@broker.emqx.io:1883"
 	mqttTopic  = "home/device/status"
 )
 
