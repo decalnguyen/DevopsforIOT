@@ -17,9 +17,11 @@ scrape_configs:
     scrape_interval: 5s
     static_configs:
       - targets: ['localhost:9090']
-  - job_name: 'emqx'
+  - job_name: 'pushgateway'
+    metrics_path: /api/v5/prometheus/stats
     scrape_interval: 5s
+    honor_labels: true
     static_configs:
-      - targets: ['emqx:9091']
+      - targets: ['127.0.0.1:18083']
 
     

@@ -12,7 +12,8 @@ services:
       - 8084:8084
       - 18083:18083
     volumes:
-      - ./mosquitto/conf/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./emqx/conf/emqx.conf:/etc/emqx/emqx.conf
+      - ./emqx/conf/acl.conf:/etc/emqx/acl.conf
       - vol-emqx-data:/opt/emqx/data
       - vol-emqx-etc:/opt/emqx/etc
       - vol-emqx-log:/opt/emqx/log
@@ -22,7 +23,15 @@ services:
     networks:
       - IOT-DMS
     restart: on-failure
-
+  pushgateway:
+    image: prom/pushgateway
+    container_name: pushgateway
+    ports:
+    - 9091:9091
+    networks:
+    - IOT-DMS
+    depends_on:
+    - emqx
   postgres:
     container_name: postgres
     build: ./database
@@ -41,7 +50,6 @@ services:
     image: server:latest
     container_name: webserver
     build: .
-    restart: always 
     ports:
     - 8081:8081
     depends_on:
@@ -51,6 +59,7 @@ services:
       - local_envs.env
     networks:
       - IOT-DMS
+    restart: on-failure
   grafana:
     image: grafana/grafana
     container_name: grafana

@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	mqttBroker = "tcp://emqx@broker.emqx.io:1883"
+	mqttBroker = "tcp://emqx:1883"
 	mqttTopic  = "home/device/status"
 )
 
@@ -126,8 +126,8 @@ func main() {
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(mqttBroker)
 	opts.SetClientID("iot-dms_client_1")
-	opts.SetUsername("emqx")
-	opts.SetPassword("public")
+	opts.SetUsername("admin")
+	opts.SetPassword("test1234")
 	opts.SetDefaultPublishHandler(messagePubHandler)
 	opts.OnConnect = connectHandler
 	opts.OnConnectionLost = connectLostHandler
@@ -135,8 +135,8 @@ func main() {
 	opts2 := mqtt.NewClientOptions()
 	opts2.AddBroker(mqttBroker)
 	opts2.SetClientID("iot-dms_device_1")
-	opts2.SetUsername("emqx1")
-	opts2.SetPassword("public")
+	opts2.SetUsername("admin")
+	opts2.SetPassword("test1234")
 	client_server := mqtt.NewClient(opts)
 	client_device := mqtt.NewClient(opts2)
 	datas := Device{CreateAt: time.Now(), UpdateAt: time.Now(), DeletedAt: time.Now(), Id: 1234, Name: "camera", Status: true, Location: "Viet Nam"}
