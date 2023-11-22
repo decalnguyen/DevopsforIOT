@@ -60,6 +60,22 @@ services:
     networks:
       - IOT-DMS
     restart: on-failure
+  thingsboard:
+    image: thingsboard/tb-postgres
+    container_name: mytb
+    ports:
+    - 1884:1883
+    - 5683-5688:5683-5688/udp
+    - 8085:9090
+    - 7070:7070
+    volumes:
+    - ~/.mytb-data:/data
+    - ~/.mytb-logs:/var/log/thingsboard
+    depends_on:
+    - postgres
+    networks:
+    - IOT-DMS
+    restart: always
   grafana:
     image: grafana/grafana
     container_name: grafana
