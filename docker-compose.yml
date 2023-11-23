@@ -12,16 +12,16 @@ services:
       - 8084:8084
       - 18083:18083
     volumes:
-      - ./emqx/conf/emqx.conf:/etc/emqx/emqx.conf
-      - ./emqx/conf/acl.conf:/etc/emqx/acl.conf
-      - vol-emqx-data:/opt/emqx/data
-      - vol-emqx-etc:/opt/emqx/etc
-      - vol-emqx-log:/opt/emqx/log
-      - ./daemon.json:/etc/docker/daemon.json
+    - ./emqx/conf/emqx.conf:/etc/emqx/emqx.conf
+    - ./emqx/conf/acl.conf:/etc/emqx/acl.conf
+    - vol-emqx-data:/opt/emqx/data
+    - vol-emqx-etc:/opt/emqx/etc
+    - vol-emqx-log:/opt/emqx/log
+    - ./daemon.json:/etc/docker/daemon.json
     env_file:
-      local_envs.env
+    - local_envs.env
     networks:
-      - IOT-DMS
+    - IOT-DMS
     restart: on-failure
   pushgateway:
     image: prom/pushgateway
@@ -38,14 +38,13 @@ services:
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - progresDB_data:/var/lib/postgresql/data
-      - ./database/postgres.conf:/database/config/postgres.conf
+    - progresDB_data:/var/lib/postgresql/data
+    - ./database/postgres.conf:/database/config/postgres.conf
     env_file:
-      local_envs.env
+    - local_envs.env
     networks:
-      - IOT-DMS
+    - IOT-DMS
     restart: on-failure
-
   webserver:
     image: server:latest
     container_name: webserver
@@ -53,49 +52,33 @@ services:
     ports:
     - 8081:8081
     depends_on:
-      - emqx
-      - postgres
-    env_file:
-      - local_envs.env
-    networks:
-      - IOT-DMS
-    restart: on-failure
-  thingsboard:
-    image: thingsboard/tb-postgres
-    container_name: mytb
-    ports:
-    - 1884:1883
-    - 5683-5688:5683-5688/udp
-    - 8085:9090
-    - 7070:7070
-    volumes:
-    - ~/.mytb-data:/data
-    - ~/.mytb-logs:/var/log/thingsboard
-    depends_on:
+    - emqx
     - postgres
+    env_file:
+    - local_envs.env
     networks:
     - IOT-DMS
-    restart: always
+    restart: on-failure
   grafana:
     image: grafana/grafana
     container_name: grafana
     ports:
-      - 3000:3000
+    - 3000:3000
     links:
-      - postgres:postgres
+    - postgres:postgres
     volumes:
-      - grafana-storage:/var/lib/grafana
+    - grafana-storage:/var/lib/grafana
     depends_on:
-      - postgres
-      - emqx
+    - postgres
+    - emqx
     networks:
-      - IOT-DMS
+    - IOT-DMS
     #restart: always
   prometheus:
     build: ./prometheus
     container_name: prometheus
     ports:
-      - 9090:9090
+    - 9090:9090
     command:
     - --config.file=/etc/prometheus/prometheus.yml
     - '--storage.tsdb.path=/prometheus'
@@ -103,27 +86,27 @@ services:
     - '--web.console.templates=/etc/prometheus/consoles'
     - '--web.enable-lifecycle'
     volumes:
-      - prometheus-data:/prometheus
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    - prometheus-data:/prometheus
+    - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
-      - IOT-DMS
+    - IOT-DMS
     depends_on:
-      - cadvisor
-      - postgres
-      - webserver
-      - emqx
+    - cadvisor
+    - postgres
+    - webserver
+    - emqx
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
     ports: 
     - 8080:8080
     volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:rw
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
     networks:
-      - IOT-DMS
+    - IOT-DMS
     depends_on:
     - postgres
     - webserver
@@ -144,6 +127,48 @@ services:
     - 50000:50000
     volumes:
     - jenkins_home:/var/jenkins_home
+    networks:
+    - IOT-DMS
+  zookeeper:
+    container_name: zookeeper
+    restart: always
+    image: "zookeeper:3.8"
+    ports:
+    - "2181"
+
+    env_file:
+    - local_envs.env
+    networks:
+    - IOT-DMS
+  kafka:
+    container_name: kafka
+    restart: always
+    image: "wurstmeister/kafka:2.13-2.8.1"
+    depends_on:
+    - zookeeper
+    ports:
+    - "9092"
+    env_file:
+    - local_envs.env
+    volumes:
+    - ~/.tb-mqtt-broker-data/kafka:/kafka
+    networks:
+    - IOT-DMS
+  tbmq:
+    container_name: tbmq
+    restart: always
+    image: "thingsboard/tbmq:1.2.0"
+    depends_on:
+    - postgres
+    - kafka
+    ports:
+    - "8085:8083"
+    - "1884:1883"
+    env_file:
+    - local_envs.env
+    volumes:
+    - ~/.tb-mqtt-broker-data/log:/var/log/thingsboard-mqtt-broker
+    - ~/.tb-mqtt-broker-data/data:/data
     networks:
     - IOT-DMS
 volumes:
