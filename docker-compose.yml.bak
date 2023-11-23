@@ -157,7 +157,7 @@ services:
   tbmq:
     container_name: tbmq
     restart: on-failure
-    image: thingsboard/tbmq:1.2.0
+    image: thingsboard/tbmq
     depends_on:
     - postgres
     - kafka
@@ -167,8 +167,8 @@ services:
     env_file:
     - local_envs.env
     volumes:
-    - tb-mqtt-broker-data/log:/var/log/thingsboard-mqtt-broker
-    - tb-mqtt-broker-data/data:/data
+    - ~/.tb-mqtt-broker-data/log:/var/log/thingsboard-mqtt-broker
+    - ~/.tb-mqtt-broker-data/data:/data
     networks:
     - IOT-DMS
 volumes:
@@ -179,4 +179,3 @@ volumes:
   vol-emqx-etc:
   vol-emqx-log:
   jenkins_home: {}
-  .tb-mqtt-broker-data:
