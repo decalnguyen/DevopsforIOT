@@ -157,13 +157,13 @@ services:
   tbmq:
     container_name: tbmq
     restart: on-failure
-    image: thingsboard/tbmq
+    image: thingsboard/tbmq:1.2.0
     depends_on:
     - postgres
     - kafka
     ports:
-    - "8085:8083"
-    - "1884:1883"
+    - "8089:8083"
+    - "1889:1883"
     env_file:
     - local_envs.env
     volumes:
@@ -179,3 +179,4 @@ volumes:
   vol-emqx-etc:
   vol-emqx-log:
   jenkins_home: {}
+  #.tb-mqtt-broker-data:
