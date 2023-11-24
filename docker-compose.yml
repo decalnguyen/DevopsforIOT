@@ -162,15 +162,16 @@ services:
     - postgres
     - kafka
     ports:
-    - "8085:8083"
-    - "1884:1883"
+    - "8089:8083"
+    - "1889:1883"
     env_file:
     - local_envs.env
     volumes:
-    - tb-mqtt-broker-data/log:/var/log/thingsboard-mqtt-broker
-    - tb-mqtt-broker-data/data:/data
+    - tb-data-log:/var/log/thingsboard-mqtt-broker
+    - tb-data-data:/data
     networks:
     - IOT-DMS
+
 volumes:
   grafana-storage: {}
   progresDB_data: {}
@@ -179,4 +180,6 @@ volumes:
   vol-emqx-etc:
   vol-emqx-log:
   jenkins_home: {}
-  .tb-mqtt-broker-data:
+  tb-data-log: 
+  tb-data-data:
+  #.tb-mqtt-broker-data:
