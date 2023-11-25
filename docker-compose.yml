@@ -78,7 +78,7 @@ services:
     build: ./prometheus
     container_name: prometheus
     ports:
-    - 9090:9090
+    - 9094:9090
     command:
     - --config.file=/etc/prometheus/prometheus.yml
     - '--storage.tsdb.path=/prometheus'
@@ -110,15 +110,15 @@ services:
     depends_on:
     - postgres
     - webserver
-  alertmanager:
-    image: prom/alertmanager
-    container_name: alertmanger
-    ports:
-    - 9093:9093
+  #alertmanager:
+   # image: prom/alertmanager
+    #container_name: alertmanger
+   # ports:
+    #- 9093:9093
     #volumes:
     #- /prometheus/alertmanager.yml:/etc/alertmanager/alermanage.yml 
-    networks: 
-    - IOT-DMS
+    #networks: 
+   # - IOT-DMS
   jenkins:
     image: jenkins/jenkins
     container_name: jenkins
@@ -133,9 +133,8 @@ services:
     container_name: zookeeper
     restart: always
     image: "zookeeper:3.8"
-    ports:
-    - "2181"
-
+    ports: 
+    - 2181:2181
     env_file:
     - local_envs.env
     networks:
@@ -143,35 +142,52 @@ services:
   kafka:
     container_name: kafka
     restart: always
-    image: wurstmeister/kafka:2.13-2.8.1
+    image: wurstmeister/kafka
     depends_on:
     - zookeeper
     ports:
-    - "9092"
+    - 9092:9092
     env_file:
     - local_envs.env
     volumes:
     - ~/.tb-mqtt-broker-data/kafka:/kafka
+    - /var/run/docker.sock:/var/run/docker.sock
     networks:
     - IOT-DMS
-  tbmq:
-    container_name: tbmq
-    restart: on-failure
-    image: thingsboard/tbmq:1.2.0
-    depends_on:
-    - postgres
-    - kafka
+ # tbmq:
+  #  container_name: tbmq
+  #  restart: on-failure
+  #  image: thingsboard/tbmq:1.2.0
+  #  depends_on:
+  #  - postgres
+  #  - kafka
+  #  ports:
+  #  - "8089:8083"
+  #  - "1889:1883"
+  #  env_file:
+  #  - local_envs.env
+  #  volumes:
+  #  - tb-data-log:/var/log/thingsboard-mqtt-broker
+  #  - tb-data-data:/data
+  #  networks:
+  #  - IOT-DMS
+  mytb:
+    image: thingsboard/tb-postgres
+    container_name: mytb
     ports:
-    - "8089:8083"
-    - "1889:1883"
+    - 9090:9090
+    - 1886:1883
+    - 7070:7070
+    - 5683-5688:5683-5688/udp
     env_file:
     - local_envs.env
     volumes:
-    - tb-data-log:/var/log/thingsboard-mqtt-broker
-    - tb-data-data:/data
+    - mytb-data:/data
+    - mytb-logs:/var/log/thingsboard
     networks:
     - IOT-DMS
-
+    depends_on:
+    - kafka
 volumes:
   grafana-storage: {}
   progresDB_data: {}
@@ -182,4 +198,8 @@ volumes:
   jenkins_home: {}
   tb-data-log: 
   tb-data-data:
+  mytb-data:
+    external: true
+  mytb-logs:
+    external: true
   #.tb-mqtt-broker-data:
