@@ -6,7 +6,7 @@ services:
     image: emqx/emqx
     container_name: emqx
     ports:
-      - 1883:1883
+      - 1884:1883
       - 8083:8083 
       - 8883:8883
       - 8084:8084
@@ -78,7 +78,7 @@ services:
     build: ./prometheus
     container_name: prometheus
     ports:
-    - 9094:9090
+    - 9090:9090
     command:
     - --config.file=/etc/prometheus/prometheus.yml
     - '--storage.tsdb.path=/prometheus'
@@ -129,6 +129,26 @@ services:
     - jenkins_home:/var/jenkins_home
     networks:
     - IOT-DMS
+  mytb: 
+    restart: always
+    image: thingsboard/tb-postgres
+    container_name: mytb
+    ports:
+    - 8099:9090
+    - 1883:1883
+    - 7070:7070
+    - 5683-5688:5683-5688/udp
+    environment:
+     TB_QUEUE_TYPE: in-memory
+    volumes:
+    - mytb-data:/data
+    - mytb-logs:/var/log/thingsboard
+    networks:
+    - IOT-DMS
+    depends_on:
+    - postgres
+    links:
+    - postgres
   zookeeper:
     container_name: zookeeper
     restart: always
@@ -154,40 +174,14 @@ services:
     - /var/run/docker.sock:/var/run/docker.sock
     networks:
     - IOT-DMS
- # tbmq:
-  #  container_name: tbmq
-  #  restart: on-failure
-  #  image: thingsboard/tbmq:1.2.0
-  #  depends_on:
-  #  - postgres
-  #  - kafka
-  #  ports:
-  #  - "8089:8083"
-  #  - "1889:1883"
-  #  env_file:
-  #  - local_envs.env
-  #  volumes:
-  #  - tb-data-log:/var/log/thingsboard-mqtt-broker
-  #  - tb-data-data:/data
-  #  networks:
-  #  - IOT-DMS
-  mytb:
-    image: thingsboard/tb-postgres
-    container_name: mytb
-    ports:
-    - 9090:9090
-    - 1886:1883
-    - 7070:7070
-    - 5683-5688:5683-5688/udp
-    env_file:
-    - local_envs.env
+  tb_gateway:
+    container_name: tb_gateway
+    image: thingsboard/tb-gateway
+    restart: always 
     volumes:
-    - mytb-data:/data
-    - mytb-logs:/var/log/thingsboard
-    networks:
-    - IOT-DMS
-    depends_on:
-    - kafka
+    - tb-gateway-logs:/thingsboard_gateway/logs
+    - tb-gateway-extensions:/thingsboard_gateway/extensions
+    - tb-gateway-config:/thingsboard_gateway/config
 volumes:
   grafana-storage: {}
   progresDB_data: {}
@@ -199,7 +193,8 @@ volumes:
   tb-data-log: 
   tb-data-data:
   mytb-data:
-    external: true
   mytb-logs:
-    external: true
+  tb-gateway-logs:
+  tb-gateway-extensions:
+  tb-gateway-config:
   #.tb-mqtt-broker-data:
