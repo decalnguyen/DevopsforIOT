@@ -78,7 +78,7 @@ services:
     build: ./prometheus
     container_name: prometheus
     ports:
-    - 9090:9090
+    - 9093:9090
     command:
     - --config.file=/etc/prometheus/prometheus.yml
     - '--storage.tsdb.path=/prometheus'
@@ -130,12 +130,12 @@ services:
     networks:
     - IOT-DMS
   mytb: 
-    restart: always
+   # restart: always
     image: thingsboard/tb-postgres
     container_name: mytb
     ports:
-    - 8099:9090
-    - 1883:1883
+    - 9090:9090
+    - 1885:1883
     - 7070:7070
     - 5683-5688:5683-5688/udp
     environment:
