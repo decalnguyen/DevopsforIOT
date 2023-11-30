@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/gorilla/mux"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -20,19 +22,86 @@ type Device struct {
 	//gorm.Model
 	CreateAt  time.Time `gorm:"->;<-:create"json:"CreateAt"`
 	UpdateAt  time.Time `gorm:"<-"json:"UpdateAt"`
-	DeletedAt time.Time
-	Id        int    `json:"id"`
-	Name      string `gorm:"<-:create"json:"name"`
-	Status    bool   `gorm:"<-"json:"status"`
+	DeletedAt time.Time `json:"DeleteAt`
+	Id        int       `json:"id"`
+	Name      string    `gorm:"<-:create"json:"Name"`
+	Status    bool      `gorm:"<-"json:"Status"`
 	Location  string
 }
+
 type DeviceRegistration struct {
 	PersistAt       time.Time
 	Id              int    `json:"id"`
-	Name            string `gorm:"<-:create"json:"name"`
+	Name            string `gorm:"<-:create"json:"Name"`
 	FirmwareVersion string
 	OwnershipInfo   string
 	Protocal        string
+}
+
+func WriteJSON(w http.ResponseWriter, status int, v any) error {
+	w.WriteHeader(status)
+	w.Header().Set("Content-Type", "application/json")
+	return json.NewEncoder(w).Encode(v)
+}
+
+type apiFunc func(http.ResponseWriter, *http.Request) error
+
+type ApiError struct {
+	Error string
+}
+
+func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if err := f(w, r); err != nil {
+			WriteJSON(w, http.StatusBadRequest, ApiError{Error: err.Error()})
+		}
+	}
+}
+
+type APIServer struct {
+	listenAddr string
+}
+
+func NewAPIServer(listenAddr string) *APIServer {
+	return &APIServer{
+		listenAddr: listenAddr,
+	}
+}
+
+func (s *APIServer) Run() {
+	router := mux.NewRouter()
+	router.HandleFunc("/devices", makeHTTPHandleFunc(s.handleDevices))
+	http.ListenAndServe(s.listenAddr, router)
+}
+
+func (s *APIServer) handleDevices(w http.ResponseWriter, r *http.Request) error {
+	switch r.Method {
+	case "GET":
+		return s.handleGetDevices(w, r)
+	case "POST":
+		return s.handleCreateDevices(w, r)
+	case "DELETE":
+		return s.handleDeleteDevices(w, r)
+	}
+
+	return fmt.Errorf("Method not allowed ", r.Method)
+}
+func (s *APIServer) handleGetDevices(w http.ResponseWriter, r *http.Request) error {
+
+	dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Println("Cannot access to database ", err)
+	}
+	var devices Device
+	rows := db.Find(&devices)
+	return WriteJSON(w, http.StatusOK, rows)
+}
+func (s *APIServer) handleCreateDevices(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+func (s *APIServer) handleDeleteDevices(w http.ResponseWriter, r *http.Request) error {
+	return nil
 }
 
 var (
@@ -148,4 +217,6 @@ func main() {
 		pub(client_device, mqttTopic, 1, datas)
 		PersistDevicesInfo(info)
 	}
+	server := NewAPIServer(":8081")
+	server.Run()
 }
