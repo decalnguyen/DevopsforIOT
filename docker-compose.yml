@@ -131,6 +131,19 @@ services:
     - jenkins_home:/var/jenkins_home
     networks:
     - IOT-DMS
+  ui:
+    image: react-app
+    container_name: ui
+    build: ./thingsboard
+    ports:
+    - 8089:8089
+    volumes: 
+      - './services/client:/usr/src/app'
+      - '/usr/src/app/node_modules'
+    env_file:
+    - local_envs.env
+    networks:
+    - IOT-DMS
   mytb: 
    # restart: always
     image: thingsboard/tb-postgres
