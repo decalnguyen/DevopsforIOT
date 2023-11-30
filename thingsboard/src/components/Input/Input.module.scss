@@ -1,0 +1,37 @@
+.wrapper {
+  text-align: center;
+  
+  position: relative;
+}
+
+.input {
+  padding: 10px;
+  padding-left: 40px;
+  font-size: 1.8rem;
+  border-color: transparent;
+  border-bottom: 1px solid #ccc;
+  width: 600px;
+  background-color: transparent;
+  color: white;
+  
+  &::placeholder {
+  color: white;
+  }
+
+  &:focus {
+    // border-color: transparent !important;
+    border-bottom: 2px solid var(--tb-login-primary-800);
+  }
+}
+
+.icon {
+  position: absolute;
+  left: 110px;
+  transform: translateY(14px); 
+  font-size: 1.6rem;
+}
+
+.label {
+  position:absolute;
+  margin-bottom: 5px;
+}

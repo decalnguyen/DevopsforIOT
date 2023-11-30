@@ -1,0 +1,68 @@
+:root {
+  --tb-login-primary-50: #e0f2f1;
+  --tb-login-primary-100: #b2dfdb;
+  --tb-login-primary-200: #00c3b6;
+  --tb-login-primary-300: #4db6ac;
+  --tb-login-primary-400: #26a69a;
+  --tb-login-primary-500: #00695c;
+  --tb-login-primary-600: #00897b;
+  --tb-login-primary-700: #00796b;
+  --tb-login-primary-800: #00695c;
+  --tb-login-primary-900: #004d40;
+  --tb-login-primary-A100: #a7ffeb;
+  --tb-login-primary-A200: #64ffda;
+  --tb-login-primary-A400: #1de9b6;
+  --tb-login-primary-A700: #00bfa5;
+  --tb-login-primary-contrast-50: rgba(0, 0, 0, 0.87);
+  --tb-login-primary-contrast-100: rgba(0, 0, 0, 0.87);
+  --tb-login-primary-contrast-200: rgba(0, 0, 0, 0.87);
+  --tb-login-primary-contrast-300: rgba(0, 0, 0, 0.87);
+  --tb-login-primary-contrast-400: rgba(0, 0, 0, 0.87);
+  --tb-login-primary-contrast-500: white;
+  --tb-login-primary-contrast-600: white;
+  --tb-login-primary-contrast-700: white;
+  --tb-login-primary-contrast-800: white;
+  --tb-login-primary-contrast-900: white;
+  --tb-login-primary-contrast-A100: rgba(0, 0, 0, 0.87);
+  --tb-login-primary-contrast-A200: rgba(0, 0, 0, 0.87);
+  --tb-login-primary-contrast-A400: rgba(0, 0, 0, 0.87);
+  --tb-login-primary-contrast-A700: rgba(0, 0, 0, 0.87);
+  --tb-login-accent-50: #fbe9e7;
+  --tb-login-accent-100: #ffccbc;
+  --tb-login-accent-200: #ffab91;
+  --tb-login-accent-300: #ff8a65;
+  --tb-login-accent-400: #ff7043;
+  --tb-login-accent-500: #ff5722;
+  --tb-login-accent-600: #f4511e;
+  --tb-login-accent-700: #e64a19;
+  --tb-login-accent-800: #d84315;
+  --tb-login-accent-900: #bf360c;
+  --tb-login-accent-A100: #ff9e80;
+  --tb-login-accent-A200: #ff6e40;
+  --tb-login-accent-A400: #ff3d00;
+  --tb-login-accent-A700: #dd2c00;
+  --tb-login-accent-contrast-50: rgba(0, 0, 0, 0.87);
+  --tb-login-accent-contrast-100: rgba(0, 0, 0, 0.87);
+  --tb-login-accent-contrast-200: rgba(0, 0, 0, 0.87);
+  --tb-login-accent-contrast-300: rgba(0, 0, 0, 0.87);
+  --tb-login-accent-contrast-400: rgba(0, 0, 0, 0.87);
+  --tb-login-accent-contrast-500: white;
+  --tb-login-accent-contrast-600: white;
+  --tb-login-accent-contrast-700: white;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+input {
+  /* ... your styles ... */
+  border: none;
+  outline: none; /* Add this to remove the default focus outline */
+}
