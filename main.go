@@ -93,9 +93,10 @@ func (s *APIServer) handleGetDevices(w http.ResponseWriter, r *http.Request) err
 	if err != nil {
 		log.Println("Cannot access to database ", err)
 	}
-	var devices Device
-	rows := db.Find(&devices)
-	return WriteJSON(w, http.StatusOK, rows)
+	var devices []Device
+	db.Find(&devices)
+	//datas := Device{CreateAt: time.Now(), UpdateAt: time.Now(), DeletedAt: time.Now(), Id: 1234, Name: "camera", Status: true, Location: "Viet Nam"}
+	return WriteJSON(w, http.StatusOK, devices)
 }
 func (s *APIServer) handleCreateDevices(w http.ResponseWriter, r *http.Request) error {
 	return nil
