@@ -76,6 +76,18 @@ services:
     networks:
     - IOT-DMS
     #restart: always
+  nginx:
+    container_name: nginx
+    restart: on-failure
+    image: nginx
+    ports:
+    - 9099:80
+    depends_on:
+    - ui
+    volumes:
+    - ./.nginx/nginx.conf:/etc/nginx/conf.d/defauft.conf
+    networks:
+    - IOT-DMS
   prometheus:
     build: ./prometheus
     container_name: prometheus
@@ -144,6 +156,7 @@ services:
     - local_envs.env
     networks:
     - IOT-DMS
+    restart: on-failure
   mytb: 
    # restart: always
     image: thingsboard/tb-postgres

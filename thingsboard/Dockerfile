@@ -2,31 +2,16 @@ FROM node:latest AS development
 
 WORKDIR /app
 
-COPY package.json ./app/packe.json
-COPY package-lock.json ./app/package-lock.json
-
-RUN npm ci
-
+COPY package.json /app/packe.json
+COPY package-lock.json /app/package-lock.json
 COPY . /app
+
+RUN yarn install --production
 
 ENV CI=true
 
 ENV PORT=8089
 
-CMD ["npm", "start"]
+CMD ["node", "src/index.js"]
 
-FROM development AS build
-
-RUN npm run build
-
-FROM nginx:alpine
-
-COPY --from=build /app/.nginx/conf /etc/nginx/conf.d/default.conf
-
-WORKDIR /usr/share/nginx/html
-
-RUN rm -rf ./*
-
-COPY --from=build /app/build .
-
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 8089
