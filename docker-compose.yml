@@ -81,7 +81,7 @@ services:
     restart: on-failure
     image: nginx
     ports:
-    - 9099:80
+    - 8089:80
     depends_on:
     - webapp
     volumes:
@@ -156,7 +156,7 @@ services:
     - local_envs.env
     networks:
     - IOT-DMS
-    restart: on-failure
+    restart: always
   mytb: 
    # restart: always
     image: thingsboard/tb-postgres

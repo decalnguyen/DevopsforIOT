@@ -9,8 +9,6 @@ COPY . .
 
 RUN yarn install --production
 
-ENV PORT=3000
+RUN yarn add customize-cra react-app-rewired --dev
 
-EXPOSE 3000
-
-CMD ["node", "src/App.js"]
+CMD ["yarn", "start"]
