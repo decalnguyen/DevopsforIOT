@@ -1,17 +1,16 @@
-FROM node:latest AS development
+FROM node:latest AS build
 
 WORKDIR /app
 
 COPY package.json /app/packe.json
 COPY package-lock.json /app/package-lock.json
-COPY . /app
 
-RUN yarn install --production
+COPY . .
 
-ENV CI=true
+RUN npm install --production
 
-ENV PORT=8089
+RUN npm add customize-cra react-app-rewired --dev
 
-CMD ["node", "src/index.js"]
+CMD ["npm", "start"]
 
-EXPOSE 8089
+EXPOSE 3000

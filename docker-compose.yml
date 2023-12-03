@@ -76,18 +76,19 @@ services:
     networks:
     - IOT-DMS
     #restart: always
-  nginx:
-    container_name: nginx
-    restart: on-failure
-    image: nginx
-    ports:
-    - 9099:80
-    depends_on:
-    - ui
-    volumes:
-    - ./.nginx/nginx.conf:/etc/nginx/conf.d/defauft.conf
-    networks:
-    - IOT-DMS
+  #nginx:
+  #  build: ./thingsboard
+  #  container_name: nginx
+  #  restart: on-failure
+  #  image: nginx
+  #  ports:
+  #  - 8089:80
+   # depends_on:
+   # - webapp
+   # volumes:
+   # - ./thingsboard/.nginx/nginx.conf:/etc/nginx/nginx.conf
+   # networks:
+   # - IOT-DMS
   prometheus:
     build: ./prometheus
     container_name: prometheus
@@ -143,20 +144,20 @@ services:
     - jenkins_home:/var/jenkins_home
     networks:
     - IOT-DMS
-  ui:
+  webapp:
     image: react-app
-    container_name: ui
+    container_name: webapp
     build: ./thingsboard
     ports:
-    - 8089:8089
+    - 8089:3000
     volumes: 
-      - './services/client:/usr/src/app'
-      - '/usr/src/app/node_modules'
+    - src:/usr/src/app
+    - node_modules:/usr/src/app/node_modules
     env_file:
     - local_envs.env
     networks:
     - IOT-DMS
-    restart: on-failure
+    restart: always
   mytb: 
    # restart: always
     image: thingsboard/tb-postgres
@@ -177,31 +178,6 @@ services:
     - postgres
     links:
     - postgres
-  zookeeper:
-    container_name: zookeeper
-    restart: always
-    image: "zookeeper:3.8"
-    ports: 
-    - 2181:2181
-    env_file:
-    - local_envs.env
-    networks:
-    - IOT-DMS
-  kafka:
-    container_name: kafka
-    restart: always
-    image: wurstmeister/kafka
-    depends_on:
-    - zookeeper
-    ports:
-    - 9092:9092
-    env_file:
-    - local_envs.env
-    volumes:
-    - ~/.tb-mqtt-broker-data/kafka:/kafka
-    - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-    - IOT-DMS
   tb_gateway:
     container_name: tb_gateway
     image: thingsboard/tb-gateway
@@ -226,3 +202,5 @@ volumes:
   tb-gateway-extensions:
   tb-gateway-config:
   #.tb-mqtt-broker-data:
+  src:
+  node_modules:
