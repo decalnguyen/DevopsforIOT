@@ -1,4 +1,4 @@
-FROM node:latest AS development
+FROM node:latest AS build
 
 WORKDIR /app
 
@@ -7,8 +7,10 @@ COPY package-lock.json /app/package-lock.json
 
 COPY . .
 
-RUN yarn install --production
+RUN npm install --production
 
-RUN yarn add customize-cra react-app-rewired --dev
+RUN npm add customize-cra react-app-rewired --dev
 
-CMD ["yarn", "start"]
+CMD ["npm", "start"]
+
+EXPOSE 3000

@@ -76,18 +76,19 @@ services:
     networks:
     - IOT-DMS
     #restart: always
-  nginx:
-    container_name: nginx
-    restart: on-failure
-    image: nginx
-    ports:
-    - 8089:80
-    depends_on:
-    - webapp
-    volumes:
-    - ./thingsboard/.nginx/nginx.conf:/etc/nginx/nginx.conf
-    networks:
-    - IOT-DMS
+  #nginx:
+  #  build: ./thingsboard
+  #  container_name: nginx
+  #  restart: on-failure
+  #  image: nginx
+  #  ports:
+  #  - 8089:80
+   # depends_on:
+   # - webapp
+   # volumes:
+   # - ./thingsboard/.nginx/nginx.conf:/etc/nginx/nginx.conf
+   # networks:
+   # - IOT-DMS
   prometheus:
     build: ./prometheus
     container_name: prometheus
@@ -150,8 +151,8 @@ services:
     ports:
     - 8089:3000
     volumes: 
-      - './services/client:/usr/src/app'
-      - '/usr/src/app/node_modules'
+    - src:/usr/src/app
+    - node_modules:/usr/src/app/node_modules
     env_file:
     - local_envs.env
     networks:
@@ -201,3 +202,5 @@ volumes:
   tb-gateway-extensions:
   tb-gateway-config:
   #.tb-mqtt-broker-data:
+  src:
+  node_modules:
