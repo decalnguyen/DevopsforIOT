@@ -1,0 +1,30 @@
+version: '3'
+networks:
+  IOT-DMS:
+    external: true
+services:
+  emqx:
+      image: emqx/emqx
+      container_name: emqx
+      ports:
+        - 1884:1883
+        - 8083:8083 
+        - 8883:8883
+        - 8084:8084
+        - 18083:18083
+      volumes:
+      - ./emqx/conf/emqx.conf:/etc/emqx/emqx.conf
+      - ./emqx/conf/acl.conf:/etc/emqx/acl.conf
+      - vol-emqx-data:/opt/emqx/data
+      - vol-emqx-etc:/opt/emqx/etc
+      - vol-emqx-log:/opt/emqx/log
+      - ./daemon.json:/etc/docker/daemon.json
+      env_file:
+      - ~/Devops_for_iot/local_envs.env
+      networks:
+      - IOT-DMS
+      restart: on-failure
+volumes:
+  vol-emqx-data:
+  vol-emqx-etc:
+  vol-emqx-log:

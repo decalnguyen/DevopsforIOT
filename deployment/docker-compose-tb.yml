@@ -1,0 +1,35 @@
+version: '3'
+networks:
+  IOT-DMS:
+    external: true
+services:
+  mytb: 
+   # restart: always
+    image: thingsboard/tb-postgres
+    container_name: mytb
+    ports:
+    - 9090:9090
+    - 1885:1883
+    - 7070:7070
+    - 5683-5688:5683-5688/udp
+    environment:
+     TB_QUEUE_TYPE: in-memory
+    volumes:
+    - mytb-data:/data
+    - mytb-logs:/var/log/thingsboard
+    networks:
+    - IOT-DMS
+  webserver:
+    image: server:latest
+    container_name: webserver
+    build: ~/Devops_for_iot/
+    ports:
+    - 8081:8081
+    env_file:
+    - ~/Devops_for_iot/local_envs.env
+    networks:
+    - IOT-DMS
+    restart: on-failure
+volumes:
+  mytb-data:
+  mytb-logs:

@@ -1,0 +1,21 @@
+version: '3'
+networks:
+  IOT-DMS:
+services:
+  webapp:
+    image: react-app
+    container_name: webapp
+    build: ./thingsboard
+    ports:
+    - 8089:3000
+    volumes: 
+    - src:/usr/src/app
+    - node_modules:/usr/src/app/node_modules
+    env_file:
+    - local_envs.env
+    networks:
+    - IOT-DMS
+    restart: always
+volumes:
+  src:
+  node_modules:
