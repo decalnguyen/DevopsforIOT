@@ -19,6 +19,8 @@ services:
     - mytb-logs:/var/log/thingsboard
     networks:
     - IOT-DMS
+    depends_on:
+    - postgres
   webserver:
     image: server:latest
     container_name: webserver
@@ -30,6 +32,22 @@ services:
     networks:
     - IOT-DMS
     restart: on-failure
+  postgres:
+    container_name: postgres
+    build: ~/Devops_for_iot/database/
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+    - 5432:5432
+    volumes:
+    - progresDB_data:/var/lib/postgresql/data
+    - ./database/postgres.conf:/database/config/postgres.conf
+    env_file:
+    - ~/Devops_for_iot/local_envs.env
+    networks:
+    - IOT-DMS
+    restart: on-failure
 volumes:
+  progresDB_data: {}
   mytb-data:
   mytb-logs:
