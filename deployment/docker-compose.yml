@@ -12,7 +12,7 @@ services:
     - 5432:5432
     volumes:
     - progresDB_data:/var/lib/postgresql/data
-    - ./database/postgres.conf:/database/config/postgres.conf
+    - ~/Devops_for_iot/database/postgres.conf:/database/config/postgres.conf
     env_file:
     - ~/Devops_for_iot/local_envs.env
     networks:
