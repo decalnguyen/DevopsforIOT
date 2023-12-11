@@ -13,8 +13,8 @@ services:
         - 8084:8084
         - 18083:18083
       volumes:
-      - ./emqx/conf/emqx.conf:/etc/emqx/emqx.conf
-      - ./emqx/conf/acl.conf:/etc/emqx/acl.conf
+      - ~/emqx/conf/emqx.conf:/etc/emqx/emqx.conf
+      - ~/emqx/conf/acl.conf:/etc/emqx/acl.conf
       - vol-emqx-data:/opt/emqx/data
       - vol-emqx-etc:/opt/emqx/etc
       - vol-emqx-log:/opt/emqx/log

@@ -5,14 +5,14 @@ services:
   webapp:
     image: react-app
     container_name: webapp
-    build: ./thingsboard
+    build: ~/Devops_for_iot/thingsboard
     ports:
     - 8089:3000
     volumes: 
     - src:/usr/src/app
     - node_modules:/usr/src/app/node_modules
     env_file:
-    - local_envs.env
+    - ~/Devops_for_iot/local_envs.env
     networks:
     - IOT-DMS
     restart: always
