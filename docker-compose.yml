@@ -134,16 +134,6 @@ services:
     #- /prometheus/alertmanager.yml:/etc/alertmanager/alermanage.yml 
     #networks: 
    # - IOT-DMS
-  jenkins:
-    image: jenkins/jenkins
-    container_name: jenkins
-    ports:
-    - 8082:8080
-    - 50000:50000
-    volumes:
-    - jenkins_home:/var/jenkins_home
-    networks:
-    - IOT-DMS
   webapp:
     image: react-app
     container_name: webapp
@@ -178,14 +168,6 @@ services:
     - postgres
     links:
     - postgres
-  tb_gateway:
-    container_name: tb_gateway
-    image: thingsboard/tb-gateway
-    restart: always 
-    volumes:
-    - tb-gateway-logs:/thingsboard_gateway/logs
-    - tb-gateway-extensions:/thingsboard_gateway/extensions
-    - tb-gateway-config:/thingsboard_gateway/config
 volumes:
   grafana-storage: {}
   progresDB_data: {}
@@ -198,9 +180,5 @@ volumes:
   tb-data-data:
   mytb-data:
   mytb-logs:
-  tb-gateway-logs:
-  tb-gateway-extensions:
-  tb-gateway-config:
-  #.tb-mqtt-broker-data:
   src:
   node_modules:

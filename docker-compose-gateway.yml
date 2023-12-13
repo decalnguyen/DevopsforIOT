@@ -1,0 +1,20 @@
+version: '3'
+networks:
+  IOT-DMS:
+    external: true
+services:
+  tb_gateway:
+    container_name: tb_gateway
+    image: thingsboard/tb-gateway
+    restart: always 
+    volumes:
+    - devops_for_iot_tb-gateway-logs:/thingsboard_gateway/logs
+    - devops_for_iot_tb-gateway-extensions:/thingsboard_gateway/extensions
+    - devops_for_iot_tb-gateway-config:/thingsboard_gateway/config
+volumes: 
+  devops_for_iot_tb-gateway-logs:
+    external: true
+  devops_for_iot_tb-gateway-extensions:
+    external: true
+  devops_for_iot_tb-gateway-config:
+    external: true
