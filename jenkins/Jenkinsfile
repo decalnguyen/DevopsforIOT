@@ -1,20 +1,51 @@
+def gv 
+
 pipeline {
     agent any
+    environment{
+        
+    }
+    parameters {
+       // DOCKER_REGIS = credentials('docker-regis')
+    }
 
     stages {
+     /*   stage('init') { 
+            steps {
+                script {
+                    gv = load "script.groovy"
+                }
+            }
+        }*/
+        stage('vui') 
+            steps {
+                withCredentials([
+                    usernamePassword(credentials: 'docker-regis', usernameVariable: USER, passwordVariable: PWD)
+                ]) {
+                    sh '''
+                        docker login -u ${USER} -p ${PWD}
+                    '''
+                }
+            }
         stage('Build') {
             steps {
-                echo 'Building..'
+                script {
+                    gv.buildServices()
+                }
             }
         }
-        stage('Test') {
+        stage('Push') {
             steps {
-                echo 'Testing..'
+                script {
+                    gv.pushServices()
+                }
             }
         }
         stage('Deploy') {
             steps {
-                echo 'Deploying....'
+                script { 
+                    gv.deployServices()
+                }
             }
         }
     }

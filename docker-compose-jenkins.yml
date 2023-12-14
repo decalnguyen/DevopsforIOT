@@ -1,6 +1,7 @@
 version: '3'
 networks: 
   IOT-DMS:
+    external: true
 services:
   jenkins:
       image: jenkins/jenkins
