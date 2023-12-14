@@ -1,23 +1,23 @@
 def gv 
-
+CODE_CHANGES = getGitChanges()
 pipeline {
     agent any
     environment{
-        
+
     }
     parameters {
        // DOCKER_REGIS = credentials('docker-regis')
     }
 
     stages {
-     /*   stage('init') { 
+        stage('init') { 
             steps {
                 script {
                     gv = load "script.groovy"
                 }
             }
-        }*/
-        stage('vui') 
+        }
+        stage('clonegit') 
             steps {
                 withCredentials([
                     usernamePassword(credentials: 'docker-regis', usernameVariable: USER, passwordVariable: PWD)
@@ -43,6 +43,11 @@ pipeline {
         }
         stage('Deploy') {
             steps {
+                when {
+                    expression {
+                        BRANCH_NAME == 'master' && CODE_CHANGES == true
+                    }
+                }
                 script { 
                     gv.deployServices()
                 }
