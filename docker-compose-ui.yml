@@ -1,0 +1,24 @@
+version: '3'
+networks:
+  IOT-DMS:
+    external: true
+services:
+  webapp:
+    image: react-app
+    container_name: webapp
+    build: ./thingsboard
+    ports:
+    - 8089:3000
+    env_file:
+    - local_envs.env
+    networks:
+    - IOT-DMS
+    restart: always
+    volumes: 
+      - devops_for_iot_src:/usr/src/app
+      - devops_for_iot_node_modules:/usr/src/app/node_modules
+volumes: 
+  devops_for_iot_src: 
+    external: true
+  devops_for_iot_node_modules: 
+    external: true

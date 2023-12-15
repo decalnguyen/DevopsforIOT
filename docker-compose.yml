@@ -1,6 +1,7 @@
 version: '3'
 networks: 
   IOT-DMS:
+    external: true
 services:
   emqx:
     image: emqx/emqx
@@ -134,20 +135,6 @@ services:
     #- /prometheus/alertmanager.yml:/etc/alertmanager/alermanage.yml 
     #networks: 
    # - IOT-DMS
-  webapp:
-    image: react-app
-    container_name: webapp
-    build: ./thingsboard
-    ports:
-    - 8089:3000
-    volumes: 
-    - src:/usr/src/app
-    - node_modules:/usr/src/app/node_modules
-    env_file:
-    - local_envs.env
-    networks:
-    - IOT-DMS
-    restart: always
   mytb: 
    # restart: always
     image: thingsboard/tb-postgres
@@ -180,5 +167,3 @@ volumes:
   tb-data-data:
   mytb-data:
   mytb-logs:
-  src:
-  node_modules:
