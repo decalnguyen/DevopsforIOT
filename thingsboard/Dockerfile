@@ -11,6 +11,8 @@ RUN npm install --production
 
 RUN npm add customize-cra react-app-rewired --dev
 
+RUN npm install react-bootstrap
+
 CMD ["npm", "start"]
 
 EXPOSE 3000
