@@ -11,7 +11,7 @@ def buildServices() [
     '''
 ]
 
-def git() {
+def pullGit() {
     git credetialsId: github, url: https://github.com/decalnguyen/DevopsforIOT.git
 }
 def pushServices() {
@@ -26,7 +26,7 @@ def testServices() {
 
 def deployServices() {
     sh '''
-        docker run 
+        docker-compose up --build 
     '''
 }
 return this

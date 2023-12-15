@@ -3,12 +3,8 @@ CODE_CHANGES = getGitChanges()
 pipeline {
     agent any
     environment{
-
+        IMAGE_NAME='server'
     }
-    parameters {
-       // DOCKER_REGIS = credentials('docker-regis')
-    }
-
     stages {
         stage('init') { 
             steps {
@@ -17,19 +13,10 @@ pipeline {
                 }
             }
         }
-        stage('clonegit') 
-            steps {
-                withCredentials([
-                    usernamePassword(credentials: 'docker-regis', usernameVariable: USER, passwordVariable: PWD)
-                ]) {
-                    sh '''
-                        docker login -u ${USER} -p ${PWD}
-                    '''
-                }
-            }
         stage('Build') {
             steps {
                 script {
+                    gv.pullGit()
                     gv.buildServices()
                 }
             }
