@@ -1,0 +1,40 @@
+/* Sidebar.css */
+
+.sidebar {
+  height: 100vh;
+  /* width: 200px; */
+  background-color: var(--tb-login-primary-100);
+  /* color: black; */
+  padding-top: 20px;
+}
+
+.sidebar-nav-link {
+  width: 100vh;
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
+.sidebar-nav-link:hover {
+  background-color: #fff;
+}
+
+.icon {
+  margin-left: 16px;
+  font-size: 2.2rem;
+  color: rgb(43, 2, 2);
+}
+
+.text {
+  margin-left: 48px;
+  font-size: 1.6rem;
+  color: var(--tb-login-primary-contrast-50);
+  line-height: 40px;
+}
+
+.active {
+  background-color: var(--tb-login-primary-200);
+}
+
+.item {
+  padding: 0px 0;
+}
