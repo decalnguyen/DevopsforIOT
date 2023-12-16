@@ -84,6 +84,7 @@ function LoginForm() {
               <option value="">Choose Platform</option>
               <option value="thingsboard.cloud">thingsboard.cloud</option>
               <option value="demo.thingsboard.io">demo.thingsboard.io</option>
+              <option value="mytb.greenstreamvision.com">mytb.greenstreamvision.com</option>
             </Form.Select>
 
             <Button variant="outline-success" type="submit" block className={cx('submit-btn')}>
