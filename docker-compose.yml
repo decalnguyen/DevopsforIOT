@@ -77,19 +77,6 @@ services:
     networks:
     - IOT-DMS
     #restart: always
-  #nginx:
-  #  build: ./thingsboard
-  #  container_name: nginx
-  #  restart: on-failure
-  #  image: nginx
-  #  ports:
-  #  - 8089:80
-   # depends_on:
-   # - webapp
-   # volumes:
-   # - ./thingsboard/.nginx/nginx.conf:/etc/nginx/nginx.conf
-   # networks:
-   # - IOT-DMS
   prometheus:
     build: ./prometheus
     container_name: prometheus
