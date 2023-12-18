@@ -1,13 +1,7 @@
 def buildServices() [
-    script{
-        def dockerImage = docker.build('server/server')
-        docker.withRegistry('http', '')
-        {
-              dockerImage.push()
-        }
-    }
     sh '''
-    docker build -f Dockerfile.deploy -t devopsforiot .
+    cd thingsboard
+    docker build -t decalnguyen/webapp .
     '''
 ]
 
@@ -17,6 +11,7 @@ def pullGit() {
 def pushServices() {
 
     sh '''
+        docker push decalnguyen/webapp:latest
     '''
 }
 
