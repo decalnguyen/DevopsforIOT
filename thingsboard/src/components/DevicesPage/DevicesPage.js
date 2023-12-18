@@ -2,13 +2,15 @@ import Header from './Header';
 import { useAuth } from '~/contexts/AuthContext';
 import { useEffect, useState } from 'react';
 import { deleteDevice, getAttributesData, getDevicesInfo, getTimeseriesData } from '~/services/request';
-import { Button, Container, Form, Row, Table } from 'react-bootstrap';
+import { Button, Container, Form, Offcanvas, Row, Table } from 'react-bootstrap';
 
 import styles from './DevicesPage.module.scss';
 import classNames from 'classnames/bind';
 import { formatTimestamp } from '~/utils';
 import LoadingModal from '../LoadingModal';
 import CustomModal from '../Modal/Modal';
+import DevicesTable from './DevicesTable';
+import DeviceInfoCanvas from './DeviceInfoCanvas';
 
 const cx = classNames.bind(styles);
 
@@ -82,52 +84,7 @@ function DevicesPage() {
     <Container>
       <Header onNewDeviceAdded={handleNewDeviceAdded} />
 
-      <Table stripped hover style={{ fontSize: '1.4rem' }}>
-        <thead>
-          <tr>
-            <th>
-              <Form.Check type="checkbox" id="default" />
-            </th>
-            <th>Created time</th>
-            <th>Name</th>
-            <th>Device Profile</th>
-            <th>Label</th>
-            <th>State</th>
-            <th>Customer name</th>
-            <th>Group</th>
-            <th>Is Gateway</th>
-          </tr>
-        </thead>
-        <tbody>
-          {devicesInfo.map((device, index) => {
-            return (
-              <tr>
-                <td>
-                  <Form.Check type="checkbox" id="default" />
-                </td>
-                <td>{formatTimestamp(device.createdTime)}</td>
-                <td>{device.name}</td>
-                <td>{device.type}</td>
-                <td>{device.label}</td>
-                <td>{device.active ? 'Active' : 'Inactive'}</td>
-                <td></td>
-                <td>{device.groups.map((group) => group.name)}</td>
-                <td>
-                  <Row>
-                    <Form.Check type="checkbox" id="default" className="col-4" />
-                    <Button variant="light" className="col-4">
-                      <i class="bi bi-bag-plus-fill"></i>
-                    </Button>
-                    <Button variant="light" className="col-4" onClick={() => handleDeleteDevice(index)}>
-                      <i class="bi bi-trash-fill"></i>
-                    </Button>
-                  </Row>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </Table>
+      <DevicesTable devicesInfo={devicesInfo} handleDeleteDevice={handleDeleteDevice} />
       <LoadingModal show={showModals.loading} />
       <CustomModal
         show={showModals.status}
@@ -135,6 +92,7 @@ function DevicesPage() {
         bodyText="Delete device succesfully!"
         onHide={() => setShowModals((values) => ({ ...values, status: false }))}
       />
+      <DeviceInfoCanvas />
     </Container>
   );
 }

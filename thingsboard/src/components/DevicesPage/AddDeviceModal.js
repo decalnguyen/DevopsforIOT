@@ -1,11 +1,13 @@
 import { Button, Col, Container, FloatingLabel, Form, Modal, ModalBody, Row } from 'react-bootstrap';
 import styles from './DevicesPage.module.scss';
 import classNames from 'classnames/bind';
-import { useState } from 'react';
-import { createNewDevice } from '~/services/request';
+import { useEffect, useState } from 'react';
+import { createNewDevice, getDeviceProfiles, getOwnerInfos } from '~/services/request';
 import { useAuth } from '~/contexts/AuthContext';
 import LoadingModal from '../LoadingModal';
 import CustomModal from '../Modal/Modal';
+import AutoComplete from '../AutoComplete';
+import { useAddDeviceModal } from '~/hooks/useAddDeviceModalSuggestions';
 
 const cx = classNames.bind(styles);
 
@@ -14,7 +16,8 @@ function AddDeviceModal({ showModal, setShowModal, onNewDeviceAdded }) {
   const { platform, token } = useAuth();
   const [showModals, setShowModals] = useState({});
   const [status, setStatus] = useState('');
-  console.log('token from add device modal: ', token);
+  const [suggestions, setSuggestions] = useAddDeviceModal();
+  const [showSuggestions, setShowSuggestions] = useState({});
   const handleChange = (e) => {
     const { name, value, checked, type } = e.target;
 
@@ -27,11 +30,16 @@ function AddDeviceModal({ showModal, setShowModal, onNewDeviceAdded }) {
     console.log('input:', inputs);
     setShowModals((values) => ({ ...values, loading: true }));
     const data = {
-      name: inputs.name,
-      label: inputs.label,
-      description: inputs.description,
+      deviceInfo: {
+        name: inputs.name,
+        description: inputs.description,
+        label: inputs.label,
+        deviceProfileId: suggestions.devicesProfileInfo.find((element) => element.name === inputs.deviceProfile).id,
+        ownerId: suggestions.ownersInfo.find((element) => element.name === inputs.owners).id,
+      },
       token: token,
       platform: platform,
+      entityGroupId: suggestions.groupsInfo.find((element) => element.name === inputs.groups).id.id,
     };
     const response = await createNewDevice(data);
     setShowModals((values) => ({ ...values, loading: false }));
@@ -47,9 +55,14 @@ function AddDeviceModal({ showModal, setShowModal, onNewDeviceAdded }) {
     console.log('response:', response);
   };
 
+  const handleHideForm = () => {
+    setInputs({});
+    setShowModal(false);
+  };
+
   return (
     <Container>
-      <Modal show={showModal} centered onHide={() => setShowModal(false)} animation>
+      <Modal show={showModal} centered onHide={handleHideForm} animation>
         <Modal.Header closeButton className={cx('modal-header')}>
           <Modal.Title>Add new device</Modal.Title>
         </Modal.Header>
@@ -84,14 +97,27 @@ function AddDeviceModal({ showModal, setShowModal, onNewDeviceAdded }) {
               </FloatingLabel>
               <FloatingLabel controlId="floatingDeviceProfile" label="Device profile*" className={cx('floating-label')}>
                 <Form.Control
+                  autoComplete="off"
                   name="deviceProfile"
                   type="text"
                   placeholder="Password"
                   required
                   className={cx('modal-input')}
+                  onClick={() => setShowSuggestions((values) => ({ ...values, devicesProfileInfo: true }))}
                   value={inputs.deviceProfile}
                   onChange={handleChange}
                 />
+                <AutoComplete
+                  suggestions={
+                    suggestions.devicesProfileInfo &&
+                    suggestions.devicesProfileInfo.length > 0 &&
+                    suggestions.devicesProfileInfo.map((profile) => profile.name)
+                  }
+                  show={showSuggestions.devicesProfileInfo}
+                  onHide={() => setShowSuggestions((values) => ({ ...values, devicesProfileInfo: false }))}
+                  onItemClick={setInputs}
+                  field="deviceProfile"
+                ></AutoComplete>
               </FloatingLabel>
               <Form.Check
                 name="isGateway"
@@ -108,26 +134,52 @@ function AddDeviceModal({ showModal, setShowModal, onNewDeviceAdded }) {
                   </Row>
                   <FloatingLabel label="Owner*" className={cx('floating-label')}>
                     <Form.Control
+                      autoComplete="off"
                       name="owners"
                       type="text"
-                      placeholder="Something"
+                      placeholder="Owner*"
                       required
                       className={cx('modal-input')}
                       value={inputs.owners}
-                      onChange={handleChange}
+                      onClick={() => setShowSuggestions((values) => ({ ...values, ownersInfo: true }))}
                     />
+                    {/* </AutoComplete> */}
                   </FloatingLabel>
+                  <AutoComplete
+                    suggestions={
+                      suggestions.ownersInfo &&
+                      suggestions.ownersInfo.length > 0 &&
+                      suggestions.ownersInfo.map((owner) => owner.name)
+                    }
+                    show={showSuggestions.ownersInfo}
+                    onItemClick={setInputs}
+                    onHide={() => setShowSuggestions((values) => ({ ...values, ownersInfo: false }))}
+                    field="owners"
+                  ></AutoComplete>
                   <FloatingLabel label="Group" className={cx('floating-label')}>
                     <Form.Control
+                      autoComplete="off"
                       name="group"
                       type="text"
                       placeholder="Something"
                       required
                       className={cx('modal-input')}
-                      value={inputs.group}
+                      value={inputs.groups}
                       onChange={handleChange}
+                      onClick={() => setShowSuggestions((values) => ({ ...values, groupsInfo: true }))}
                     />
                   </FloatingLabel>
+                  <AutoComplete
+                    suggestions={
+                      suggestions.groupsInfo &&
+                      suggestions.groupsInfo.length > 0 &&
+                      suggestions.groupsInfo.map((group) => group.name)
+                    }
+                    show={showSuggestions.groupsInfo}
+                    onItemClick={setInputs}
+                    onHide={() => setShowSuggestions((values) => ({ ...values, groupsInfo: false }))}
+                    field="groups"
+                  ></AutoComplete>
                   <FloatingLabel label="Description" className={cx('floating-label')}>
                     <Form.Control
                       name="description"

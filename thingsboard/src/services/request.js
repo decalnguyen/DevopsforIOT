@@ -12,6 +12,8 @@ export const authenticate = async ({ username, password, platform }) => {
         'Content-Type': 'application/json',
       },
     });
+    const { token, refreshToken } = response.data;
+    console.log('refresh token: ' + refreshToken);
     return response.data.token;
   } catch (e) {
     console.log(e);
@@ -20,14 +22,15 @@ export const authenticate = async ({ username, password, platform }) => {
 
 // The data is in array format
 export const getDevicesInfo = async ({ token, platform, pageSize = 20, page = 0 }) => {
-  const api = `api/deviceInfos/all`;
+  const api = `/deviceInfos/all`;
   try {
-    const response = await request.get(platform, api, token, {
-      params: {
-        pageSize,
-        page,
-      },
-    });
+    const data = {
+      platform,
+      api,
+      token,
+      configs: { params: { pageSize, page } },
+    };
+    const response = await request.get(data);
     return response.data.data;
   } catch (e) {
     console.log(e);
@@ -36,15 +39,11 @@ export const getDevicesInfo = async ({ token, platform, pageSize = 20, page = 0 
 
 // The data is in array format
 export const getTimeseriesData = async ({ entityType, entityId, token, platform }) => {
-  const api = `https://${platform}/api/plugins/telemetry/${entityType}/${entityId}/values/timeseries`;
+  const api = `/plugins/telemetry/${entityType}/${entityId}/values/timeseries`;
 
   try {
-    const response = await axios.get(api, {
-      headers: {
-        Accept: 'application/json',
-        Authorization: 'Bearer ' + token,
-      },
-    });
+    const data = { platform, api, token, option: {} };
+    const response = await request.get(data);
     return response.data;
   } catch (e) {
     console.log(e);
@@ -53,32 +52,40 @@ export const getTimeseriesData = async ({ entityType, entityId, token, platform 
 
 // The data is in array format
 export const getAttributesData = async ({ entityType, entityId, token, platform, params }) => {
-  const api = `https://${platform}/api/plugins/telemetry/${entityType}/${entityId}/values/attributes`;
+  const api = `/plugins/telemetry/${entityType}/${entityId}/values/attributes`;
   try {
-    const response = await axios.get(api, {
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
+    const data = {
+      platform,
+      api,
+      token,
+      option: {
+        params,
       },
-      params: params,
-    });
+    };
+    const response = await request.get(data);
     return response.data;
   } catch (e) {
     console.log(e);
   }
 };
 
-export const createNewDevice = async ({ name, label, description, platform, token }) => {
-  const api = `https://${platform}/api/device`;
-  const data = { name, label, description };
-  try {
-    const response = await axios.post(api, data, {
-      headers: {
-        Accept: 'application/json',
-        Authorization: 'Bearer ' + token,
+export const createNewDevice = async ({ deviceInfo, entityGroupId, platform, token }) => {
+  const api = `/device`;
+  console.log('device info', deviceInfo);
+  console.log('entity group id', entityGroupId);
+  const data = {
+    platform,
+    api,
+    token,
+    data: deviceInfo,
+    configs: {
+      params: {
+        entityGroupId: entityGroupId,
       },
-    });
+    },
+  };
+  try {
+    const response = await request.post(data);
     return response;
   } catch (e) {
     console.log(e);
@@ -88,16 +95,74 @@ export const createNewDevice = async ({ name, label, description, platform, toke
 export const deleteDevice = async ({ platform, token, deviceId }) => {
   const api = `https://${platform}/api/device/${deviceId}`;
   try {
-    const response = await axios.delete(api, {
-      headers: {
-        Accept: 'application/json',
-        Authorization: 'Bearer ' + token,
+    const data = {
+      platform,
+      token,
+      api,
+      configs: {
+        params: { deviceId },
       },
-      params: {
-        deviceId,
-      },
-    });
+    };
+    const response = await request.Delete(data);
     return response;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const getOwnerInfos = async ({ token, platform, pageSize = 10, page = 0 }) => {
+  const api = `/ownerInfos`;
+  try {
+    const data = {
+      platform,
+      api,
+      token,
+      data: {},
+      configs: {
+        params: { pageSize, page },
+      },
+    };
+    const response = request.get(data);
+    return response;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const getDeviceProfiles = async ({ token, platform, pageSize = 10, page = 0 }) => {
+  const api = `/deviceProfiles`;
+  try {
+    const data = {
+      platform,
+      api,
+      token,
+      data: {},
+      configs: {
+        params: { pageSize, page },
+      },
+    };
+    const response = await request.get(data);
+    return response.data.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const getEntityGroupsByType = async ({ token, platform, groupType, includeShared = true }) => {
+  const api = `/entityGroups/${groupType}`;
+  try {
+    const data = {
+      platform,
+      api,
+      token,
+      configs: {
+        params: {
+          includeShared,
+        },
+      },
+    };
+    const response = await request.get(data);
+    return response.data;
   } catch (e) {
     console.log(e);
   }
