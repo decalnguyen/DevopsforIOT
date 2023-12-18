@@ -1,18 +1,21 @@
-FROM node:latest AS build
+FROM node:latest as node
 
 WORKDIR /app
 
-COPY package.json /app/packe.json
-COPY package-lock.json /app/package-lock.json
+COPY . /app
 
-COPY . .
-
-RUN npm install --production
+RUN npm install 
 
 RUN npm add customize-cra react-app-rewired --dev
 
 RUN npm install react-bootstrap
 
-CMD ["npm", "start"]
+RUN npm run build 
 
-EXPOSE 3000
+FROM nginx:1.12
+
+COPY --from=node /app/build/ /var/www/dist/
+
+COPY --from=node /app/nginx/nginx.conf /etc/nginx/nginx.conf
+
+CMD ["nginx", "-g", "daemon off;"]
