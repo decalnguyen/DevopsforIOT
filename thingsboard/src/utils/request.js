@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const createRequest = (platform, token) => {
   const request = axios.create({
-    baseURL: `https://${platform}/`,
+    baseURL: `https://${platform}/api/`,
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -12,15 +12,21 @@ const createRequest = (platform, token) => {
   return request;
 };
 
-export const get = async (platform, path, token, options) => {
+export const get = async ({ platform, api, token, configs }) => {
   const request = createRequest(platform, token);
   console.log('token:', token);
-  const response = await request.get(path, options);
+  const response = await request.get(api, configs);
   return response;
 };
 
-export const post = async (platform, path, token, options) => {
+export const post = async ({ platform, api, token, data, configs }) => {
   const request = createRequest(platform, token);
-  const response = await request.post(path, options);
+  const response = await request.post(api, data, configs);
+  return response;
+};
+
+export const Delete = async ({ platform, token, api, configs }) => {
+  const request = createRequest(platform, token);
+  const response = await request.delete(api, configs);
   return response;
 };
