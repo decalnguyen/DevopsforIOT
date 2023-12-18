@@ -16,7 +16,6 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    gv.pullGit()
                     gv.buildServices()
                 }
             }

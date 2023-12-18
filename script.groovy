@@ -11,17 +11,23 @@ def pullGit() {
 def pushServices() {
 
     sh '''
+        docker tag decalnguyen/webapp:latest
         docker push decalnguyen/webapp:latest
     '''
 }
-
+def pullServices() {
+    sh '''
+        docker pull decalnguyen/webapp:latest
+    '''
+}
 def testServices() {
     echo 'Testing'
 }
 
 def deployServices() {
     sh '''
-        docker-compose up --build 
+        docker rm -f webapp
+        docker-compose -f docker-compose-ui.yml up --build
     '''
 }
 return this
