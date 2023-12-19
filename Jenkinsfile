@@ -34,9 +34,12 @@ pipeline {
         stage('Push') {
             steps {
                 script {
+                    withCredentials([string(credentialsId: 'github-gat', variable: 'docker-regis')]) {
                      sh '''
+                            docker login -u decalnguyen -p ${docker-regis}
                             docker push decalnguyen/webapp:latest
                         '''
+                    }
                     }
                 }
             }
