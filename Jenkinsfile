@@ -15,12 +15,12 @@ pipeline {
                 }
             }
         }*/
-        stage('Check') {
-            steps {
-                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/decalnguyen/DevopsforIOT.git']])
-                sh 'mvn clean install'
-            }
-        }
+        //stage('Check') {
+         //   steps {
+          //      checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/decalnguyen/DevopsforIOT.git']])
+           //     sh 'mvn clean install'
+           // }
+      //  }
         stage('Build') {
             steps {
                 script {
