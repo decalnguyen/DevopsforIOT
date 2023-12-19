@@ -22,8 +22,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        cd thingsboard
-                        docker build -t decalnguyen/webapp .
+                        docker build -t decalnguyen/webapp -f thingsboard/Dockerfile .
                         '''
                 }
             }
@@ -31,12 +30,12 @@ pipeline {
         stage('Push') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: 'github-gat', variable: 'docker-regis')]) {
-                     sh '''
+                    withCredentials([string(credentialsId: 'docker-regis-text', variable: 'docker-regis')]) {
+                        sh '''
                             docker login -u decalnguyen -p ${docker-regis}
                             docker push decalnguyen/webapp:latest
                         '''
-                    }
+                        }
                     }
                 }
             }
