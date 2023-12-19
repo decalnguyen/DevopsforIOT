@@ -4,9 +4,6 @@ pipeline {
     environment{
         IMAGE_NAME='server'
     }
-    tools{
-        maven 'maven_3_5_0'
-    }
     stages {
        /* stage('init') { 
             steps {
