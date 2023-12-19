@@ -1,4 +1,4 @@
-CODE_CHANGES = getGitChanges()
+//CODE_CHANGES = getGitChanges()
 pipeline {
     agent any
     environment{
@@ -42,11 +42,11 @@ pipeline {
             }
         stage('Deploy') {
             steps {
-                when {
+               /* when {
                     expression {
                         BRANCH_NAME == 'master' && CODE_CHANGES == true
                     }
-                }
+                }*/
                 script { 
                     sh '''
                         docker pull decalnguyen/webapp:latest
