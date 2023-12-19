@@ -11,7 +11,6 @@ def pullGit() {
 def pushServices() {
 
     sh '''
-        docker tag decalnguyen/webapp:latest
         docker push decalnguyen/webapp:latest
     '''
 }
