@@ -1,4 +1,4 @@
-import { Button, Col, Form, Row, Table } from 'react-bootstrap';
+import { Badge, Button, Col, Form, Row, Table } from 'react-bootstrap';
 import { formatTimestamp } from '~/utils';
 
 import styles from './DevicesPage.module.scss';
@@ -6,7 +6,7 @@ import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);
 
-function DevicesTable({ devicesInfo, handleDeleteDevice }) {
+function DevicesTable({ devicesInfo, handleDeleteDevice, setShowCanvas }) {
   const columnsInfo = [
     {
       width: '3%',
@@ -46,7 +46,7 @@ function DevicesTable({ devicesInfo, handleDeleteDevice }) {
   ];
 
   return (
-    <Table stripped hover style={{ fontSize: '1.4rem' }}>
+    <Table striped hover style={{ fontSize: '1.4rem' }}>
       <thead>
         <tr style={{ padding: '4px 4px' }}>
           {columnsInfo.map((column, index) => {
@@ -69,7 +69,7 @@ function DevicesTable({ devicesInfo, handleDeleteDevice }) {
       <tbody>
         {devicesInfo.map((device, index) => {
           return (
-            <tr style={{ cursor: 'pointer' }}>
+            <tr style={{ cursor: 'pointer' }} onClick={() => setShowCanvas({ index, show: true })}>
               <td className={cx('col-padding')}>
                 <Form.Check type="checkbox" id="default" />
               </td>
@@ -77,9 +77,19 @@ function DevicesTable({ devicesInfo, handleDeleteDevice }) {
               <td className={cx('col-padding')}>{device.name}</td>
               <td className={cx('col-padding')}>{device.type}</td>
               <td className={cx('col-padding')}>{device.label}</td>
-              <td className={cx('col-padding')}>{device.active ? 'Active' : 'Inactive'}</td>
+              <td className={cx('col-padding')}>
+                <Badge pill bg="danger">
+                  {device.active ? 'Active' : 'Inactive'}
+                </Badge>
+              </td>
               <td className={cx('col-padding')}></td>
-              <td className={cx('col-padding')}>{device.groups.map((group) => group.name)}</td>
+              <td className={cx('col-padding')}>
+                {device.groups.map((group) => (
+                  <Badge pill bg="secondary">
+                    {group.name}
+                  </Badge>
+                ))}
+              </td>
               <td className={cx('col-padding')}>
                 <Row>
                   <Form.Check type="checkbox" id="default" className="col-4" />

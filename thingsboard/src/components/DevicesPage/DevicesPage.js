@@ -6,17 +6,17 @@ import { Button, Container, Form, Offcanvas, Row, Table } from 'react-bootstrap'
 
 import styles from './DevicesPage.module.scss';
 import classNames from 'classnames/bind';
-import { formatTimestamp } from '~/utils';
 import LoadingModal from '../LoadingModal';
 import CustomModal from '../Modal/Modal';
 import DevicesTable from './DevicesTable';
-import DeviceInfoCanvas from './DeviceInfoCanvas';
+import DeviceInfoCanvas from './DeviceInfoOffcanvas/DeviceInfoCanvas';
 
 const cx = classNames.bind(styles);
 
 function DevicesPage() {
   const { token, platform, devicesInfo, setDevicesInfo } = useAuth();
   const [showModals, setShowModals] = useState({});
+  const [showCanvas, setShowCanvas] = useState({});
   const [status, setStatus] = useState('');
   const [timeSeriesData, setTimeSeriesData] = useState([]);
   const [attributesData, setAttributesData] = useState([]);
@@ -84,7 +84,7 @@ function DevicesPage() {
     <Container>
       <Header onNewDeviceAdded={handleNewDeviceAdded} />
 
-      <DevicesTable devicesInfo={devicesInfo} handleDeleteDevice={handleDeleteDevice} />
+      <DevicesTable devicesInfo={devicesInfo} handleDeleteDevice={handleDeleteDevice} setShowCanvas={setShowCanvas} />
       <LoadingModal show={showModals.loading} />
       <CustomModal
         show={showModals.status}
@@ -92,7 +92,12 @@ function DevicesPage() {
         bodyText="Delete device succesfully!"
         onHide={() => setShowModals((values) => ({ ...values, status: false }))}
       />
-      <DeviceInfoCanvas />
+      {showCanvas.show && (
+        <DeviceInfoCanvas
+          deviceInfo={devicesInfo[showCanvas.index]}
+          onHide={() => setShowCanvas((values) => ({ ...values, show: false }))}
+        />
+      )}
     </Container>
   );
 }
