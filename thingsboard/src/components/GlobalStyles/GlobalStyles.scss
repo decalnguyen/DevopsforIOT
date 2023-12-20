@@ -115,3 +115,18 @@ input {
   border: none;
   outline: none; /* Add this to remove the default focus outline */
 }
+
+button {
+  border: none;
+  // box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+  padding: 4px;
+  background-color: transparent !important;
+  border-radius: 50%;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  &:active {
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+  }
+  // &:hover {
+  //   background-color: #e0e0e0 !important;
+  // }
+}
