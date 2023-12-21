@@ -5,6 +5,6 @@ USER root
 ARG DOCKER_GID=137
 
 RUN groupadd -g ${DOCKER_GID} docker \
-    && usermod -a -G docker jenkins
+    && usermod -g ${DOCKER_GID} jenkins
 
 USER jenkins
