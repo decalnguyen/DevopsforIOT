@@ -37,7 +37,7 @@ pipeline {
         stage('Push') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'docker-regis') {
+                    withDockerRegistry(credentialsId: 'docker_act2') {
                             sh '''
                              docker build -t decalnguyen/devopsforiot/webapp:1.0 .
                             docker push decalnguyen/devopsforiot/webapp:1.0
