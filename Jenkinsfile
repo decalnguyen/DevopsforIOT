@@ -25,7 +25,7 @@ pipeline {
                 }
             }
         }
-        stage('Build') {
+       /* stage('Build') {
             steps {
                 script {
                     sh '''
@@ -33,14 +33,14 @@ pipeline {
                         '''
                 }
             }
-        }
+        }*/
         stage('Push') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: 'docker-regis-text', variable: 'docker-regis')]) {
-                        sh '''
-                            docker login decalnguyen/devopsforiot -u decalnguyen -p ${docker-regis}
-                            docker push decalnguyen/devopsforiot/webapp:latest
+                    withDockerRegistry(credentialsId: 'docker-regis') {
+                            sh '''
+                            docker build -t decalnguyen/devopsforiot/webapp:latest .
+                            docker push 
                         '''
                         }
                     }
