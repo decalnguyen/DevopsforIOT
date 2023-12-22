@@ -167,3 +167,39 @@ export const getEntityGroupsByType = async ({ token, platform, groupType, includ
     console.log(e);
   }
 };
+
+export const getAttributesByScope = async ({ token, platform, entityType, entityId, scope, keys }) => {
+  const api = `/plugins/telemetry/${entityType}/${entityId}/values/attributes/${scope}`;
+  try {
+    const data = {
+      platform,
+      api,
+      token,
+      configs: {
+        params: { keys },
+      },
+    };
+    const response = await request.get(data);
+    return response;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const deleteEntityTimeSeries = async ({ token, platform, entityType, entityId, keys }) => {
+  const api = `/plugins/telemetry/${entityType}/${entityId}/timeseries/delete`;
+  try {
+    const data = {
+      platform,
+      api,
+      token,
+      configs: {
+        params: { keys },
+      },
+    };
+    const response = await request.Delete(data);
+    return response;
+  } catch (e) {
+    console.log(e);
+  }
+};

@@ -1,14 +1,12 @@
-FROM node:latest as node
+FROM node:13.12.0-alpine as node
 
 WORKDIR /app
 
-COPY . /app
+COPY package*.json /app
 
 RUN npm install 
 
-RUN npm add customize-cra react-app-rewired --dev
-
-RUN npm install react-bootstrap
+COPY . /app
 
 RUN npm run build 
 

@@ -5,8 +5,6 @@ import { useAuth } from '~/contexts/AuthContext';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Fragment } from 'react';
 function App() {
-  const { isAuthenticated } = useAuth();
-
   return (
     <Router>
       <Routes>

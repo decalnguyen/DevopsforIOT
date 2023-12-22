@@ -149,7 +149,6 @@ volumes:
   vol-emqx-data:
   vol-emqx-etc:
   vol-emqx-log:
-  jenkins_home: {}
   tb-data-log: 
   tb-data-data:
   mytb-data:

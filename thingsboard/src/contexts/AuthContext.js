@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [platform, setPlatform] = useState('');
   const [devicesInfo, setDevicesInfo] = useState([]);
   const [token, setToken] = useState('');
+  const [showLoadingModal, setShowLoadingModal] = useState(false);
   const value = {
     isAuthenticated,
     setIsAuthenticated,
@@ -19,6 +20,8 @@ export const AuthProvider = ({ children }) => {
     setToken,
     devicesInfo,
     setDevicesInfo,
+    showLoadingModal,
+    setShowLoadingModal,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

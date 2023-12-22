@@ -1,13 +1,6 @@
-def gv 
-CODE_CHANGES = getGitChanges()
+//CODE_CHANGES = getGitChanges()
 pipeline {
     agent any
-    environment{
-        IMAGE_NAME='server'
-    }
-    tools{
-        maven 'maven_3_5_0'
-    }
     stages {
        /* stage('init') { 
             steps {
@@ -16,17 +9,26 @@ pipeline {
                 }
             }
         }*/
-        stage('Check') {
+        //stage('Check') {
+         //   steps {
+          //      checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/decalnguyen/DevopsforIOT.git']])
+           //     sh 'mvn clean install'
+           // }
+      //  }
+        stage('Install Dependencies') {
             steps {
-                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/decalnguyen/DevopsforIOT.git']])
-                sh 'mvn clean install'
+                script {
+                    sh''' 
+                    cd thingsboard
+                        npm install
+                    '''
+                }
             }
         }
         stage('Build') {
             steps {
                 script {
                     sh '''
-                        cd thingsboard
                         docker build -t decalnguyen/webapp .
                         '''
                 }
@@ -35,19 +37,22 @@ pipeline {
         stage('Push') {
             steps {
                 script {
-                     sh '''
+                    withCredentials([string(credentialsId: 'docker-regis-text', variable: 'docker-regis')]) {
+                        sh '''
+                            docker login -u decalnguyen -p ${docker-regis}
                             docker push decalnguyen/webapp:latest
                         '''
+                        }
                     }
                 }
             }
         stage('Deploy') {
             steps {
-                when {
+               /* when {
                     expression {
                         BRANCH_NAME == 'master' && CODE_CHANGES == true
                     }
-                }
+                }*/
                 script { 
                     sh '''
                         docker pull decalnguyen/webapp:latest

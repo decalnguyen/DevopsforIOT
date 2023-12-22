@@ -7,7 +7,6 @@ const useBusPosition = ({ devicesInfo, onPositionUpdate }) => {
 
   useEffect(() => {
     const webSocket = new WebSocket('wss://thingsboard.cloud/api/ws/plugins/telemetry?token=' + token);
-    console.log('Inside bus position hook: ', devicesInfo);
     webSocket.onopen = () => {
       const object = {
         tsSubCmds:
