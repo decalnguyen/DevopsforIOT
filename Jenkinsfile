@@ -29,7 +29,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        docker build -t decalnguyen/webapp .
+                        docker build -t decalnguyen/devopsforiot/webapp .
                         '''
                 }
             }
@@ -39,8 +39,8 @@ pipeline {
                 script {
                     withCredentials([string(credentialsId: 'docker-regis-text', variable: 'docker-regis')]) {
                         sh '''
-                            docker login -u decalnguyen -p ${docker-regis}
-                            docker push decalnguyen/webapp:latest
+                            docker login decalnguyen/devopsforiot -u decalnguyen -p ${docker-regis}
+                            docker push decalnguyen/devopsforiot/webapp:latest
                         '''
                         }
                     }
