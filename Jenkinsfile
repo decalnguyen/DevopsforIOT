@@ -57,7 +57,7 @@ pipeline {
                     sh '''
                         docker pull decalnguyen/webapp:latest
                         docker rm -f webapp
-                        docker-compose -f docker-compose-ui.yml up --build
+                        docker run -p 8089:80 --name webapp decalnguyen/webapp
                     '''
                     
                 }
