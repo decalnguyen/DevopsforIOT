@@ -37,10 +37,10 @@ pipeline {
         stage('Push') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'docker-regis', url: 'decalnguyen/devopsforiot') {
+                    withDockerRegistry(credentialsId: 'docker-regis') {
                             sh '''
-                            docker build -t decalnguyen/devopsforiot/webapp:latest .
-                            docker push 
+                             docker build -t decalnguyen/devopsforiot/webapp:1.0 .
+                            docker push decalnguyen/devopsforiot/webapp:1.0
                         '''
                         }
                     }
