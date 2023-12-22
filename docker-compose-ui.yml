@@ -4,7 +4,6 @@ networks:
     external: true
 services:
   webapp:
-    image: react-app
     container_name: webapp
     build: ./thingsboard
     ports:
@@ -14,9 +13,6 @@ services:
     networks:
     - IOT-DMS
     restart: always
-    volumes: 
-      - devops_for_iot_src:/usr/src/app
-      - devops_for_iot_node_modules:/usr/src/app/node_modules
 volumes: 
   devops_for_iot_src: 
     external: true
