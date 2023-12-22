@@ -4,9 +4,12 @@ RUN mkdir app
 
 WORKDIR /app
 
-COPY . /app
+COPY package.json /app/package.json
+COPY package-lock.json /app/package-lock.json
 
 RUN npm install 
+
+COPY . /app
 
 RUN npm add customize-cra react-app-rewired --dev
 
