@@ -19,7 +19,8 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        docker build -t decalnguyen/webapp -p thingsboard -f thingsboard/Dockerfile .
+                        ls
+                        docker build -t decalnguyen/webapp -f thingsboard/Dockerfile .
                         '''
                 }
             }
