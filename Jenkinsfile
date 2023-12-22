@@ -57,7 +57,7 @@ pipeline {
                     sh '''
                         docker pull decalnguyen/webapp:latest
                         docker rm -f webapp
-                        docker run -p 8089:80 --name webapp decalnguyen/webapp
+                        docker run -d -p 8089:80 --name webapp decalnguyen/webapp
                     '''
                     
                 }
