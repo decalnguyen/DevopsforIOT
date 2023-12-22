@@ -39,8 +39,8 @@ pipeline {
                 script {
                     withDockerRegistry(credentialsId: 'docker_act2') {
                             sh '''
-                             docker build -t decalnguyen/devopsforiot/webapp:1.0 .
-                            docker push decalnguyen/devopsforiot/webapp:1.0
+                             docker build -t decalnguyen/webapp:1.0 .
+                            docker push decalnguyen/webapp:1.0
                         '''
                         }
                     }
