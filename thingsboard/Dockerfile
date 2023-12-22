@@ -1,5 +1,7 @@
 FROM node:latest as node
 
+RUN mkdir app
+
 WORKDIR /app
 
 COPY . /app
