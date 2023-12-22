@@ -1,9 +1,6 @@
-FROM node:latest as node
+FROM node:13.12.0-alpine as node
 
 WORKDIR /app
-
-COPY ./package.json /app/package.json
-COPY ./package-lock.json /app/package-lock.json
 
 RUN npm install 
 
