@@ -12,6 +12,9 @@ services:
     - local_envs.env
     networks:
     - IOT-DMS
+    volumes: 
+    - devops_for_iot_src:/usr/src/app
+    - devops_for_iot_node_modules:/usr/src/app/node_modules
     restart: always
 volumes: 
   devops_for_iot_src: 
