@@ -15,12 +15,13 @@ pipeline {
            //     sh 'mvn clean install'
            // }
       //  }
+    tools { nodejs "node" }
         stage('Install Dependencies') {
             steps {
                 script {
                     sh''' 
                     cd thingsboard
-
+                        npm install
                         npm add customize-cra react-app-rewired
 
                         npm install react-bootstrap
@@ -35,6 +36,7 @@ pipeline {
             steps {
                 script {
                     sh '''
+                        cd ..
                         docker build -t decalnguyen/webapp -f thingsboard/Dockerfile .
                         '''
                 }

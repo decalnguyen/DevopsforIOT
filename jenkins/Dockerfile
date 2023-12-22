@@ -2,6 +2,8 @@ FROM jenkins/jenkins
 
 USER root
 
+RUN apt install npm
+
 RUN echo 'root:123456' | chpasswd
 
 # Install prerequisites
