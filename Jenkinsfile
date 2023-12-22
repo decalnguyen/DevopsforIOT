@@ -37,7 +37,7 @@ pipeline {
         stage('Push') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'docker-regis', url: 'https://hub.docker.com/repository/docker/decalnguyen/devopsforiot/general') {
+                    withDockerRegistry(credentialsId: 'docker-regis', url: 'decalnguyen/devopsforiot') {
                             sh '''
                             docker build -t decalnguyen/devopsforiot/webapp:latest .
                             docker push 
