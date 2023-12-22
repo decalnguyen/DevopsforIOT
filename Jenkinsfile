@@ -15,7 +15,6 @@ pipeline {
            //     sh 'mvn clean install'
            // }
       //  }
-    tools { nodejs "node" }
         stage('Install Dependencies') {
             steps {
                 script {
