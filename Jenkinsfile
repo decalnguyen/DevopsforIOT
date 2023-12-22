@@ -15,6 +15,23 @@ pipeline {
            //     sh 'mvn clean install'
            // }
       //  }
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    sh''' 
+                    cd thingsboard
+                    npm install 
+
+                        npm add customize-cra react-app-rewired
+
+                        npm install react-bootstrap
+
+                        npm run build 
+
+                    '''
+                }
+            }
+        }
         stage('Build') {
             steps {
                 script {

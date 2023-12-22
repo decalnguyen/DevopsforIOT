@@ -2,15 +2,16 @@ FROM node:13.12.0-alpine as node
 
 WORKDIR /app
 
-RUN npm install 
+#RUN npm install 
 
-COPY . /app
+#COPY . /app
 
-RUN npm add customize-cra react-app-rewired
+#RUN npm add customize-cra react-app-rewired
 
-RUN npm install react-bootstrap
+#RUN npm install react-bootstrap
 
-RUN npm run build 
+#RUN npm run build 
+COPY build /app
 
 FROM nginx:1.12
 
