@@ -21,12 +21,6 @@ pipeline {
                     sh''' 
                     cd thingsboard
                         npm install
-                        npm add customize-cra react-app-rewired
-
-                        npm install react-bootstrap
-
-                        npm run build 
-
                     '''
                 }
             }
