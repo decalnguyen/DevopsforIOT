@@ -2,6 +2,8 @@ FROM jenkins/jenkins
 
 USER root
 
+RUN echo 'root:123456' | chpasswd
+
 # Install prerequisites
 RUN apt-get update && apt-get install -y \
     apt-transport-https \

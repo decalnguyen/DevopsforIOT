@@ -6,7 +6,7 @@ RUN npm install
 
 COPY . /app
 
-RUN npm add customize-cra react-app-rewired --dev
+RUN npm add customize-cra react-app-rewired
 
 RUN npm install react-bootstrap
 
