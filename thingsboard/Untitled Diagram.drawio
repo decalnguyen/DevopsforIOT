@@ -1,13 +1,13 @@
-<mxfile host="app.diagrams.net" modified="2023-12-28T14:56:39.475Z" agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0" etag="DQF6hEUFl_ZslUk_EwQg" version="22.1.15" type="github">
+<mxfile host="app.diagrams.net" modified="2023-12-28T15:01:41.973Z" agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0" etag="joIwkl7wyhx96dvyKw4v" version="22.1.15" type="github">
   <diagram name="Page-1" id="8_qWgsKQ5Wl90cChguR5">
     <mxGraphModel dx="1382" dy="797" grid="0" gridSize="1" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1700" background="#000000" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="3OSSQbV52YD_su38mAtl-4" value="Client side" style="swimlane;startSize=20;strokeColor=#c061cb;" parent="1" vertex="1">
+        <mxCell id="3OSSQbV52YD_su38mAtl-4" value="Client side" style="swimlane;startSize=20;strokeColor=#c061cb;fillColor=#6666FF;" parent="1" vertex="1">
           <mxGeometry x="1161" y="442" width="219" height="482" as="geometry" />
         </mxCell>
-        <mxCell id="3OSSQbV52YD_su38mAtl-3" value="Cloud Side" style="swimlane;startSize=20;fontFamily=Verdana;strokeColor=#dc8add;" parent="1" vertex="1">
+        <mxCell id="3OSSQbV52YD_su38mAtl-3" value="Cloud Side" style="swimlane;startSize=20;fontFamily=Verdana;strokeColor=#dc8add;fillColor=#3399FF;fontColor=#FFFFFF;" parent="1" vertex="1">
           <mxGeometry x="777" y="442" width="368" height="482" as="geometry">
             <mxRectangle x="766" y="478" width="106" height="26" as="alternateBounds" />
           </mxGeometry>
@@ -75,7 +75,7 @@
         <mxCell id="RjjPB-zqwfENZfD3fN4v-121" value="" style="outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;fontStyle=0;strokeColor=#879196;fillColor=none;verticalAlign=top;align=center;fontColor=#879196;dashed=1;spacingTop=3;rounded=1;" vertex="1" parent="3OSSQbV52YD_su38mAtl-3">
           <mxGeometry x="7.220000000000027" y="28" width="131" height="431" as="geometry" />
         </mxCell>
-        <mxCell id="3OSSQbV52YD_su38mAtl-2" value="Edge side" style="swimlane;startSize=20;fontFamily=Verdana;strokeColor=#c061cb;" parent="1" vertex="1">
+        <mxCell id="3OSSQbV52YD_su38mAtl-2" value="Edge side" style="swimlane;startSize=20;fontFamily=Verdana;strokeColor=#c061cb;fillColor=#9933FF;" parent="1" vertex="1">
           <mxGeometry x="482" y="443" width="284" height="480" as="geometry" />
         </mxCell>
         <mxCell id="RjjPB-zqwfENZfD3fN4v-68" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;strokeColor=#FFFFFF;labelBackgroundColor=none;fontColor=#CC0000;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.422;exitY=0.064;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="3OSSQbV52YD_su38mAtl-2" source="RjjPB-zqwfENZfD3fN4v-47" target="RjjPB-zqwfENZfD3fN4v-31">
