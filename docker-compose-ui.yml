@@ -5,7 +5,7 @@ networks:
 services:
   webapp:
     container_name: webapp
-    build: ./thingsboard
+    image: decalnguyen/webapp
     ports:
     - 8089:80
     env_file:

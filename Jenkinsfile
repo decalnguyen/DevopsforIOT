@@ -25,22 +25,22 @@ pipeline {
                 }
             }
         }
-        stage('Build') {
+       /* stage('Build') {
             steps {
                 script {
                     sh '''
-                        docker build -t decalnguyen/webapp .
+                        docker build -t decalnguyen/devopsforiot/webapp .
                         '''
                 }
             }
-        }
+        }*/
         stage('Push') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: 'docker-regis-text', variable: 'docker-regis')]) {
-                        sh '''
-                            docker login -u decalnguyen -p ${docker-regis}
-                            docker push decalnguyen/webapp:latest
+                    withDockerRegistry(credentialsId: 'docker_act2') {
+                            sh '''
+                             docker build -t decalnguyen/webapp:1.0 .
+                            docker push decalnguyen/webapp:1.0
                         '''
                         }
                     }
@@ -57,7 +57,7 @@ pipeline {
                     sh '''
                         docker pull decalnguyen/webapp:latest
                         docker rm -f webapp
-                        docker-compose -f docker-compose-ui.yml up --build
+                        docker run -d -p 8089:80 --name webapp decalnguyen/webapp
                     '''
                     
                 }

@@ -1,0 +1,17 @@
+Rule Engine: Intergrates with eKuiper để nâng cao khả năng sử lý luồng 
+Message Persistence: Tự động đồng hóa dữ liệu khi mà kiết nối hoạt động trở lại 
+Multi-Language Protocol: Hỗ trợ nhiều protocol
+Message filltering and Processing:
+- Rule Engine có thể filter các incoming MQTT messages dựa trên các topic và các tiêu chí khác
+Data Transformation:
+- It có thể transform data payload . Ví dụ như, Nó có thể chuyển đổi data formats, giải nén data fields, và tổng hợp data từ nhiều message
+Conditional Logic: Rule bao gồm các logic điều kiện nhằm thực hiện các hành động khác nhau dựa trên message content 
+Ưu điểm NanoMQ:
+- Ultra-lightweight
+- Dễ dàng tương thích và di động với mọi nền tảng 
+- Nhanh gấp 10 lần Mosquitto khi xử lý nhiều nhân CPU
+- Dễ dàng mở rộng quy mô 
+Data Bridges: - là cách để kết nối với nhiều MQTT broker. Không như swarms. Routing tables không được sao chép giữa các nodes đang vận hành ở bridge mode. Cách chúng vận hành:
+- Chuyển các message tới Bridege node theo các luật đã configure sẵn
+- Sub topic từ bridge node, và sau khi nhận được các messages từ topic đã đăng ký từ trước, nó forwward những message này tới những nodes hoặc nhóm khác. ĐÂy là chức năng của Bridging 
+Scalabitiy: Nó được thiết kế để mở rộng, đáp ứng khi mà mạng lưới IOT càng có thiết bị IOT kết nối hơn 
