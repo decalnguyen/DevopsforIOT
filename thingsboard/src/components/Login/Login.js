@@ -5,7 +5,8 @@ import { useState } from 'react';
 import { authenticate } from '~/services/request';
 import { useAuth } from '~/contexts/AuthContext';
 import { Col, Row, Form, Button, FloatingLabel, Nav, Container } from 'react-bootstrap';
-import CustomModal from '../Modal';
+import { StatusModal } from '../Modal';
+import { authRequest } from '~/services/requests';
 const cx = classNames.bind(styles);
 
 function LoginForm() {
@@ -13,7 +14,7 @@ function LoginForm() {
   const [password, setPassword] = useState('');
   const [_platform, set_Platform] = useState('');
   const { setIsAuthenticated, setToken, setPlatform } = useAuth();
-
+  const { authenticate } = authRequest();
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
@@ -90,7 +91,7 @@ function LoginForm() {
               Login
             </Button>
 
-            <CustomModal
+            <StatusModal
               show={showModal}
               titleText="Authentication failed"
               bodyText="Your email/password/platform is not valid. Please try again"

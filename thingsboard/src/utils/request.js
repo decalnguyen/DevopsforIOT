@@ -14,7 +14,6 @@ const createRequest = (platform, token) => {
 
 export const get = async ({ platform, api, token, configs }) => {
   const request = createRequest(platform, token);
-  console.log('token:', token);
   const response = await request.get(api, configs);
   return response;
 };

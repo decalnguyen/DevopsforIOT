@@ -1,15 +1,14 @@
 import Header from './Header';
 import { useAuth } from '~/contexts/AuthContext';
 import { useEffect, useState } from 'react';
-import { deleteDevice, getAttributesData, getDevicesInfo, getTimeseriesData } from '~/services/request';
 import { Button, Container, Form, Offcanvas, Row, Table } from 'react-bootstrap';
 
 import styles from './DevicesPage.module.scss';
 import classNames from 'classnames/bind';
-import LoadingModal from '../LoadingModal';
-import CustomModal from '../Modal/Modal';
+import { LoadingModal, StatusModal } from '../Modal';
 import DevicesTable from './DevicesTable';
 import DeviceInfoCanvas from './DeviceInfoOffcanvas/DeviceInfoCanvas';
+import { deviceRequest, devicesInfoRequest, telemetryRequest } from '~/services/requests';
 
 const cx = classNames.bind(styles);
 
@@ -20,7 +19,9 @@ function DevicesPage() {
   const [status, setStatus] = useState('');
   const [timeSeriesData, setTimeSeriesData] = useState([]);
   const [attributesData, setAttributesData] = useState([]);
-
+  const { getDevicesInfo } = devicesInfoRequest();
+  const { getTimeseriesData, getAttributesData } = telemetryRequest();
+  const { deleteDevice } = deviceRequest();
   useEffect(() => {
     const fetchDevicesInfo = async () => {
       const devicesInfo = await getDevicesInfo({ token, platform });
@@ -86,7 +87,7 @@ function DevicesPage() {
 
       <DevicesTable devicesInfo={devicesInfo} handleDeleteDevice={handleDeleteDevice} setShowCanvas={setShowCanvas} />
       <LoadingModal show={showModals.loading} />
-      <CustomModal
+      <StatusModal
         show={showModals.status}
         titleText="Delete device status"
         bodyText="Delete device succesfully!"

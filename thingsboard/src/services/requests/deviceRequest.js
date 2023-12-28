@@ -1,10 +1,9 @@
-const { useAuth } = require('~/contexts/AuthContext');
+import { useAuth } from '~/contexts/AuthContext';
 const { request } = require('~/utils');
 
-function useDeviceRequest() {
+function DeviceRequest() {
   const { token, platform } = useAuth();
-
-  const getRequestConfig = ({ api, data = {}, params = {} }) => {
+  const getRequestConfig = ({ api, data, params }) => {
     return {
       platform,
       token,
@@ -13,7 +12,6 @@ function useDeviceRequest() {
       configs: { params },
     };
   };
-
   const getDeviceCredentialsByDeviceId = async ({ deviceId }) => {
     const api = `/device/${deviceId}/credentials`;
     const data = getRequestConfig({ api });
@@ -25,9 +23,21 @@ function useDeviceRequest() {
     }
   };
 
-  const deleteEntityTimeSeries = async ({ entityType, entityId, keys }) => {
-    const api = `/plugins/telemetry/${entityType}/${entityId}/timeseries/delete`;
-    const data = getRequestConfig({ api, params: { keys, deleteAllDataForKeys: true } });
+  const createNewDevice = async ({ deviceInfo, entityGroupId }) => {
+    const api = `/device`;
+
+    const data = getRequestConfig({ api, params: { entityGroupId }, data: deviceInfo });
+    try {
+      const response = await request.post(data);
+      return response;
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const deleteDevice = async ({ deviceId }) => {
+    const api = `/device/${deviceId}`;
+    const data = getRequestConfig({ api, params: { deviceId } });
     try {
       const response = await request.Delete(data);
       return response;
@@ -37,9 +47,10 @@ function useDeviceRequest() {
   };
 
   return {
-    deleteEntityTimeSeries,
     getDeviceCredentialsByDeviceId,
+    createNewDevice,
+    deleteDevice,
   };
 }
 
-export default useDeviceRequest;
+export default DeviceRequest;

@@ -4,10 +4,10 @@ import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
 import { createNewDevice, getDeviceProfiles, getOwnerInfos } from '~/services/request';
 import { useAuth } from '~/contexts/AuthContext';
-import LoadingModal from '../LoadingModal';
-import CustomModal from '../Modal/Modal';
+import { LoadingModal, StatusModal } from '~/components/Modal';
 import AutoComplete from '../AutoComplete';
 import { useAddDeviceModal } from '~/hooks/useAddDeviceModalSuggestions';
+import { deviceRequest } from '~/services/requests';
 
 const cx = classNames.bind(styles);
 
@@ -18,6 +18,7 @@ function AddDeviceModal({ showModal, setShowModal, onNewDeviceAdded }) {
   const [status, setStatus] = useState('');
   const [suggestions, setSuggestions] = useAddDeviceModal();
   const [showSuggestions, setShowSuggestions] = useState({});
+  const { createNewDevice } = deviceRequest();
   const handleChange = (e) => {
     const { name, value, checked, type } = e.target;
 
@@ -62,9 +63,9 @@ function AddDeviceModal({ showModal, setShowModal, onNewDeviceAdded }) {
 
   return (
     <Container>
-      <Modal show={showModal} centered onHide={handleHideForm} animation>
+      <Modal show={showModal} style={{ backgroundColor: 'transparent' }} centered onHide={handleHideForm} animation>
         <Modal.Header closeButton className={cx('modal-header')}>
-          <Modal.Title>Add new device</Modal.Title>
+          <Modal.Title style={{ color: 'white' }}>Add new device</Modal.Title>
         </Modal.Header>
         <ModalBody>
           <Row>
@@ -216,7 +217,7 @@ function AddDeviceModal({ showModal, setShowModal, onNewDeviceAdded }) {
 
       <LoadingModal show={showModals.loading} />
 
-      <CustomModal
+      <StatusModal
         show={showModals.status}
         titleText="Create device status!"
         bodyText={status}

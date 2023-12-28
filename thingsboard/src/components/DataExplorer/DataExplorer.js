@@ -4,6 +4,7 @@ import Table from '~/components/Table';
 import { useEffect, useState } from 'react';
 import { getAttributesData, getDevicesInfo, getTimeseriesData } from '~/services/request';
 import { useAuth } from '~/contexts/AuthContext';
+import { deviceRequest, devicesInfoRequest, telemetryRequest } from '~/services/requests';
 
 const cx = classNames.bind(styles);
 
@@ -11,6 +12,8 @@ function DataExplorer() {
   const { token, platform, username } = useAuth();
   const [timeSeriesData, setTimeSeriesData] = useState([]);
   const [attributesData, setAttributesData] = useState([]);
+  const { getDevicesInfo } = devicesInfoRequest();
+  const { getTimeseriesData, getAttributesData } = telemetryRequest();
   useEffect(() => {
     const fetchData = async () => {
       console.log('token: ', token);
