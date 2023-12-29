@@ -8,11 +8,12 @@ const useDevicesInfo = () => {
   useEffect(() => {
     const fetchDevices = async () => {
       const _devicesInfo = await getDevicesInfo({});
+      console.log(_devicesInfo);
       setDevicesInfo(_devicesInfo);
     };
     fetchDevices();
-  }, [getDevicesInfo]);
-  return devicesInfo;
+  }, []);
+  return { devicesInfo };
 };
 
 export default useDevicesInfo;

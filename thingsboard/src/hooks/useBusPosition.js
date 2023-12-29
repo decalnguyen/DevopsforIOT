@@ -1,11 +1,29 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '~/contexts/AuthContext';
 
-const useBusPosition = ({ devicesInfo, onPositionUpdate }) => {
+const useBusPosition = ({ devicesInfo }) => {
   // const [position, setPosition] = useState([]);
   const { token } = useAuth();
+  const [position, setPosition] = useState([]);
 
+  const onPositionUpdate = useCallback(({ subscriptionId, latitude, longitude }) => {
+    console.log('onPositionUpdate');
+    setPosition((prev) => {
+      const copy = [...prev];
+      const hasPositionExisted = copy.some((current) => current.index === subscriptionId);
+
+      if (hasPositionExisted) {
+        const indexToUpdate = copy.findIndex((current) => current.index === subscriptionId);
+        copy[indexToUpdate] = { index: subscriptionId, lat: latitude, lng: longitude };
+      } else {
+        copy.push({ index: subscriptionId, lat: latitude, lng: longitude });
+      }
+
+      return copy;
+    });
+  }, []);
   useEffect(() => {
+    console.log('useEffect', devicesInfo);
     const webSocket = new WebSocket('wss://thingsboard.cloud/api/ws/plugins/telemetry?token=' + token);
     webSocket.onopen = () => {
       const object = {
@@ -23,6 +41,7 @@ const useBusPosition = ({ devicesInfo, onPositionUpdate }) => {
       };
 
       const data = JSON.stringify(object);
+      console.log(data);
       webSocket.send(data);
     };
 
@@ -51,6 +70,8 @@ const useBusPosition = ({ devicesInfo, onPositionUpdate }) => {
       webSocket.close();
     };
   }, [token, devicesInfo, onPositionUpdate]);
+
+  return { position };
 };
 
 export default useBusPosition;
