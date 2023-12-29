@@ -8,7 +8,7 @@ import { useMemo, useState } from 'react';
 import useAttributes from '~/hooks/useAttribute';
 import { formatTimestamp } from '~/utils';
 import AddModal from './AddModal';
-import MultiSelectPanel from './MultiSelectPanel';
+import MultiSelectPanel from '~/components/MultiSelectPanel';
 import { useCheckboxItems } from '~/hooks';
 
 const cx = classNames.bind(styles);

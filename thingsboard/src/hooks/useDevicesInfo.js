@@ -13,7 +13,7 @@ const useDevicesInfo = () => {
     };
     fetchDevices();
   }, []);
-  return { devicesInfo };
+  return { devicesInfo, setDevicesInfo };
 };
 
 export default useDevicesInfo;

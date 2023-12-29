@@ -24,11 +24,10 @@ export const AuthProvider = ({ children }) => {
     setShowLoadingModal,
   };
 
-  const accessToken = localStorage.getItem('accessToken');
-
   useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken');
     setToken(accessToken);
-  }, [accessToken]);
+  }, []);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

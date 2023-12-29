@@ -10,7 +10,7 @@ import styles from './DeviceInfoOffcanvas.module.scss';
 import classNames from 'classnames/bind';
 import AddModal from './AddModal';
 import { useCheckboxItems } from '~/hooks';
-import MultiSelectPanel from './MultiSelectPanel';
+import MultiSelectPanel from '~/components/MultiSelectPanel';
 
 const cx = classNames.bind(styles);
 

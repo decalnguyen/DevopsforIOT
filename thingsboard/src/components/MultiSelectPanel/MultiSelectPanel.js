@@ -1,13 +1,14 @@
 import { Stack } from 'react-bootstrap';
-import styles from './DeviceInfoOffcanvas.module.scss';
+import { CustomButton } from '../CustomButton';
+
+import styles from './MultiSelectPanel.module.scss';
 import classNames from 'classnames/bind';
-import { CustomButton } from '~/components/CustomButton';
 
 const cx = classNames.bind(styles);
 
-function MultiSelectPanel({ title, onDeleteItems }) {
+function MultiSelectPanel({ title, onDeleteItems, ...props }) {
   return (
-    <div style={{ backgroundColor: 'var(--tb-login-primary-700)', width: '100%' }}>
+    <div style={{ backgroundColor: 'var(--tb-login-primary-700)', width: '100%' }} {...props}>
       <Stack direction="horizontal">
         <span className={cx('header-title')} style={{ color: 'white' }}>
           {title}
