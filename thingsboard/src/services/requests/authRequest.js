@@ -15,7 +15,8 @@ function AuthRequest() {
       });
       const { token, refreshToken } = response.data;
       console.log('refresh token: ' + refreshToken);
-      return response.data.token;
+      // return response.data.token;
+      return { token, refreshToken };
     } catch (e) {
       console.log(e);
     }

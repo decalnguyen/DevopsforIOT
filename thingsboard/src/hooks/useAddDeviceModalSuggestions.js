@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from '~/contexts/AuthContext';
 import { getDeviceProfiles, getEntityGroupsByType, getOwnerInfos } from '~/services/request';
+import { getLocalStorageItems } from '~/utils';
 
 export const useAddDeviceModal = (initialSuggestions = []) => {
-  const { token, platform } = useAuth();
+  const { token, platform } = getLocalStorageItems();
   const [suggestions, setSuggestions] = useState([initialSuggestions]);
 
   useEffect(() => {

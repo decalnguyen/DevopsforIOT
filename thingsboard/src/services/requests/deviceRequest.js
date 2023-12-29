@@ -1,8 +1,8 @@
 import { useAuth } from '~/contexts/AuthContext';
-const { request } = require('~/utils');
+const { request, getLocalStorageItems } = require('~/utils');
 
 function DeviceRequest() {
-  const { token, platform } = useAuth();
+  const { token, platform } = getLocalStorageItems();
   const getRequestConfig = ({ api, data, params }) => {
     return {
       platform,

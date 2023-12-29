@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 const AuthContext = createContext();
 
@@ -23,6 +23,12 @@ export const AuthProvider = ({ children }) => {
     showLoadingModal,
     setShowLoadingModal,
   };
+
+  const accessToken = localStorage.getItem('accessToken');
+
+  useEffect(() => {
+    setToken(accessToken);
+  }, [accessToken]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

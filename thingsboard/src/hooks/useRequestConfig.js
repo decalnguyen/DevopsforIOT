@@ -1,7 +1,7 @@
 const { useAuth } = require('~/contexts/AuthContext');
 
 const GetRequestConfig = ({ api, data = {}, params = {} }) => {
-  const { token, platform } = useAuth();
+  const { token, platform } = getLocalStorageItems();
   return {
     platform,
     token,

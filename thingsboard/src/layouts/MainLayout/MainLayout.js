@@ -2,7 +2,6 @@ import DataExplorer from '~/components/DataExplorer';
 import Header from './Header';
 import Sidebar from '../Sidebar';
 import { Col, Row } from 'react-bootstrap';
-import { DevicesPage } from '../pages';
 
 function MainLayout({ children }) {
   return (

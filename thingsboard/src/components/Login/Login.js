@@ -20,8 +20,11 @@ function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = await authenticate({ username, password, platform: _platform });
+    const { token, refreshToken } = await authenticate({ username, password, platform: _platform });
     if (token) {
+      localStorage.setItem('accessToken', token);
+      localStorage.setItem('platform', _platform);
+      localStorage.setItem('refreshToken', refreshToken);
       setIsAuthenticated(true);
       setPlatform(_platform);
       setToken(token);
