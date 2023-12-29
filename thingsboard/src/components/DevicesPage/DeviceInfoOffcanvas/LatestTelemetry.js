@@ -25,22 +25,27 @@ function LatestTelemetry({ deviceInfo }) {
       {
         title: 'select',
         component: <Form.Check checked={checkAll} onChange={() => handleCheckAll()} type="checkbox"></Form.Check>,
+        width: '10%',
       },
       {
         title: 'lastUpdateTime',
         component: <span>Last Update Time</span>,
+        width: '30%',
       },
       {
         title: 'key',
         component: <span>Key</span>,
+        width: '10%',
       },
       {
         title: 'value',
         component: <span>Value</span>,
+        width: '40%',
       },
       {
         title: '',
         component: <></>,
+        width: '10%',
       },
     ];
   }, [checkAll, handleCheckAll]);
@@ -81,7 +86,11 @@ function LatestTelemetry({ deviceInfo }) {
         <thead>
           <tr style={{ padding: '4px 4px' }}>
             {elements.map((element, index) => {
-              return <th key={index}>{element.component}</th>;
+              return (
+                <th key={index} style={{ width: element.width }}>
+                  {element.component}
+                </th>
+              );
             })}
           </tr>
         </thead>

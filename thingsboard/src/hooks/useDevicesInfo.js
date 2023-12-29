@@ -7,7 +7,7 @@ const useDevicesInfo = () => {
   const [devicesInfo, setDevicesInfo] = useState([]);
   useEffect(() => {
     const fetchDevices = async () => {
-      const _devicesInfo = await getDevicesInfo();
+      const _devicesInfo = await getDevicesInfo({});
       setDevicesInfo(_devicesInfo);
     };
     fetchDevices();
