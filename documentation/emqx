@@ -8,3 +8,30 @@ Bên cạnh sử dụng configuration files . EMQX còn hỗ trợ sử dụng d
 PostgreSQL, Redis, MongoDB, HTTP và LDAP
 MQueue:
 Nếu clean session flag bị set thành false trong MQTT connect packet, thì EMQX sẽ bảo tồn session cho client khi mà client bị disconnnect và session sẽ nhận các messages từ các topic đã sub và lưu những messages này vào session mqueue. Khi client kết nối lại, những messages này sẽ được gửi tới client ngay lập tức. QoS 0 sẽ không được lưu. Tuy nhiên điều này có thể thay đối nếu mqtt.mqueue_store_qos0=true ở emqx.conf
+RULE engine:
+EMQX rule engine is especially usefull for transforming hoặc rerouting incoming messages. Ví dụ, ta có thể thiết kế ra rules để filter các data không liên quan , thực hiện các phép biết đổi và trigger alerts hoặc notifications dựa vào sự kiện đặc biệt hoặc điều kiện
+Datasource->Data Process-> Handle Process Result(Actions)
+Actions:
+Sau khi input được sử lý theo rules, 1 hoặc nhiều các hàng động sẽ được xác định để xử lý kết quả đã được thực thi. Rule Engines sẽ thực hiện các hành động tương ứng, như lưu processing results trong database hoặc republishing chúng tới các MQTT topic khác. Các hành động:
+Message Republishing: publish kết quả tới MQTT topic được chỉ định
+Console Output
+Forwarding to Sinks: gửi results tới external data systems như MQTT Services, Kafka, PostgreSQL, etc
+Benefits:
+Xử lý dữ liệu đơn giản hóa
+
+Cú pháp giống như SQL và khả năng xử lý luồng của công cụ quy tắc giúp hợp lý hóa việc lọc, chuyển đổi và phân phối dữ liệu mà không cần mã tùy chỉnh hoặc các công cụ bổ sung.
+
+Thông tin chi tiết và hành động theo thời gian thực
+
+Bằng cách kích hoạt các hành động dựa trên các điều kiện cụ thể, Công cụ quy tắc trao quyền cho người dùng để có được thông tin chi tiết theo thời gian thực và thực hiện các hành động thích hợp.
+
+Giảm thời gian và công sức phát triển
+
+Công cụ quy tắc giúp dễ dàng phát triển ứng dụng IoT bằng cách cung cấp nhiều khả năng tích hợp sẵn, giảm thiểu nhu cầu về mã tùy chỉnh và nỗ lực bảo trì.
+
+Khả năng mở rộng và độ tin cậy
+
+Được thiết kế để xử lý thông lượng cao và nhiều thiết bị được kết nối, Rule Engine cho phép người dùng mở rộng quy mô các giải pháp IoT của họ mà không ảnh hưởng đến hiệu suất hoặc độ tin cậy.
+Cách tạo luật bằng EMQX Dashboard:
+Republish Actions:
+
