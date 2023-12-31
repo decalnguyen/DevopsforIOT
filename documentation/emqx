@@ -1,0 +1,10 @@
+EMQX có các command line tools dành cho backup và restore, cho phép export data và file configuration từ cơ sở dữ liệu tích hợp như là 1 gói nén và khôi phục chúng ở 1 cluster mới.
+EMQX visualize quá trình data intergration với tính năng Flows ở DAshboard. CÓ thể kiểm trả cách mà quá trình rule engine xử lý IOT data và cách data di chuyển tới external data services hoặc các thiết bị 
+EMQX's authentication options :
+- Username and password
+- CLientID: Mỗi MQTT client sẽ có các ClientID duy nhất. List of acceptable clientID có thể được configured for server. CHỉ các id trong list này mới được xác thực thành công 
+- Anonymous 
+Bên cạnh sử dụng configuration files . EMQX còn hỗ trợ sử dụng database và intergration với các external applications khác như MySQL, 
+PostgreSQL, Redis, MongoDB, HTTP và LDAP
+MQueue:
+Nếu clean session flag bị set thành false trong MQTT connect packet, thì EMQX sẽ bảo tồn session cho client khi mà client bị disconnnect và session sẽ nhận các messages từ các topic đã sub và lưu những messages này vào session mqueue. Khi client kết nối lại, những messages này sẽ được gửi tới client ngay lập tức. QoS 0 sẽ không được lưu. Tuy nhiên điều này có thể thay đối nếu mqtt.mqueue_store_qos0=true ở emqx.conf
