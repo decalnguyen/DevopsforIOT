@@ -1,14 +1,14 @@
-<mxfile host="app.diagrams.net" modified="2024-01-02T22:36:25.350Z" agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0" etag="v-AVKevnFSf2lgGjnxwC" version="22.1.16" type="github">
+<mxfile host="app.diagrams.net" modified="2024-01-02T22:36:48.655Z" agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0" etag="dj8PtZs5SdmQLE0uInNZ" version="22.1.16" type="github">
   <diagram name="Page-1" id="8_qWgsKQ5Wl90cChguR5">
     <mxGraphModel dx="1140" dy="755" grid="0" gridSize="1" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="1700" background="#000000" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="3OSSQbV52YD_su38mAtl-4" value="Client side" style="swimlane;startSize=20;strokeColor=#c061cb;fillColor=#6666FF;" parent="1" vertex="1">
-          <mxGeometry x="1165" y="442" width="219" height="482" as="geometry" />
+          <mxGeometry x="1164" y="442" width="219" height="482" as="geometry" />
         </mxCell>
         <mxCell id="3OSSQbV52YD_su38mAtl-3" value="Cloud Side" style="swimlane;startSize=20;fontFamily=Verdana;strokeColor=#dc8add;fillColor=#3399FF;fontColor=#FFFFFF;" parent="1" vertex="1">
-          <mxGeometry x="777" y="442" width="432" height="482" as="geometry">
+          <mxGeometry x="777" y="442" width="369" height="482" as="geometry">
             <mxRectangle x="766" y="478" width="106" height="26" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
@@ -109,7 +109,7 @@
           <mxGeometry x="18" y="77" width="82" height="32" as="geometry" />
         </mxCell>
         <mxCell id="3OSSQbV52YD_su38mAtl-2" value="Edge side" style="swimlane;startSize=20;fontFamily=Verdana;strokeColor=#c061cb;fillColor=#9933FF;" parent="1" vertex="1">
-          <mxGeometry x="482" y="443" width="292" height="480" as="geometry" />
+          <mxGeometry x="482" y="443" width="278" height="480" as="geometry" />
         </mxCell>
         <mxCell id="RjjPB-zqwfENZfD3fN4v-68" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;strokeColor=#FFFFFF;labelBackgroundColor=none;fontColor=#CC0000;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.422;exitY=0.064;exitDx=0;exitDy=0;exitPerimeter=0;" parent="3OSSQbV52YD_su38mAtl-2" source="RjjPB-zqwfENZfD3fN4v-47" target="RjjPB-zqwfENZfD3fN4v-31" edge="1">
           <mxGeometry x="0.0159" y="10" width="50" height="50" relative="1" as="geometry">
