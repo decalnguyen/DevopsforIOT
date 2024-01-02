@@ -1,41 +1,54 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Form, Stack, Table } from 'react-bootstrap';
-import CopyButton from '~/components/CustomButton/CopyButton';
-import { AddButton, DeleteButton } from '~/components/CustomButton';
+import { CustomButton } from '~/components/CustomButton';
 import CustomContainer from '~/components/CustomContainer';
 import useTemeletry from '~/hooks/useTelemetry';
 import { formatTimestamp } from '~/utils';
-import SearchButton from '~/components/CustomButton/SearchButton';
-import useDeviceRequest from '~/hooks/request/deviceRequest';
+import { telemetryRequest } from '~/services/requests';
+
+import styles from './DeviceInfoOffcanvas.module.scss';
+import classNames from 'classnames/bind';
+import AddModal from './AddModal';
+import { useCheckboxItems } from '~/hooks';
+import MultiSelectPanel from '~/components/MultiSelectPanel';
+
+const cx = classNames.bind(styles);
 
 function LatestTelemetry({ deviceInfo }) {
-  const { deleteEntityTimeSeries } = useDeviceRequest();
+  const { deleteEntityTimeSeries, postTelemetry } = telemetryRequest();
   const [telemetry] = useTemeletry({ deviceInfo });
-  console.log('telemetry' + telemetry);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const { checkedItems, setCheckedItems, handleCheckboxChange, checkAll, setCheckAll, handleCheckAll } =
+    useCheckboxItems(telemetry ? telemetry.length : 0);
   const elements = useMemo(() => {
     return [
       {
         title: 'select',
-        component: <Form.Check type="checkbox"></Form.Check>,
+        component: <Form.Check checked={checkAll} onChange={() => handleCheckAll()} type="checkbox"></Form.Check>,
+        width: '10%',
       },
       {
         title: 'lastUpdateTime',
         component: <span>Last Update Time</span>,
+        width: '30%',
       },
       {
         title: 'key',
         component: <span>Key</span>,
+        width: '10%',
       },
       {
         title: 'value',
         component: <span>Value</span>,
+        width: '40%',
       },
       {
         title: '',
         component: <></>,
+        width: '10%',
       },
     ];
-  }, []);
+  }, [checkAll, handleCheckAll]);
 
   const handleDeleteTelemetry = async (index) => {
     const data = {
@@ -47,21 +60,37 @@ function LatestTelemetry({ deviceInfo }) {
     console.log('response: ' + response);
   };
 
+  const handleDeleteItems = async () => {
+    const keys = checkedItems.map((index) => telemetry[index].key).join(',');
+    await deleteEntityTimeSeries({ entityType: deviceInfo.id.entityType, entityId: deviceInfo.id.id, keys });
+    setCheckedItems([]);
+    setCheckAll(false);
+  };
   return (
     <CustomContainer>
       <Stack direction="horizontal">
-        <span>Telemetry</span>
-        <div className="ms-auto">
-          <AddButton />
-          <SearchButton />
-        </div>
+        {checkedItems.length === 0 ? (
+          <>
+            <span className={cx('header-title')}>Telemetry</span>
+            <div className="ms-auto">
+              <CustomButton.AddButton className={cx('header-icon')} onClick={() => setShowAddModal(true)} />
+              <CustomButton.SearchButton className={cx('header-icon')} />
+            </div>
+          </>
+        ) : (
+          <MultiSelectPanel title={`${checkedItems.length} telemetry selected`} onDeleteItems={handleDeleteItems} />
+        )}
       </Stack>
 
       <Table>
         <thead>
           <tr style={{ padding: '4px 4px' }}>
             {elements.map((element, index) => {
-              return <th key={index}>{element.component}</th>;
+              return (
+                <th key={index} style={{ width: element.width }}>
+                  {element.component}
+                </th>
+              );
             })}
           </tr>
         </thead>
@@ -69,33 +98,58 @@ function LatestTelemetry({ deviceInfo }) {
           {telemetry &&
             telemetry.length > 0 &&
             telemetry.map((attribute, index) => {
-              console.log('attribute: ' + attribute);
               return (
                 <tr>
                   <td>
-                    <Form.Check></Form.Check>
+                    <Form.Check
+                      key={index}
+                      checked={checkedItems.includes(index)}
+                      onChange={() => handleCheckboxChange(index)}
+                    ></Form.Check>
                   </td>
                   <td>{formatTimestamp(attribute.lastUpdateTs)}</td>
                   <td>
                     <Stack direction="horizontal" gap={2}>
                       {attribute.key}
-                      <CopyButton textToCopy={attribute.key} />
+                      <CustomButton.CopyButton textToCopy={attribute.key} />
                     </Stack>
                   </td>
                   <td>
                     <Stack direction="horizontal" gap={2}>
                       {typeof attribute.value === 'boolean' ? (attribute.value ? 'true' : 'false') : attribute.value}
-                      <CopyButton textToCopy={attribute.value} />
+                      <CustomButton.CopyButton textToCopy={attribute.value} />
                     </Stack>
                   </td>
                   <td>
-                    <DeleteButton onClick={() => handleDeleteTelemetry(index)} />
+                    <CustomButton.DeleteButton onClick={() => handleDeleteTelemetry(index)} />
                   </td>
                 </tr>
               );
             })}
         </tbody>
       </Table>
+
+      {showAddModal && (
+        <AddModal
+          deviceInfo={deviceInfo}
+          showAddModal={showAddModal}
+          setShowAddModal={setShowAddModal}
+          title="telemetry"
+          onSubmit={async (values) => {
+            const telemetry = {
+              [values.key]: values.value,
+            };
+            const telemetryObject = {
+              entityType: deviceInfo.id.entityType,
+              entityId: deviceInfo.id.id,
+              telemetry,
+            };
+            postTelemetry(telemetryObject);
+
+            setShowAddModal(false);
+          }}
+        />
+      )}
     </CustomContainer>
   );
 }

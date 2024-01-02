@@ -4,12 +4,12 @@ import { Button, Container, FloatingLabel, Form, Stack } from 'react-bootstrap';
 import styles from './DeviceInfoOffcanvas.module.scss';
 import classNames from 'classnames/bind';
 import { CopyButton } from '~/components/CustomButton';
-import useDeviceRequest from '~/hooks/request/deviceRequest';
+import usedeviceRequest from '~/services/requests/deviceRequest';
 
 const cx = classNames.bind(styles);
 
 function Details({ deviceInfo }) {
-  const { getDeviceCredentialsByDeviceId } = useDeviceRequest();
+  const { getDeviceCredentialsByDeviceId } = usedeviceRequest();
   const inputs = useMemo(() => {
     return (
       deviceInfo && [
@@ -74,6 +74,7 @@ function Details({ deviceInfo }) {
           onClick={async () => {
             const response = await getDeviceCredentialsByDeviceId({ deviceId: deviceInfo.id.id });
             const accessToken = response.credentialsId;
+            console.log(accessToken);
             await navigator.clipboard.writeText(accessToken);
           }}
         >

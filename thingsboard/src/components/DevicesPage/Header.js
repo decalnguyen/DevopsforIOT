@@ -20,7 +20,7 @@ function Header({ onNewDeviceAdded }) {
   return (
     <Container>
       <Row className={`p-3 ${cx('header-wrapper')}`}>
-        <Col className="">
+        <Col className="" style={{ paddingBottom: '9px' }}>
           <span className={cx('header-text')}>Devices</span>
         </Col>
         <Col className="col-2">
@@ -35,9 +35,11 @@ function Header({ onNewDeviceAdded }) {
           </Row>
         </Col>
       </Row>
-      <div className={cx('divider')}></div>
+      {/* <div className={cx('divider')}></div> */}
 
-      <AddDeviceModal showModal={showModal} setShowModal={setShowModal} onNewDeviceAdded={onNewDeviceAdded} />
+      {showModal && (
+        <AddDeviceModal showModal={showModal} setShowModal={setShowModal} onNewDeviceAdded={onNewDeviceAdded} />
+      )}
       {/* <Row className={cx('table')}>
         <Col className="col-3">
           <Row>
