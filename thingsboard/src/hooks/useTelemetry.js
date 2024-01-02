@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '~/contexts/AuthContext';
 
-const useTemeletry = ({ deviceInfo }) => {
+const useTelemetry = ({ deviceInfo }) => {
   const { token } = useAuth();
-  const [telemetry, setTelemetry] = useState({});
+  const [telemetry, setTelemetry] = useState([]);
+  const telemetryRef = useRef(telemetry);
+
   useEffect(() => {
     const webSocket = new WebSocket('wss://thingsboard.cloud/api/ws/plugins/telemetry?token=' + token);
 
@@ -31,16 +33,35 @@ const useTemeletry = ({ deviceInfo }) => {
       console.log('received message: ' + received_msg);
       const parsedResponse = JSON.parse(received_msg);
       const data = parsedResponse.data;
-      console.log(data);
 
-      if (Object.keys(data).length === 0) {
+      const keys = Object.keys(data);
+
+      if (keys.length === 0) {
         return;
       }
 
-      const firstKey = Object.keys(data)[0];
+      const firstKey = keys[0];
       console.log('first key: ' + firstKey);
       if (Object.values(data)[0][0][0] === 0) {
-        setTelemetry((values) => values.filter((value) => value.key !== firstKey));
+        setTelemetry((values) => values.filter((value) => !keys.includes(value.key)));
+        return;
+      }
+
+      if (keys.length === 1) {
+        const index = telemetryRef.current.map((value) => value.key).findIndex((key) => key === firstKey);
+        const firstObject = data[firstKey];
+        const addedObject = {
+          key: firstKey,
+          value: firstObject[0][1],
+          lastUpdateTs: firstObject[0][0],
+        };
+
+        if (index !== -1) {
+          console.log('This key has already been added');
+          setTelemetry((prev) => prev.map((item, i) => (i === index ? addedObject : item)));
+        } else {
+          setTelemetry((prev) => prev.concat(addedObject));
+        }
         return;
       }
 
@@ -55,6 +76,8 @@ const useTemeletry = ({ deviceInfo }) => {
       );
     };
 
+    console.log('telemetry: ', telemetry);
+
     webSocket.onclose = () => {
       console.log('Connection is closed!');
     };
@@ -64,7 +87,13 @@ const useTemeletry = ({ deviceInfo }) => {
       webSocket.close();
     };
   }, [token, deviceInfo]);
+
+  // Update the telemetryRef when telemetry changes
+  useEffect(() => {
+    telemetryRef.current = telemetry;
+  }, [telemetry]);
+
   return [telemetry, setTelemetry];
 };
 
-export default useTemeletry;
+export default useTelemetry;

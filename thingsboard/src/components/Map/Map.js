@@ -6,26 +6,9 @@ import useBusPosition from '~/hooks/useBusPosition';
 import { getDevicesInfo } from '~/services/request';
 import './Map.css';
 function Map() {
-  const [position, setPosition] = useState([]);
-
-  const onPositionUpdate = useCallback(({ subscriptionId, latitude, longitude }) => {
-    setPosition((prev) => {
-      const copy = [...prev];
-      const hasPositionExisted = copy.some((current) => current.index === subscriptionId);
-
-      if (hasPositionExisted) {
-        const indexToUpdate = copy.findIndex((current) => current.index === subscriptionId);
-        copy[indexToUpdate] = { index: subscriptionId, lat: latitude, lng: longitude };
-      } else {
-        copy.push({ index: subscriptionId, lat: latitude, lng: longitude });
-      }
-
-      return copy;
-    });
-  }, []);
-  const devicesInfo = useDevicesInfo();
-  useBusPosition({ devicesInfo, onPositionUpdate });
-  console.log('position: ', position);
+  const { devicesInfo } = useDevicesInfo();
+  const { position } = useBusPosition({ devicesInfo });
+  // console.log('position: ', position);
   const center =
     position.length > 0
       ? {

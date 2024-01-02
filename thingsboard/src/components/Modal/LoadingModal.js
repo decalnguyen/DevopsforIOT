@@ -1,5 +1,5 @@
 import CustomSpinner from '../CustomSpinner';
-import styles from './LoadingModal.module.scss';
+import styles from './Modal.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);

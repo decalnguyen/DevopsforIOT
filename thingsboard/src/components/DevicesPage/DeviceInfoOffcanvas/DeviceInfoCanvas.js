@@ -48,12 +48,7 @@ function DeviceInfoCanvas({ deviceInfo, onHide }) {
   }, [deviceInfo]);
 
   return (
-    <Offcanvas
-      show={show}
-      onHide={onHide}
-      backdrop="static"
-      style={{ height: '100vh', width: '50%', overflowY: 'auto' }}
-    >
+    <Offcanvas show={show} onHide={onHide} backdrop={true} style={{ height: '100vh', width: '50%', overflowY: 'auto' }}>
       <Offcanvas.Header className={cx('header')} closeButton>
         <Offcanvas.Title>
           <span style={{ fontSize: '2rem' }}>{deviceInfo && deviceInfo.name}</span>
@@ -63,12 +58,7 @@ function DeviceInfoCanvas({ deviceInfo, onHide }) {
       </Offcanvas.Header>
       <Offcanvas.Body>
         <div style={{ borderBottom: '1px solid #ccc' }}>
-          <Nav
-            variant="underline"
-            activeKey={tabs[activeTab].title}
-            onSelect={handleSelectTab}
-            style={{ color: 'red' }}
-          >
+          <Nav variant="underline" activeKey={activeTab} onSelect={handleSelectTab}>
             {tabs.map((tab, index) => {
               return (
                 <Nav.Item key={index} style={{ fontSize: '1.7rem', padding: '0 16px', color: 'red' }}>

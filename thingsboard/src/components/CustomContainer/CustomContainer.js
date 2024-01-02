@@ -1,7 +1,15 @@
 import { Container } from 'react-bootstrap';
+import styles from './CustomContainer.module.scss';
+import classNames from 'classnames/bind';
 
-function CustomerContainer({ children }) {
-  return <Container style={{ height: '100%', border: '1px solid #ccc', marginTop: '16px' }}>{children}</Container>;
+const cx = classNames.bind(styles);
+
+function CustomerContainer({ children, className = '', ...props }) {
+  return (
+    <Container className={`${cx('wrapper')} ${className}`} {...props}>
+      {children}
+    </Container>
+  );
 }
 
 export default CustomerContainer;

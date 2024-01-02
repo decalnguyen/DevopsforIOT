@@ -1,6 +1,6 @@
 import { Button, Modal } from 'react-bootstrap';
 
-function CustomModal(modalInfo) {
+function StatusModal(modalInfo) {
   const {
     show = false,
     onHide,
@@ -27,4 +27,4 @@ function CustomModal(modalInfo) {
   );
 }
 
-export default CustomModal;
+export default StatusModal;
