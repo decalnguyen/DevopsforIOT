@@ -34,4 +34,56 @@ Khả năng mở rộng và độ tin cậy
 Được thiết kế để xử lý thông lượng cao và nhiều thiết bị được kết nối, Rule Engine cho phép người dùng mở rộng quy mô các giải pháp IoT của họ mà không ảnh hưởng đến hiệu suất hoặc độ tin cậy.
 Cách tạo luật bằng EMQX Dashboard:
 Republish Actions:
+Rules SQL Reference:
+Expressions and Operations
+Cho phép xử dụng các expressions để chuyển đổi data và filter messages
+FOREACH statement : input data in an array format 
+MQTT Events:
+Chúng ta có thể sử dụng EMQX rules để extract dâta từ event topics như client online and offline, client Subscriptions, etc.... The Event topic starts wwith "$events/" 
+$events/message_delivered	Message delivery
+$events/message_acked	Message acknowledged
+$events/message_dropped	Message dropped when routing
+$events/delivery_dropped	Message dropped when delivering
+$events/client_connected	Connection complete
+$events/client_disconnected	Disconnect
+$events/client_connack	Connection acknowledged
+$events/client_check_authz_complete	Authorization check complete
+$events/session_subscribed	Subscribe
+$events/session_unsubscribed	Unsubscribe
+Những event topic này có thể sử dụng để trigger a rule khi mà message được gửi tới client
+Disconect Event:
+Có những reasons :
+Disconnect reasons
 
+normal: The client is intentionally disconnected
+
+kicked: EMQX has forcibly removed the client through REST API
+
+keepalive_timeout: The specified keepalive time period expired.
+
+not_authorized: Authorization failed.
+
+tcp_closed: The peer has closed network connection.
+
+discarded: Another client ( with clean_start set to true) connected with the same ClientID, causing the previous connection to be dropped.
+
+takenover: Another client ( with clean_start set to false) connected with the same ClientID, taking over the previous connection..
+
+internal_error: An error has occurred due to an improperly formatted message or other unknown issues.
+
+BUILD-IN SQL FUnctions:
+-Mathematical Functions
+-Data Type Judgment Function
+Data Type COnversion Functions
+- String Functions
+- Map Functions
+- Array Functions
+- Map Functions
+- Array Functions
+- Hash FUnctions
+- Compression and Decompression Functions
+- Bitwise Operation Functions
+- Bit Sequence Functions
+- Decoding and Encoding Functions
+- Time and Data Functions
+- UUID Function 
