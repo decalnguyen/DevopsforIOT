@@ -1,0 +1,11 @@
+Thingsboard Edge:
+Local deployment and Storage: Xử lý và lưu data ở local mà không cần kết nối với cloud. Sẽ đẩy những dữ liệu đó lên cloud một khi có kết nối trở lại
+Traffic filtering:
+- Filter data ở local và chỉ đẩy những data lên cloud cho mục đích xử lý khác hoặc lưu trữ
+- Local alarms: Lập tức phản ứng với những tình huống quan trọng, mà không cần kết nối tới cloud 
+- Real-time dashboards: Monitor local events và timeseries data
+- Local storage: Lưu trữ dâta ở thiết bị edge nếu kết nối tới cloud không hoạt động và sẽ cập nhật với cloud một khi mà kết nối trở lại
+- Batch Update: Cập nhật nhiều edge cùng lúc với thao tác đơn giản
+OTA - Over-the-air firmware và software updates
+OTA packages sẽ được tạo ở Platform. Với phiên bản CE thì không thể tạo, sửa đổi, và xóa trên Edge
+Tất cả các OTA firmware và software packages, đều được tạo trên Platform, và sẽ được tự động đưa tới mỗi Edge đã được kết nối với PLatform
