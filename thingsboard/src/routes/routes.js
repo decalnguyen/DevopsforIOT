@@ -2,7 +2,7 @@ import { LoginLayout, MainLayout } from '~/layouts';
 import { DevicesPage } from '~/components/DevicesPage';
 import config from '~/config';
 import Home from '~/components/Home';
-import Dashboard from '~/components/Dashboard';
+import DashboardPage from '~/components/pages/DashboardPage';
 export const routes = [
   {
     path: config.routes.home,
@@ -21,7 +21,7 @@ export const routes = [
   },
   {
     path: config.routes.dashboard,
-    component: Dashboard,
+    component: DashboardPage,
     layout: MainLayout,
   },
 ];

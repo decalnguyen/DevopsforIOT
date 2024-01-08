@@ -117,6 +117,12 @@ function publishTelemetry() {
       speed: speed,
       status: status,
       radius: circle,
+      perimeter: {
+        latitude: 37.78448679174453,
+        longitude: -122.48097302826606,
+        radius: 1817.1804021330854,
+        radiusUnit: 'METER',
+      },
     }),
   );
   stopTime++;
