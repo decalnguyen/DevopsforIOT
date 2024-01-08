@@ -12,20 +12,26 @@ const createRequest = (platform, token) => {
   return request;
 };
 
+const makeRequest = async (requestFuntion, ...params) => {
+  try {
+    const response = await requestFuntion(...params);
+    return response;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 export const get = async ({ platform, api, token, configs }) => {
   const request = createRequest(platform, token);
-  const response = await request.get(api, configs);
-  return response;
+  return makeRequest(request.get, api, configs);
 };
 
 export const post = async ({ platform, api, token, data, configs }) => {
   const request = createRequest(platform, token);
-  const response = await request.post(api, data, configs);
-  return response;
+  return makeRequest(request.post, api, data, configs);
 };
 
 export const Delete = async ({ platform, token, api, configs }) => {
   const request = createRequest(platform, token);
-  const response = await request.delete(api, configs);
-  return response;
+  return makeRequest(request.delete, api, configs);
 };

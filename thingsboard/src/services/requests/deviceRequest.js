@@ -15,35 +15,23 @@ function DeviceRequest() {
   const getDeviceCredentialsByDeviceId = async ({ deviceId }) => {
     const api = `/device/${deviceId}/credentials`;
     const data = getRequestConfig({ api });
-    try {
-      const response = await request.get(data);
-      return response.data;
-    } catch (e) {
-      console.log(e);
-    }
+    const response = await request.get(data);
+    return response.data;
   };
 
   const createNewDevice = async ({ deviceInfo, entityGroupId }) => {
     const api = `/device`;
 
     const data = getRequestConfig({ api, params: { entityGroupId }, data: deviceInfo });
-    try {
-      const response = await request.post(data);
-      return response;
-    } catch (e) {
-      console.log(e);
-    }
+    const response = await request.post(data);
+    return response;
   };
 
   const deleteDevice = async ({ deviceId }) => {
     const api = `/device/${deviceId}`;
     const data = getRequestConfig({ api, params: { deviceId } });
-    try {
-      const response = await request.Delete(data);
-      return response;
-    } catch (e) {
-      console.log(e);
-    }
+    const response = await request.Delete(data);
+    return response;
   };
 
   return {
