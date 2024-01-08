@@ -1,5 +1,3 @@
-import { useAuth } from '~/contexts/AuthContext';
-
 const { request, getLocalStorageItems } = require('~/utils');
 function DevicesInfoRequest() {
   const { token, platform } = getLocalStorageItems();
@@ -14,7 +12,10 @@ function DevicesInfoRequest() {
   };
   const getDevicesInfo = async ({ pageSize = 20, page = 0 }) => {
     const api = `/deviceInfos/all`;
-    const data = getRequestConfig({ api, params: { pageSize, page } });
+    const data = getRequestConfig({
+      api,
+      params: { pageSize, page },
+    });
     const response = await request.get(data);
     return response.data.data;
   };

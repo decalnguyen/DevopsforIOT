@@ -1,6 +1,6 @@
 import { Button, Form, Stack, Table } from 'react-bootstrap';
 import CustomContainer from '~/components/CustomContainer';
-
+import global from '~/components/GlobalStyles/GlobalStyles.module.scss';
 import styles from './DeviceInfoOffcanvas.module.scss';
 import classNames from 'classnames/bind';
 import { CustomButton } from '~/components/CustomButton';
@@ -88,7 +88,12 @@ function Attributes({ deviceInfo }) {
         )}
       </Stack>
 
-      <Table>
+      <Table style={{ tableLayout: 'fixed' }}>
+        <colgroup>
+          {elements.map((element) => (
+            <col style={{ width: element.width }}></col>
+          ))}
+        </colgroup>
         <thead>
           {elements.map((element, index) => {
             return (
@@ -121,7 +126,9 @@ function Attributes({ deviceInfo }) {
                   </td>
                   <td>
                     <Stack direction="horizontal" gap={2}>
-                      {typeof attribute.value === 'boolean' ? (attribute.value ? 'true' : 'false') : attribute.value}
+                      <p className={global['text-overflow']}>
+                        {typeof attribute.value === 'boolean' ? (attribute.value ? 'true' : 'false') : attribute.value}
+                      </p>
                       <CustomButton.CopyButton textToCopy={attribute.value} />
                     </Stack>
                   </td>

@@ -30,17 +30,17 @@ function LatestTelemetry({ deviceInfo }) {
       {
         title: 'lastUpdateTime',
         component: <span>Last Update Time</span>,
-        width: '30%',
+        width: '15%',
       },
       {
         title: 'key',
         component: <span>Key</span>,
-        width: '10%',
+        width: '30%',
       },
       {
         title: 'value',
+        width: '30%',
         component: <span>Value</span>,
-        width: '40%',
       },
       {
         title: '',
@@ -82,18 +82,17 @@ function LatestTelemetry({ deviceInfo }) {
         )}
       </Stack>
 
-      <Table>
-        <thead>
-          <tr style={{ padding: '4px 4px' }}>
-            {elements.map((element, index) => {
-              return (
-                <th key={index} style={{ width: element.width }}>
-                  {element.component}
-                </th>
-              );
-            })}
-          </tr>
-        </thead>
+      <Table style={{ tableLayout: 'fixed', overflow: 'hidden' }}>
+        <colgroup>
+          {elements.map((element) => (
+            <col style={{ width: element.width }}></col>
+          ))}
+        </colgroup>
+        <tr style={{ padding: '4px 4px' }}>
+          {elements.map((element, index) => {
+            return <th key={index}>{element.component}</th>;
+          })}
+        </tr>
         <tbody>
           {telemetry &&
             telemetry.length > 0 &&
@@ -116,7 +115,9 @@ function LatestTelemetry({ deviceInfo }) {
                   </td>
                   <td>
                     <Stack direction="horizontal" gap={2}>
-                      {typeof attribute.value === 'boolean' ? (attribute.value ? 'true' : 'false') : attribute.value}
+                      <p style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                        {typeof attribute.value === 'boolean' ? (attribute.value ? 'true' : 'false') : attribute.value}
+                      </p>
                       <CustomButton.CopyButton textToCopy={attribute.value} />
                     </Stack>
                   </td>

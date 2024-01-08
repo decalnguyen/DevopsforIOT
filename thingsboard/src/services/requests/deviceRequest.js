@@ -1,15 +1,17 @@
-import { useAuth } from '~/contexts/AuthContext';
+import { toast } from 'react-toastify';
+
 const { request, getLocalStorageItems } = require('~/utils');
 
 function DeviceRequest() {
   const { token, platform } = getLocalStorageItems();
-  const getRequestConfig = ({ api, data, params }) => {
+  const getRequestConfig = ({ api, data, params, msg = null }) => {
     return {
       platform,
       token,
       api,
       data,
       configs: { params },
+      msg,
     };
   };
   const getDeviceCredentialsByDeviceId = async ({ deviceId }) => {
@@ -22,7 +24,16 @@ function DeviceRequest() {
   const createNewDevice = async ({ deviceInfo, entityGroupId }) => {
     const api = `/device`;
 
-    const data = getRequestConfig({ api, params: { entityGroupId }, data: deviceInfo });
+    const data = getRequestConfig({
+      api,
+      params: { entityGroupId },
+      data: deviceInfo,
+      msg: {
+        loading: 'Creating new device...',
+        error: 'Failed to create new device',
+        success: 'Create device succesfully!',
+      },
+    });
     const response = await request.post(data);
     return response;
   };

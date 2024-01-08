@@ -4,12 +4,12 @@ import './Map.css';
 import styles from './Map.module.scss';
 import classNames from 'classnames/bind';
 import Header from './Header';
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Map from './Map';
-import BusAlert from './BusAlert';
 import useGeofenceNotification from '~/hooks/useGeofenceNotification';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { formatTimestamp } from '~/utils';
 
 const cx = classNames.bind(styles);
 
@@ -22,7 +22,9 @@ function DashBoard() {
 
   useEffect(() => {
     if (message !== null) {
-      toast(<BusAlert message={message} />);
+      toast(`${message.name} has ${message.type.toLowerCase()} the geofence at ${formatTimestamp(message.ts)}`, {
+        type: message.type === 'Entered' ? 'success' : 'warning',
+      });
     }
   }, [message]);
 
@@ -36,19 +38,6 @@ function DashBoard() {
         position={position}
         devicesInfo={devicesInfo}
         geofence={geoJsonData}
-      />
-
-      <ToastContainer
-        position="bottom-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
       />
     </div>
   );

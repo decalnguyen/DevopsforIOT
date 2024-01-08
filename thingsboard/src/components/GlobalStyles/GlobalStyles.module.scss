@@ -195,3 +195,9 @@ td {
 .sr-only {
   display: none;
 }
+
+.text-overflow {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

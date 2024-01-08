@@ -1,4 +1,4 @@
-import { Badge, Button, Col, Form, Row, Table } from 'react-bootstrap';
+import { Badge, Button, Form, Row, Table } from 'react-bootstrap';
 import { formatTimestamp } from '~/utils';
 
 import styles from './DevicesPage.module.scss';
@@ -44,8 +44,7 @@ function DevicesTable({ devicesInfo, checkBoxHandler, handleDeleteDevice, setSho
       width: '12%',
     },
   ];
-  const { checkedItems, setCheckedItems, handleCheckboxChange, checkAll, setCheckAll, handleCheckAll } =
-    checkBoxHandler;
+  const { checkedItems, handleCheckboxChange, checkAll, handleCheckAll } = checkBoxHandler;
 
   return (
     <Table striped hover style={{ fontSize: '1.4rem' }}>
@@ -88,7 +87,7 @@ function DevicesTable({ devicesInfo, checkBoxHandler, handleDeleteDevice, setSho
                 <td className={cx('col-padding')}>{device.type}</td>
                 <td className={cx('col-padding')}>{device.label}</td>
                 <td className={cx('col-padding')}>
-                  <Badge pill bg="danger">
+                  <Badge pill bg={device.active ? 'success' : 'danger'}>
                     {device.active ? 'Active' : 'Inactive'}
                   </Badge>
                 </td>
@@ -106,7 +105,14 @@ function DevicesTable({ devicesInfo, checkBoxHandler, handleDeleteDevice, setSho
                     <Button variant="pill" className="col-3">
                       <i class="bi bi-bag-plus-fill" style={{ fontSize: '1.4rem' }}></i>
                     </Button>
-                    <Button variant="pill" className="col-3" onClick={() => handleDeleteDevice(index)}>
+                    <Button
+                      variant="pill"
+                      className="col-3"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteDevice(index);
+                      }}
+                    >
                       <i class="bi bi-trash-fill" style={{ fontSize: '1.4rem' }}></i>
                     </Button>
                   </Row>

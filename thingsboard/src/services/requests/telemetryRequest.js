@@ -1,4 +1,3 @@
-import { useAuth } from '~/contexts/AuthContext';
 const { request, getLocalStorageItems } = require('~/utils');
 
 function TelemetryRequest() {

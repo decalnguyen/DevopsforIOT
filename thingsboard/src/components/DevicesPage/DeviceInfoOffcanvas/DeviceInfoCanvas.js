@@ -9,8 +9,8 @@ import LatestTelemetry from './LatestTelemetry';
 
 const cx = classNames.bind(styles);
 
-function DeviceInfoCanvas({ deviceInfo, onHide }) {
-  const [show, setShow] = useState(true);
+function DeviceInfoCanvas({ deviceInfo, onHide, show }) {
+  // const [show, setShow] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
   const handleSelectTab = (selectedTab) => setActiveTab(selectedTab);
 

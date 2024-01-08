@@ -1,4 +1,4 @@
-import globalStyles from '~/components/GlobalStyles';
+import globalStyles from '~/components/GlobalStyles/GlobalStyles.module.scss';
 import styles from './DeviceInfoOffcanvas.module.scss';
 import classNames from 'classnames/bind';
 import { useMemo, useState } from 'react';

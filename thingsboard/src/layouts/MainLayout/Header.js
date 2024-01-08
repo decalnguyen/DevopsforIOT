@@ -1,4 +1,4 @@
-import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap';
+import { Navbar, Container } from 'react-bootstrap';
 
 import styles from './MainLayout.module.scss';
 import classNames from 'classnames/bind';
