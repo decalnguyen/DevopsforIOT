@@ -10,6 +10,7 @@ import { formatTimestamp } from '~/utils';
 import AddModal from './AddModal';
 import MultiSelectPanel from '~/components/MultiSelectPanel';
 import { useCheckboxItems } from '~/hooks';
+import { transform } from '../../../utils';
 
 const cx = classNames.bind(styles);
 
@@ -127,7 +128,7 @@ function Attributes({ deviceInfo }) {
                   <td>
                     <Stack direction="horizontal" gap={2}>
                       <p className={global['text-overflow']}>
-                        {typeof attribute.value === 'boolean' ? (attribute.value ? 'true' : 'false') : attribute.value}
+                        {transform(attribute.value)}
                       </p>
                       <CustomButton.CopyButton textToCopy={attribute.value} />
                     </Stack>

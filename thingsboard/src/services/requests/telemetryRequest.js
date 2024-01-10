@@ -49,9 +49,9 @@ function TelemetryRequest() {
 
   const getAttributesByScope = async ({ entityType, entityId, scope, keys }) => {
     const api = `/plugins/telemetry/${entityType}/${entityId}/values/attributes/${scope}`;
-    const data = getRequestConfig({ api, params: keys });
+    const data = getRequestConfig({ api, params: {keys} });
     const response = await request.get(data);
-    return response.data;
+    return response?.data;
   };
 
   // keys must be a string value representing the comma-separated list of attributes keys

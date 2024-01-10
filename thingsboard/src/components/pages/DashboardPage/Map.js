@@ -4,9 +4,10 @@ import {
   Marker,
   Popup,
   TileLayer,
-  GeoJSON,
   LayersControl,
   LayerGroup,
+  Circle,
+  useMap,
 } from 'react-leaflet';
 import styles from './Map.module.scss';
 import classNames from 'classnames/bind';
@@ -14,12 +15,16 @@ import Search from './SearchBox';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import { GeomanControls } from 'react-leaflet-geoman-v2';
-import { Drawing } from '~/hooks/useGeoJson';
-import { useMemo } from 'react';
+import  Drawing  from './Drawing';
+import { useEffect, useRef } from 'react';
 import L from 'leaflet';
+import GeomanWrapper from './GeomanWrapper';
 const cx = classNames.bind(styles);
 
+
 function Map({ geofence, position, devicesInfo, isEditMode }) {
+  const ref = useRef(null);
+  // const map = useMap();
   const center =
     position.length > 0
       ? {
@@ -27,9 +32,8 @@ function Map({ geofence, position, devicesInfo, isEditMode }) {
           lng: position[0].lng,
         }
       : { lat: 37.76596, lng: -122.45636 };
-  const { handleShapeCreated, handleEditShape, geoJSON, setGeoJSON, removeGeoJSON } = geofence;
-  // const { handleShapeCreated } = Drawing();
-
+  const { handleShapeCreated, geoJSON, setGeoJSON, removeGeoJSON } = geofence;
+  
   return (
     <div>
       <div className={cx('map-wrapper')}>
@@ -48,10 +52,10 @@ function Map({ geofence, position, devicesInfo, isEditMode }) {
             </LayersControl.Overlay>
             {/* {render()} */}
 
-            <Drawing geoJSON={geoJSON} setGeoJSON={setGeoJSON} onRemove={removeGeoJSON} />
+            {/* <Drawing geoJSON={geoJSON} setGeoJSON={setGeoJSON} onRemove={removeGeoJSON} ref={ref}/> */}
 
-            {isEditMode && (
-              <FeatureGroup>
+            {/* {isEditMode && (
+              <FeatureGroup ref={ref}>
                 <GeomanControls
                   options={{
                     position: 'topleft',
@@ -64,7 +68,8 @@ function Map({ geofence, position, devicesInfo, isEditMode }) {
                   onCreate={handleShapeCreated}
                 />
               </FeatureGroup>
-            )}
+            )} */}
+            <GeomanWrapper geoJSON={geoJSON} setGeoJSON={setGeoJSON} isEditMode={isEditMode}/>
 
             {position.map((pos, index) => {
               return (
