@@ -4,12 +4,19 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import GlobalStyles from '~/components/GlobalStyles';
 import { AuthProvider } from './contexts/AuthContext';
+import { CustomBrowserRouter } from './CustomBrowserRouter';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
+  <React.StrictMode>
     <GlobalStyles>
-      <AuthProvider><App /></AuthProvider>
+      <AuthProvider>
+        <CustomBrowserRouter>
+          <App />
+        </CustomBrowserRouter>
+      </AuthProvider>
     </GlobalStyles>
+  </React.StrictMode>,
 );
 
 // If you want to start measuring performance in your app, pass a function

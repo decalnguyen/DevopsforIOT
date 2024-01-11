@@ -11,8 +11,8 @@ function GeomanWrapper({geoJSON, setGeoJSON, isEditMode}) {
         features: [],
       }
       const layers = ref.current?.getLayers();
-      console.log(layers.length);
-      if (layers.length > 0) {
+      console.log(layers?.length);
+      if (layers?.length > 0) {
         layers.forEach((layer) => {
           if (layer instanceof L.Circle || layer instanceof L.CircleMarker) {
             const { lat, lng } = layer?.getLatLng()
@@ -38,14 +38,24 @@ function GeomanWrapper({geoJSON, setGeoJSON, isEditMode}) {
       }
       setGeoJSON(convertToTBJSON(newGeo));
     }
+
     useEffect(() => {
+      console.log(geoJSON);
         const geojson = convertToGeoJSON(geoJSON);
         const layers = ref.current?.getLayers();
-      // alert(layers.length)
-        layers.length > 0 && layers.forEach((layer) => ref.current.removeLayer(layer));
-        console.log(geojson);
+      // alert(layers?.length)
+        layers && layers?.length > 0 && layers.forEach((layer) => ref.current.removeLayer(layer));
+        console.log(geojson); 
         if (geojson) {
-            // if(!layers[0].feature || layers[0].feature.geometry.coordinates == {}) return;
+            // const isEmpty = geojson.features.some(value => {
+            //   const coords = value?.geometry?.coordinates;
+            //   return !coords 
+            //   || (Array.isArray(coords) && coords.length === 0) 
+            //   || Object.keys(coords).length === 0});
+            // if(isEmpty) {
+            //   // setGeoJSON({});
+            //   return;
+            // }
           L.geoJSON(geojson).eachLayer((layer) => {
             console.log(layer);
             if(!Array.isArray(layer.feature.geometry.coordinates)) return;
@@ -62,6 +72,7 @@ function GeomanWrapper({geoJSON, setGeoJSON, isEditMode}) {
                 newLayer.addTo(ref.current);
               } else {
                 layer.on('pm:edit', handleChange);
+                layer.on('pm:remove', () => ref.current.removeLayer(layer));
                 ref.current?.addLayer(layer)
               }
             }

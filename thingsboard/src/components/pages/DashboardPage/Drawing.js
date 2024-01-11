@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Circle, Polygon, Rectangle, useMap } from 'react-leaflet';
+import { Circle, FeatureGroup, Polygon, Rectangle, useMap } from 'react-leaflet';
 import L from 'leaflet';
 
 function Drawing({ geoJSON, setGeoJSON, onRemove,ref }) {
@@ -46,7 +46,7 @@ function Drawing({ geoJSON, setGeoJSON, onRemove,ref }) {
       return coordinates;
     };
 
-    // if (geoJSON && geoJSON.length > 0) {
+    // if (geoJSON && geoJSON?.length > 0) {
     //   const _layers = geoJSON.map((feature, index) => {
     //     if (!feature) return null;
     //     let layer, _layer;
@@ -92,6 +92,10 @@ function Drawing({ geoJSON, setGeoJSON, onRemove,ref }) {
         }
       });
     };
+
+    return (<FeatureGroup>
+
+    </FeatureGroup>)
   }, [geoJSON, map, onRemove, setGeoJSON,ref]);
 }
 

@@ -11,7 +11,7 @@ function Header() {
   return (
     <Navbar collapseOnSelect expand="lg" className={cx('header-wrapper')}>
       <Container>
-        <Navbar.Brand as={Link} to={config.routes.home}>
+        <Navbar.Brand as={Link} to={config.privateRoutes.home}>
           <img
             src={process.env.PUBLIC_URL + '/logo192.png'}
             alt="green stream"

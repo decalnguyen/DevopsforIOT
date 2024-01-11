@@ -147,7 +147,7 @@ export default function NotificationCenter() {
             </Header>
             <AnimatePresence>
               <Content variants={variants.content} animate={isOpen ? 'open' : 'closed'}>
-                {(!notifications.length || (unreadCount === 0 && showUnreadOnly)) && (
+                {(!notifications?.length || (unreadCount === 0 && showUnreadOnly)) && (
                   <motion.h4 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                     Your queue is empty! you are all set{' '}
                     <span role="img" aria-label="dunno what to put">

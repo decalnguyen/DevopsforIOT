@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Button, Container, Nav, Offcanvas, Row, Stack } from 'react-bootstrap';
 import Details from './Details';
-
+import {AnimatePresence, motion} from 'framer-motion'
 import styles from './DeviceInfoOffcanvas.module.scss';
 import classNames from 'classnames/bind';
 import Attributes from './Attributes';
@@ -56,21 +56,21 @@ function DeviceInfoCanvas({ deviceInfo, onHide, show }) {
           <span style={{ fontWeight: '100' }}>Device Details</span>
         </Offcanvas.Title>
       </Offcanvas.Header>
-      <Offcanvas.Body>
-        <div style={{ borderBottom: '1px solid #ccc' }}>
-          <Nav variant="underline" activeKey={activeTab} onSelect={handleSelectTab}>
-            {tabs.map((tab, index) => {
-              return (
-                <Nav.Item key={index} style={{ fontSize: '1.7rem', padding: '0 16px', color: 'red' }}>
-                  <Nav.Link eventKey={index}>{tab.title}</Nav.Link>
-                </Nav.Item>
-              );
-            })}
-          </Nav>
-        </div>
-
-        <Container style={{ height: '90%' }}>{tabs[activeTab].component}</Container>
-      </Offcanvas.Body>
+        <Offcanvas.Body>
+              <Nav justify variant="pills" activeKey={activeTab} onSelect={handleSelectTab}>
+                {tabs.map((tab, index) => {
+                  return (
+                    <div style={{position:'relative'}}>
+                      <Nav.Item key={index} style={{ fontSize: '1.7rem', padding: '0 16px', color: 'red' }}>
+                        <Nav.Link eventKey={index}>{tab.title}</Nav.Link>
+                      </Nav.Item>
+                    </div>
+                  );
+                })}
+              </Nav>
+  
+          <Container style={{ height: '90%' }}>{tabs[activeTab].component}</Container>
+        </Offcanvas.Body>
     </Offcanvas>
   );
 }

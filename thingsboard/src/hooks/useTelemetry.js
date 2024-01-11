@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '~/contexts/AuthContext';
 
 const useTelemetry = ({ deviceInfo }) => {
-  const { token } = useAuth();
+  const token = localStorage.getItem('accessToken');
   const [telemetry, setTelemetry] = useState([]);
   const telemetryRef = useRef(telemetry);
 
@@ -36,7 +36,7 @@ const useTelemetry = ({ deviceInfo }) => {
 
       const keys = Object.keys(data);
 
-      if (keys.length === 0) {
+      if (keys?.length === 0) {
         return;
       }
 
@@ -47,7 +47,7 @@ const useTelemetry = ({ deviceInfo }) => {
         return;
       }
 
-      if (keys.length === 1) {
+      if (keys?.length === 1) {
         const index = telemetryRef.current.map((value) => value.key).findIndex((key) => key === firstKey);
         const firstObject = data[firstKey];
         const addedObject = {

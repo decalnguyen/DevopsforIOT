@@ -17,9 +17,9 @@ const cx = classNames.bind(styles);
 function LatestTelemetry({ deviceInfo }) {
   const { deleteEntityTimeSeries, postTelemetry } = telemetryRequest();
   const [telemetry] = useTemeletry({ deviceInfo });
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [isVisible, setVisible] = useState(false);
   const { checkedItems, setCheckedItems, handleCheckboxChange, checkAll, setCheckAll, handleCheckAll } =
-    useCheckboxItems(telemetry ? telemetry.length : 0);
+    useCheckboxItems(telemetry ? telemetry?.length : 0);
   const elements = useMemo(() => {
     return [
       {
@@ -69,16 +69,16 @@ function LatestTelemetry({ deviceInfo }) {
   return (
     <CustomContainer>
       <Stack direction="horizontal">
-        {checkedItems.length === 0 ? (
+        {checkedItems?.length === 0 ? (
           <>
             <span className={cx('header-title')}>Telemetry</span>
             <div className="ms-auto">
-              <CustomButton.AddButton className={cx('header-icon')} onClick={() => setShowAddModal(true)} />
+              <CustomButton.AddButton className={cx('header-icon')} onClick={() => setVisible(true)} />
               <CustomButton.SearchButton className={cx('header-icon')} />
             </div>
           </>
         ) : (
-          <MultiSelectPanel title={`${checkedItems.length} telemetry selected`} onDeleteItems={handleDeleteItems} />
+          <MultiSelectPanel title={`${checkedItems?.length} telemetry selected`} onDeleteItems={handleDeleteItems} />
         )}
       </Stack>
 
@@ -95,7 +95,7 @@ function LatestTelemetry({ deviceInfo }) {
         </tr>
         <tbody>
           {telemetry &&
-            telemetry.length > 0 &&
+            telemetry?.length > 0 &&
             telemetry.map((attribute, index) => {
               return (
                 <tr>
@@ -130,11 +130,11 @@ function LatestTelemetry({ deviceInfo }) {
         </tbody>
       </Table>
 
-      {showAddModal && (
+      
         <AddModal
           deviceInfo={deviceInfo}
-          showAddModal={showAddModal}
-          setShowAddModal={setShowAddModal}
+          isVisible={isVisible}
+          setVisible={setVisible}
           title="telemetry"
           onSubmit={async (values) => {
             const telemetry = {
@@ -147,10 +147,10 @@ function LatestTelemetry({ deviceInfo }) {
             };
             postTelemetry(telemetryObject);
 
-            setShowAddModal(false);
+            setVisible(false);
           }}
         />
-      )}
+      
     </CustomContainer>
   );
 }

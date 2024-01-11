@@ -25,7 +25,7 @@ function DevicesPage() {
   const { devicesInfo, setDevicesInfo } = useDevicesInfo();
 
   const { checkedItems, setCheckedItems, handleCheckboxChange, checkAll, setCheckAll, handleCheckAll } =
-    useCheckboxItems(devicesInfo ? devicesInfo.length : 0);
+    useCheckboxItems(devicesInfo ? devicesInfo?.length : 0);
   const { getDevicesInfo } = devicesInfoRequest();
   const { deleteDevice } = deviceRequest();
 
@@ -36,7 +36,7 @@ function DevicesPage() {
   };
 
   const handleDeleteDevice = async (index) => {
-    if (checkedItems.length === 0) {
+    if (checkedItems?.length === 0) {
       const deviceId = devicesInfo[index].id.id;
       setShowModals((values) => ({ ...values, loading: true }));
       const response = await deleteDevice({ platform, token, deviceId });
@@ -68,13 +68,13 @@ function DevicesPage() {
 
   return (
     <CustomContainer>
-      {checkedItems.length === 0 ? (
+      {checkedItems?.length === 0 ? (
         <Header onNewDeviceAdded={handleNewDeviceAdded} />
       ) : (
         <div className={cx('header-wrapper')}>
           <MultiSelectPanel
             onDeleteItems={handleDeleteDevice}
-            title={`${checkedItems.length} ${checkedItems.length === 1 ? 'device' : 'devices'} selected`}
+            title={`${checkedItems?.length} ${checkedItems?.length === 1 ? 'device' : 'devices'} selected`}
           />
         </div>
       )}

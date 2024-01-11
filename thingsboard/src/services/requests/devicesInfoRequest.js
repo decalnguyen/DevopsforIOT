@@ -17,7 +17,7 @@ function DevicesInfoRequest() {
       params: { pageSize, page },
     });
     const response = await request.get(data);
-    return response.data.data;
+    return response?.data?.data;
   };
   return { getDevicesInfo };
 }

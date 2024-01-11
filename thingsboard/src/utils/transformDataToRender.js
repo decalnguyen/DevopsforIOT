@@ -11,6 +11,7 @@ export default function Transform(value) {
 }
 
 export function convertToGeoJSON(value) {
+    if(!value || (typeof value === 'object' && Object.keys(value).length === 0)) return null;
     const newgeo = {
         type: 'FeatureCollection',
         features: []
@@ -26,12 +27,13 @@ export function convertToGeoJSON(value) {
             }
         })
     }
-    else {newgeo.features.push({
+    else {
+        newgeo.features.push({
             type: 'Feature',
             properties: {},
             geometry: {
                 type: 'Polygon',
-                coordinates: value
+                coordinates: [value]
             }
         })}
         return newgeo;
@@ -40,7 +42,7 @@ export function convertToGeoJSON(value) {
 
 export function convertToTBJSON(value) {
     console.log(value);
-    if(!Array.isArray(value.features) || value.features.length === 0) return null;
+    if(!Array.isArray(value.features) || value.features?.length === 0) return null;
     if(value.features[0].properties?.radius) { //This is a circle
         const feature = value.features[0];
         return {
@@ -49,9 +51,9 @@ export function convertToTBJSON(value) {
             radius: feature.properties.radius,
             radiusUnit: 'METER'
         }
+    } else {
+        return value.features[0].geometry.coordinates[0];
     }
-
-    return value.geometry.coordinates; 
 }
 
 // 

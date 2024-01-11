@@ -50,6 +50,15 @@
   }
 }
 
+.indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background-color: red;
+}
+
 .header-icon {
   font-size: 1.6rem !important;
 }
@@ -63,5 +72,18 @@
   background-color: var(--tb-login-primary-50);
 }
 
-.fade.show {
+.edit-btn {
+  position: absolute;
+  right: 0;
+  margin-right: -10px;
+  margin-top: 20px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ff5722;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 1;
 }

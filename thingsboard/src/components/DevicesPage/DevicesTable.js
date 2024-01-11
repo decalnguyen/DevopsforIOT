@@ -69,7 +69,7 @@ function DevicesTable({ devicesInfo, checkBoxHandler, handleDeleteDevice, setSho
       </thead>
       <tbody>
         {devicesInfo &&
-          devicesInfo.length > 0 &&
+          devicesInfo?.length > 0 &&
           devicesInfo.map((device, index) => {
             return (
               <tr style={{ cursor: 'pointer' }} onClick={() => setShowCanvas({ index, show: true })}>

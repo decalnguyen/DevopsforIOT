@@ -2,7 +2,6 @@ import classNames from 'classnames/bind';
 import styles from './LoginForm.module.scss';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { authenticate } from '~/services/request';
 import { useAuth } from '~/contexts/AuthContext';
 import { Col, Row, Form, Button, FloatingLabel, Nav, Container } from 'react-bootstrap';
 import { StatusModal } from '../Modal';
@@ -13,7 +12,7 @@ function LoginForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [_platform, set_Platform] = useState('');
-  const { setIsAuthenticated, setToken, setPlatform } = useAuth();
+  const { setIsAuthenticated, setPlatform } = useAuth();
   const { authenticate } = authRequest();
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
@@ -27,7 +26,6 @@ function LoginForm() {
       localStorage.setItem('refreshToken', refreshToken);
       setIsAuthenticated(true);
       setPlatform(_platform);
-      setToken(token);
       navigate('/devices');
     } else {
       setShowModal(true);

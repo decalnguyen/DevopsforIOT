@@ -26,7 +26,7 @@ function Map({ geofence, position, devicesInfo, isEditMode }) {
   const ref = useRef(null);
   // const map = useMap();
   const center =
-    position.length > 0
+    position?.length > 0
       ? {
           lat: position[0].lat,
           lng: position[0].lng,

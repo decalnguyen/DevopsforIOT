@@ -3,7 +3,7 @@ import { useAuth } from '~/contexts/AuthContext';
 
 const useBusPosition = ({ devicesInfo }) => {
   // const [position, setPosition] = useState([]);
-  const { token } = useAuth();
+  const token = localStorage.getItem('accessToken');
   const [position, setPosition] = useState([]);
 
   const onPositionUpdate = useCallback(({ subscriptionId, latitude, longitude }) => {
@@ -27,7 +27,7 @@ const useBusPosition = ({ devicesInfo }) => {
       const object = {
         tsSubCmds:
           devicesInfo &&
-          devicesInfo.length > 0 &&
+          devicesInfo?.length > 0 &&
           devicesInfo.map((device, index) => ({
             entityType: device.id.entityType,
             entityId: device.id.id,

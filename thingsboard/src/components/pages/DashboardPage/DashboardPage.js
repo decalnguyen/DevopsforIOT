@@ -37,7 +37,7 @@ function DashBoard() {
           console.log(data);
         }
         
-        const promises = devicesInfo && devicesInfo.length > 0 && devicesInfo.map(promise);
+        const promises = devicesInfo && devicesInfo?.length > 0 && devicesInfo.map(promise);
         const results = await Promise.all(promises);
         console.log(results);
         }} />

@@ -1,28 +1,30 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getLocalStorageItems } from '~/utils';
 import L from 'leaflet';
-import { Circle,  Polygon, Rectangle, useMap } from 'react-leaflet';
+import { Circle, Polygon, Rectangle, useMap } from 'react-leaflet';
 import TelemetryRequest from '../services/requests/telemetryRequest';
 
-
-const {getAttributesByScope, postAttributes} = TelemetryRequest();
-function useGeoJSON({devicesInfo}) {
-  
+const { getAttributesByScope, postAttributes } = TelemetryRequest();
+function useGeoJSON({ devicesInfo }) {
   const [geoJSON, setGeoJSON] = useState({});
 
   useEffect(() => {
-    if(!devicesInfo || devicesInfo.length === 0) return;
+    if (!devicesInfo || devicesInfo?.length === 0) return;
     const fetchData = async () => {
-        const device = devicesInfo[0];console.log(device);
-        const obj = {entityType: device.id.entityType, entityId: device.id.id, scope:'SERVER_SCOPE', keys: 'perimeter'};
-        console.log(obj);
-        const data = await getAttributesByScope(obj);
-        console.log(data);
-        setGeoJSON(data[0]?.value);
-        console.log(data[0]?.value);
-    }
+      const device = devicesInfo[0];
+      console.log(device);
+      const obj = {
+        entityType: device.id.entityType,
+        entityId: device.id.id,
+        scope: 'SERVER_SCOPE',
+        keys: 'perimeter',
+      };
+      console.log(obj);
+      const data = await getAttributesByScope(obj);
+      if (data && data.length) setGeoJSON(data[0]?.value);
+    };
     fetchData();
-  }, [devicesInfo])
+  }, [devicesInfo]);
 
   const addGeoJSON = (_geoJSON) => {
     const newGeoJSON = [...geoJSON, _geoJSON];
@@ -37,7 +39,7 @@ function useGeoJSON({devicesInfo}) {
   };
 
   const modifyGeoJSON = (index, _geoJSON) => {
-    if (geoJSON.length > 0) {
+    if (geoJSON?.length > 0) {
       const newGeoJSON = geoJSON.map((data, _index) => {
         return index === _index ? _geoJSON : data;
       });
@@ -82,17 +84,25 @@ function useGeoJSON({devicesInfo}) {
     console.log('aaa');
   };
 
-  const handleSave = useCallback(async (deviceInfo) => {
-    localStorage.setItem('geoJSON', JSON.stringify(geoJSON));
-    
-    const {id} = deviceInfo;
-    console.log(geoJSON);
-    const response = await postAttributes({entityType: id.entityType, entityId: id.id, scope: 'SERVER_SCOPE', telemetry: {perimeter:geoJSON}});
-    console.log(response);
-  }, [geoJSON]);
+  const handleSave = useCallback(
+    async (deviceInfo) => {
+      localStorage.setItem('geoJSON', JSON.stringify(geoJSON));
+
+      const { id } = deviceInfo;
+      console.log(geoJSON);
+      const response = await postAttributes({
+        entityType: id.entityType,
+        entityId: id.id,
+        scope: 'SERVER_SCOPE',
+        telemetry: { perimeter: geoJSON ? geoJSON : {} },
+      });
+      console.log(response);
+    },
+    [geoJSON],
+  );
 
   const render = useCallback(() => {
-    if (geoJSON && geoJSON.length > 0) {
+    if (geoJSON && geoJSON?.length > 0) {
       return geoJSON.map((data, index) => {
         switch (data.type) {
           case 'rectangle':
@@ -123,4 +133,3 @@ function useGeoJSON({devicesInfo}) {
 }
 
 export default useGeoJSON;
-
