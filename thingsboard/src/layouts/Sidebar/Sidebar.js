@@ -1,4 +1,3 @@
-// Sidebar.js
 import React, { useState } from 'react';
 import Nav from 'react-bootstrap/Nav';
 import classNames from 'classnames/bind';
@@ -21,26 +20,6 @@ const Sidebar = () => {
   };
 
   return (
-    // <Tab.Container id="left-tabs-example" className={cx('sidebar')}>
-    //   <Row className={cx('sidebar')}>
-    //     <Col sm={12}>
-    //       <Nav className="flex-column">
-    //         {navItems.map((item, index) => (
-    //           <Nav.Item
-    //             className={cx('item', { active: index === active })}
-    //             key={index}
-    //             onClick={() => handleTabSelect(index)}
-    //           >
-    //             <Nav.Link>
-    //               <span className={cx('icon')}>{item.Icon}</span>
-    //               <span className={cx('text')}> {item.text}</span>
-    //             </Nav.Link>
-    //           </Nav.Item>
-    //         ))}
-    //       </Nav>
-    //     </Col>
-    //   </Row>
-    // </Tab.Container>
     <Container style={{ backgroundColor: '', width: '100%', height: '100%' }} className={`col-3 ${cx('sidebar')}`}>
       <Nav className="flex-column">
         {navItems.map((item, index) => (
