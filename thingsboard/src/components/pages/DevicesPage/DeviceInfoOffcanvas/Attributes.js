@@ -10,8 +10,7 @@ import { formatTimestamp } from '~/utils';
 import AddModal from './AddModal';
 import MultiSelectPanel from '~/components/MultiSelectPanel';
 import { useCheckboxItems } from '~/hooks';
-import { transform } from '../../../utils';
-import { useFade } from '../../../hooks';
+import { transform } from '~/utils';
 
 const cx = classNames.bind(styles);
 
@@ -129,9 +128,7 @@ function Attributes({ deviceInfo }) {
                   </td>
                   <td>
                     <Stack direction="horizontal" gap={2}>
-                      <p className={global['text-overflow']}>
-                        {transform(attribute.value)}
-                      </p>
+                      <p className={global['text-overflow']}>{transform(attribute.value)}</p>
                       <CustomButton.CopyButton textToCopy={attribute.value} />
                     </Stack>
                   </td>
@@ -140,29 +137,28 @@ function Attributes({ deviceInfo }) {
             })}
         </tbody>
       </Table>
-      
-        <AddModal
-          deviceInfo={deviceInfo}
-          scope={scope}
-          title="attributes"
-          onSubmit={async (values) => {
-            const telemetry = {
-              [values.key]: values.value,
-            };
-            const telemetryObject = {
-              entityType: deviceInfo.id.entityType,
-              entityId: deviceInfo.id.id,
-              telemetry,
-              scope,
-            };
-            handleAddAttribute(telemetryObject);
-            setVisible(false);
-            // handleAddAttribute(telemetryObject);
-          }}
-          isVisible={isVisible}
-          setVisible={setVisible}
-        />
-      
+
+      <AddModal
+        deviceInfo={deviceInfo}
+        scope={scope}
+        title="attributes"
+        onSubmit={async (values) => {
+          const telemetry = {
+            [values.key]: values.value,
+          };
+          const telemetryObject = {
+            entityType: deviceInfo.id.entityType,
+            entityId: deviceInfo.id.id,
+            telemetry,
+            scope,
+          };
+          handleAddAttribute(telemetryObject);
+          setVisible(false);
+          // handleAddAttribute(telemetryObject);
+        }}
+        isVisible={isVisible}
+        setVisible={setVisible}
+      />
     </CustomContainer>
   );
 }

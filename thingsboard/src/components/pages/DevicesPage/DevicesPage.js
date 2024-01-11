@@ -5,15 +5,15 @@ import { Container } from 'react-bootstrap';
 
 import styles from './DevicesPage.module.scss';
 import classNames from 'classnames/bind';
-import { LoadingModal, StatusModal } from '../Modal';
+import { LoadingModal, StatusModal } from '~/components/Modal';
 import DevicesTable from './DevicesTable';
 import DeviceInfoCanvas from './DeviceInfoOffcanvas/DeviceInfoCanvas';
 import { deviceRequest, devicesInfoRequest } from '~/services/requests';
 import { useCheckboxItems, useDevicesInfo } from '~/hooks';
 import { getLocalStorageItems } from '~/utils';
-import MultiSelectPanel from '../MultiSelectPanel';
-import CustomContainer from '../CustomContainer';
-import PaginationHandle from '../PaginationHandle';
+import MultiSelectPanel from '~/components/MultiSelectPanel';
+import CustomContainer from '~/components/CustomContainer';
+import PaginationHandle from '~/components/PaginationHandle';
 
 const cx = classNames.bind(styles);
 
