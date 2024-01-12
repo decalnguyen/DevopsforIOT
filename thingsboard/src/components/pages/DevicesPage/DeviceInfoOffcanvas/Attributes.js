@@ -1,6 +1,5 @@
 import { Button, Form, Stack, Table } from 'react-bootstrap';
 import CustomContainer from '~/components/CustomContainer';
-import global from '~/components/GlobalStyles/GlobalStyles.module.scss';
 import styles from './DeviceInfoOffcanvas.module.scss';
 import classNames from 'classnames/bind';
 import { CustomButton } from '~/components/CustomButton';
@@ -11,6 +10,7 @@ import AddModal from './AddModal';
 import MultiSelectPanel from '~/components/MultiSelectPanel';
 import { useCheckboxItems } from '~/hooks';
 import { transform } from '~/utils';
+import CopyableElement from './CopyableElement';
 
 const cx = classNames.bind(styles);
 
@@ -119,18 +119,14 @@ function Attributes({ deviceInfo }) {
                       onChange={() => handleCheckboxChange(index)}
                     ></Form.Check>
                   </td>
-                  <td>{formatTimestamp(attribute.lastUpdateTs)}</td>
                   <td>
-                    <Stack direction="horizontal" gap={2}>
-                      {attribute.key}
-                      <CustomButton.CopyButton textToCopy={attribute.key} />
-                    </Stack>
+                    <p className={global['text-overflow']}>{formatTimestamp(attribute.lastUpdateTs)}</p>
                   </td>
                   <td>
-                    <Stack direction="horizontal" gap={2}>
-                      <p className={global['text-overflow']}>{transform(attribute.value)}</p>
-                      <CustomButton.CopyButton textToCopy={attribute.value} />
-                    </Stack>
+                    <CopyableElement value={transform(attribute?.key)} />
+                  </td>
+                  <td>
+                    <CopyableElement value={transform(attribute?.value)} />
                   </td>
                 </tr>
               );

@@ -11,6 +11,7 @@ import classNames from 'classnames/bind';
 import AddModal from './AddModal';
 import { useCheckboxItems } from '~/hooks';
 import MultiSelectPanel from '~/components/MultiSelectPanel';
+import CopyableElement from './CopyableElement';
 
 const cx = classNames.bind(styles);
 
@@ -108,18 +109,10 @@ function LatestTelemetry({ deviceInfo }) {
                   </td>
                   <td>{formatTimestamp(attribute.lastUpdateTs)}</td>
                   <td>
-                    <Stack direction="horizontal" gap={2}>
-                      {attribute.key}
-                      <CustomButton.CopyButton textToCopy={attribute.key} />
-                    </Stack>
+                    <CopyableElement value={attribute?.key} />
                   </td>
                   <td>
-                    <Stack direction="horizontal" gap={2}>
-                      <p style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                        {typeof attribute.value === 'boolean' ? (attribute.value ? 'true' : 'false') : attribute.value}
-                      </p>
-                      <CustomButton.CopyButton textToCopy={attribute.value} />
-                    </Stack>
+                    <CopyableElement value={attribute?.value} />
                   </td>
                   <td>
                     <CustomButton.DeleteButton onClick={() => handleDeleteTelemetry(index)} />
@@ -130,27 +123,25 @@ function LatestTelemetry({ deviceInfo }) {
         </tbody>
       </Table>
 
-      
-        <AddModal
-          deviceInfo={deviceInfo}
-          isVisible={isVisible}
-          setVisible={setVisible}
-          title="telemetry"
-          onSubmit={async (values) => {
-            const telemetry = {
-              [values.key]: values.value,
-            };
-            const telemetryObject = {
-              entityType: deviceInfo.id.entityType,
-              entityId: deviceInfo.id.id,
-              telemetry,
-            };
-            postTelemetry(telemetryObject);
+      <AddModal
+        deviceInfo={deviceInfo}
+        isVisible={isVisible}
+        setVisible={setVisible}
+        title="telemetry"
+        onSubmit={async (values) => {
+          const telemetry = {
+            [values.key]: values.value,
+          };
+          const telemetryObject = {
+            entityType: deviceInfo.id.entityType,
+            entityId: deviceInfo.id.id,
+            telemetry,
+          };
+          postTelemetry(telemetryObject);
 
-            setVisible(false);
-          }}
-        />
-      
+          setVisible(false);
+        }}
+      />
     </CustomContainer>
   );
 }
