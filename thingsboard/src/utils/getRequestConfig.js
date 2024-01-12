@@ -1,4 +1,6 @@
-function getRequestConfig({ platform, token, api, data, params }) {
+function getRequestConfig({ api, data, params }) {
+  const platform = localStorage.getItem('platform');
+  const token = localStorage.getItem('accessToken');
   return {
     platform,
     token,

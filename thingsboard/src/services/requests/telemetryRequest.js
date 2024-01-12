@@ -1,16 +1,6 @@
-const { request, getLocalStorageItems } = require('~/utils');
+const { request, getRequestConfig } = require('~/utils');
 
 function TelemetryRequest() {
-  const { token, platform } = getLocalStorageItems();
-  const getRequestConfig = ({ api, data = {}, params = {} }) => {
-    return {
-      platform,
-      token,
-      api,
-      data,
-      configs: { params },
-    };
-  };
   const deleteEntityTimeSeries = async ({ entityType, entityId, keys }) => {
     const api = `/plugins/telemetry/${entityType}/${entityId}/timeseries/delete`;
     const data = getRequestConfig({ api, params: { keys, deleteAllDataForKeys: true } });
@@ -49,7 +39,7 @@ function TelemetryRequest() {
 
   const getAttributesByScope = async ({ entityType, entityId, scope, keys }) => {
     const api = `/plugins/telemetry/${entityType}/${entityId}/values/attributes/${scope}`;
-    const data = getRequestConfig({ api, params: {keys} });
+    const data = getRequestConfig({ api, params: { keys } });
     const response = await request.get(data);
     return response?.data;
   };

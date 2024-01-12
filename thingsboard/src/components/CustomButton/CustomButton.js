@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import {Edit2} from 'react-feather'
+import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Book, Edit2 } from 'react-feather';
 function CustomButton({ children, onClick, toolTip, placement = 'top', ...props }) {
   return (
     <OverlayTrigger placement={placement} overlay={<Tooltip>{toolTip}</Tooltip>}>
@@ -45,7 +45,7 @@ export function CopyButton({ textToCopy, title, ...props }) {
   return (
     <div>
       <CustomButton onClick={copyToClipboard} toolTip={toolTip} {...props}>
-        <i class="bi bi-clipboard-fill" style={{ color: '#ccc' }}></i>
+        <i class="bi bi-clipboard-fill"></i>
         <span>{title}</span>
       </CustomButton>
     </div>
@@ -77,8 +77,19 @@ export function SearchButton({ onClick, ...props }) {
 }
 export default CustomButton;
 
-export function EditButton({onClick, ...props}) {
-  return <CustomButton toolTip="Toggle Edit Mode" onClick={onClick} {...props}>
-      <Edit2 color='white'/>
+export function EditButton({ onClick, ...props }) {
+  return (
+    <CustomButton toolTip="Toggle Edit Mode" onClick={onClick} {...props}>
+      <Edit2 color="white" />
     </CustomButton>
+  );
+}
+
+export function DocumentationButton({ onClick, target = '_blank', ...props }) {
+  return (
+    <Button as="a" target={target} {...props}>
+      <Book />
+      <span style={{ fontSize: '1.4rem', textAlign: 'center', marginLeft: '4px' }}>Documentation</span>
+    </Button>
+  );
 }

@@ -6,12 +6,17 @@ import classNames from 'classnames/bind';
 import usedeviceRequest from '~/services/requests/deviceRequest';
 import { toast } from 'react-toastify';
 import { EditButton } from '~/components/CustomButton/CustomButton';
+import CheckConnectivity from './CheckConnectivity/CheckConnectivity';
 
 const cx = classNames.bind(styles);
+
+const primaryButton = ['Manage credentials', 'Manage owners and groups', 'Check connectivity', 'Delete device'];
+// In the future, if there are more components that suits all these button, we can create an array of modals that can be rendered
 
 function Details({ deviceInfo }) {
   const { getDeviceCredentialsByDeviceId } = usedeviceRequest();
   const [isEditMode, setEditMode] = useState(false);
+  const [showModal, setShowModal] = useState(Array(4).fill(false)); // showModal is an array that manages the open/close state of many modals
   const inputs = useMemo(() => {
     return (
       deviceInfo && [
@@ -52,17 +57,20 @@ function Details({ deviceInfo }) {
       ]
     );
   }, [deviceInfo]);
-
+  const handleToggleModal = (index) => {
+    setShowModal((prev) => prev.map((item, _index) => (_index === index ? !item : item)));
+  };
   return (
     <div style={{ position: 'relative' }}>
       <EditButton onClick={() => setEditMode((prev) => !prev)} className={cx('edit-btn')} />
       {!isEditMode && (
         <div>
           <Stack direction="horizontal" gap={5} style={{ marginTop: '16px' }}>
-            <Button className={cx('primary-btn')}>Manage credentials</Button>
-            <Button className={cx('primary-btn')}>Manage owners and groups</Button>
-            <Button className={cx('primary-btn')}>Check connectivity</Button>
-            <Button className={cx('primary-btn')}> Delete device</Button>
+            {primaryButton.map((item, index) => (
+              <Button className={cx('primary-btn')} key={index} onClick={() => handleToggleModal(index)}>
+                {item}
+              </Button>
+            ))}
           </Stack>
           <Stack direction="horizontal" gap={5} style={{ marginTop: '16px' }}>
             <Button
@@ -119,6 +127,8 @@ function Details({ deviceInfo }) {
             })}
         </Stack>
       </Form>
+
+      <CheckConnectivity isVisible={showModal[2]} onHide={() => handleToggleModal(2)} deviceInfo={deviceInfo} />
     </div>
   );
 }

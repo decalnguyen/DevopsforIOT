@@ -152,7 +152,6 @@ td {
 }
 
 .modal {
-  // display: none;
   opacity: 0;
   width: 30%;
   position: fixed;
@@ -161,7 +160,6 @@ td {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  // animation: fadeIn 1s ease;
 
   &.fade {
     animation: fadeOut 0.3s ease;
@@ -187,11 +185,13 @@ td {
 }
 
 @keyframes fadeOut {
-  0% {opacity: 1;}
-  100% {opacity: 0;} 
-} 
-
-
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 
 .sr-only {
   display: none;
