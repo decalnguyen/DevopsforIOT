@@ -1,6 +1,4 @@
-import { toast } from 'react-toastify';
-
-const { request, getLocalStorageItems, getRequestConfig } = require('~/utils');
+const { request, getRequestConfig } = require('~/utils');
 
 function DeviceRequest() {
   const getDeviceCredentialsByDeviceId = async ({ deviceId }) => {

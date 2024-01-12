@@ -1,21 +1,15 @@
 import { useAuth } from './contexts/AuthContext';
 import { privateRoutes, publicRoutes } from './routes';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment } from 'react';
 import { ToastContainer } from 'react-toastify';
 import './App.css';
 import { LoadingModal } from './components/Modal';
+import { useLoading } from './contexts';
 
 function App() {
   const { isAuthenticated } = useAuth();
-  const [showLoading, setShowLoading] = useState(true);
-
-  useEffect(() => {
-    const delay = setTimeout(() => {
-      setShowLoading(false);
-    }, 1000);
-    return () => clearTimeout(delay);
-  }, []);
+  const { loading, setLoading } = useLoading();
 
   return (
     <div style={{ height: '100px' }}>
@@ -61,7 +55,6 @@ function App() {
 
       <ToastContainer
         position="bottom-right"
-        autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -72,7 +65,7 @@ function App() {
         theme="light"
       />
 
-      <LoadingModal show={showLoading} />
+      <LoadingModal show={loading} />
     </div>
   );
 }

@@ -7,16 +7,32 @@ import usedeviceRequest from '~/services/requests/deviceRequest';
 import { toast } from 'react-toastify';
 import { EditButton } from '~/components/CustomButton/CustomButton';
 import CheckConnectivity from './CheckConnectivity/CheckConnectivity';
+import { deviceRequest } from '~/services/requests';
+import { useLoading } from '~/contexts';
 
 const cx = classNames.bind(styles);
 
-const primaryButton = ['Manage credentials', 'Manage owners and groups', 'Check connectivity', 'Delete device'];
+const modalButton = ['Manage credentials', 'Manage owners and groups', 'Check connectivity'];
 // In the future, if there are more components that suits all these button, we can create an array of modals that can be rendered
+const { deleteDevice } = deviceRequest();
+const { getDeviceCredentialsByDeviceId } = usedeviceRequest();
 
-function Details({ deviceInfo }) {
-  const { getDeviceCredentialsByDeviceId } = usedeviceRequest();
+const handleDeleteDevice = async (deviceInfo, setLoading, onHide) => {
+  try {
+    setLoading(true);
+    await deleteDevice({ deviceId: deviceInfo?.id.id });
+    setLoading(false);
+    onHide();
+    toast.success('Device deleted successfully', { autoClose: '1000' });
+  } catch (e) {
+    toast.error('Device deletion failed', { autoClose: '1000' });
+  }
+};
+
+function Details({ deviceInfo, onHide }) {
+  const { setLoading } = useLoading();
   const [isEditMode, setEditMode] = useState(false);
-  const [showModal, setShowModal] = useState(Array(4).fill(false)); // showModal is an array that manages the open/close state of many modals
+  const [showModal, setShowModal] = useState(Array(modalButton.length).fill(false)); // showModal is an array that manages the open/close state of many modals
   const inputs = useMemo(() => {
     return (
       deviceInfo && [
@@ -60,17 +76,25 @@ function Details({ deviceInfo }) {
   const handleToggleModal = (index) => {
     setShowModal((prev) => prev.map((item, _index) => (_index === index ? !item : item)));
   };
+
   return (
     <div style={{ position: 'relative' }}>
       <EditButton onClick={() => setEditMode((prev) => !prev)} className={cx('edit-btn')} />
       {!isEditMode && (
         <div>
           <Stack direction="horizontal" gap={5} style={{ marginTop: '16px' }}>
-            {primaryButton.map((item, index) => (
+            {modalButton.map((item, index) => (
               <Button className={cx('primary-btn')} key={index} onClick={() => handleToggleModal(index)}>
                 {item}
               </Button>
             ))}
+            <Button
+              className={cx('primary-btn')}
+              key="delete"
+              onClick={() => handleDeleteDevice(deviceInfo, setLoading, onHide)}
+            >
+              Delete device
+            </Button>
           </Stack>
           <Stack direction="horizontal" gap={5} style={{ marginTop: '16px' }}>
             <Button

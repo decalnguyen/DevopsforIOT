@@ -8,7 +8,6 @@ import CustomContainer from '~/components/CustomContainer';
 import { useEffect, useState } from 'react';
 import { deviceConnectivityRequest } from '~/services/requests';
 import { TRANSPORT, OS, install, renderCommands, TRANSPORT_VARIANTS, installContent } from './content';
-import Footer from '~/components/Footer';
 const cx = classNames.bind(styles);
 const { getDevicePublishTelemetryCommands } = deviceConnectivityRequest();
 
