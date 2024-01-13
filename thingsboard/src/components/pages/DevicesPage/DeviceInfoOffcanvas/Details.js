@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Button, Container, FloatingLabel, Form, Stack } from 'react-bootstrap';
+import { Button, Container, FloatingLabel, Form, Modal, Stack } from 'react-bootstrap';
 
 import styles from './DeviceInfoOffcanvas.module.scss';
 import classNames from 'classnames/bind';
@@ -17,22 +17,13 @@ const modalButton = ['Manage credentials', 'Manage owners and groups', 'Check co
 const { deleteDevice } = deviceRequest();
 const { getDeviceCredentialsByDeviceId } = usedeviceRequest();
 
-const handleDeleteDevice = async (deviceInfo, setLoading, onHide) => {
-  try {
-    setLoading(true);
-    await deleteDevice({ deviceId: deviceInfo?.id.id });
-    setLoading(false);
-    onHide();
-    toast.success('Device deleted successfully', { autoClose: '1000' });
-  } catch (e) {
-    toast.error('Device deletion failed', { autoClose: '1000' });
-  }
-};
+const confirmToDeleteDevice = () => {};
 
 function Details({ deviceInfo, onHide }) {
   const { setLoading } = useLoading();
   const [isEditMode, setEditMode] = useState(false);
   const [showModal, setShowModal] = useState(Array(modalButton.length).fill(false)); // showModal is an array that manages the open/close state of many modals
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const inputs = useMemo(() => {
     return (
       deviceInfo && [
@@ -76,7 +67,18 @@ function Details({ deviceInfo, onHide }) {
   const handleToggleModal = (index) => {
     setShowModal((prev) => prev.map((item, _index) => (_index === index ? !item : item)));
   };
-
+  const handleDeleteDevice = async () => {
+    setShowConfirmModal(true);
+    try {
+      setLoading(true);
+      await deleteDevice({ deviceId: deviceInfo?.id.id });
+      setLoading(false);
+      onHide();
+      toast.success('Device deleted successfully', { autoClose: '1000' });
+    } catch (e) {
+      toast.error('Device deletion failed', { autoClose: '1000' });
+    }
+  };
   return (
     <div style={{ position: 'relative' }}>
       <EditButton onClick={() => setEditMode((prev) => !prev)} className={cx('edit-btn')} />
@@ -88,11 +90,7 @@ function Details({ deviceInfo, onHide }) {
                 {item}
               </Button>
             ))}
-            <Button
-              className={cx('primary-btn')}
-              key="delete"
-              onClick={() => handleDeleteDevice(deviceInfo, setLoading, onHide)}
-            >
+            <Button className={cx('primary-btn')} key="delete" onClick={handleDeleteDevice}>
               Delete device
             </Button>
           </Stack>
@@ -151,6 +149,9 @@ function Details({ deviceInfo, onHide }) {
             })}
         </Stack>
       </Form>
+      <Modal show={showConfirmModal}>
+        <Modal.Header closeButton>Are you sure?</Modal.Header>
+      </Modal>
 
       <CheckConnectivity isVisible={showModal[2]} onHide={() => handleToggleModal(2)} deviceInfo={deviceInfo} />
     </div>
