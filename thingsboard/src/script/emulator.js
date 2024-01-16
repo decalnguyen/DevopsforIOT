@@ -96,7 +96,7 @@ var index = 0,
 client.on('message', function (topic, message) {
   console.log('request.topic: ' + topic);
   console.log('request.body: ' + message.toString());
-  var requestId = topic.slice('v1/devices/me/rpc/request/'.length),
+  var requestId = topic.slice('v1/devices/me/rpc/request/'?.length),
     messageData = JSON.parse(message.toString());
   if (messageData.method === 'setSoftwareVersion') {
     var softwareVersion = messageData.params.value;
@@ -117,6 +117,12 @@ function publishTelemetry() {
       speed: speed,
       status: status,
       radius: circle,
+      perimeter: {
+        latitude: 37.78448679174453,
+        longitude: -122.48097302826606,
+        radius: 1817.1804021330854,
+        radiusUnit: 'METER',
+      },
     }),
   );
   stopTime++;

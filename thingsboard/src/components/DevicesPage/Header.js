@@ -35,57 +35,8 @@ function Header({ onNewDeviceAdded }) {
           </Row>
         </Col>
       </Row>
-      {/* <div className={cx('divider')}></div> */}
 
-      {showModal && (
-        <AddDeviceModal showModal={showModal} setShowModal={setShowModal} onNewDeviceAdded={onNewDeviceAdded} />
-      )}
-      {/* <Row className={cx('table')}>
-        <Col className="col-3">
-          <Row>
-            <Col className="col-3">
-              <Form.Check type="checkbox" id="default" />
-            </Col>
-            <Col className="col-4">
-              <span>Created time</span>
-            </Col>
-            <Col>
-              <span>Name</span>
-            </Col>
-          </Row>
-        </Col>
-
-        <Col>
-          <Row>
-            <Col className="col-2">
-              <span>Device profile</span>
-            </Col>
-            <Col className="col-2">
-              <span>Label</span>
-            </Col>
-            <Col className="col-2">
-              <span>State</span>
-            </Col>
-            <Col className="col-3">
-              <span>Customer name</span>
-            </Col>
-            <Col className="col-3">
-              <span>Group</span>
-            </Col>
-          </Row>
-        </Col>
-
-        <Col className="col-2">
-          <Row>
-            <Col>
-              <span>Is gateway</span>
-            </Col>
-            <Col></Col>
-          </Row>
-        </Col>
-      </Row>
-
-      <div className={cx('divider')}></div> */}
+      <AddDeviceModal showModal={showModal} setShowModal={setShowModal} onNewDeviceAdded={onNewDeviceAdded} />
     </Container>
   );
 }

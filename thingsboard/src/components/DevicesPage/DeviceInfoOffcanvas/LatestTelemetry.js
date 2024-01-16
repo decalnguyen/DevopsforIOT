@@ -17,9 +17,9 @@ const cx = classNames.bind(styles);
 function LatestTelemetry({ deviceInfo }) {
   const { deleteEntityTimeSeries, postTelemetry } = telemetryRequest();
   const [telemetry] = useTemeletry({ deviceInfo });
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [isVisible, setVisible] = useState(false);
   const { checkedItems, setCheckedItems, handleCheckboxChange, checkAll, setCheckAll, handleCheckAll } =
-    useCheckboxItems(telemetry ? telemetry.length : 0);
+    useCheckboxItems(telemetry ? telemetry?.length : 0);
   const elements = useMemo(() => {
     return [
       {
@@ -30,17 +30,17 @@ function LatestTelemetry({ deviceInfo }) {
       {
         title: 'lastUpdateTime',
         component: <span>Last Update Time</span>,
-        width: '30%',
+        width: '15%',
       },
       {
         title: 'key',
         component: <span>Key</span>,
-        width: '10%',
+        width: '30%',
       },
       {
         title: 'value',
+        width: '30%',
         component: <span>Value</span>,
-        width: '40%',
       },
       {
         title: '',
@@ -69,34 +69,33 @@ function LatestTelemetry({ deviceInfo }) {
   return (
     <CustomContainer>
       <Stack direction="horizontal">
-        {checkedItems.length === 0 ? (
+        {checkedItems?.length === 0 ? (
           <>
             <span className={cx('header-title')}>Telemetry</span>
             <div className="ms-auto">
-              <CustomButton.AddButton className={cx('header-icon')} onClick={() => setShowAddModal(true)} />
+              <CustomButton.AddButton className={cx('header-icon')} onClick={() => setVisible(true)} />
               <CustomButton.SearchButton className={cx('header-icon')} />
             </div>
           </>
         ) : (
-          <MultiSelectPanel title={`${checkedItems.length} telemetry selected`} onDeleteItems={handleDeleteItems} />
+          <MultiSelectPanel title={`${checkedItems?.length} telemetry selected`} onDeleteItems={handleDeleteItems} />
         )}
       </Stack>
 
-      <Table>
-        <thead>
-          <tr style={{ padding: '4px 4px' }}>
-            {elements.map((element, index) => {
-              return (
-                <th key={index} style={{ width: element.width }}>
-                  {element.component}
-                </th>
-              );
-            })}
-          </tr>
-        </thead>
+      <Table style={{ tableLayout: 'fixed', overflow: 'hidden' }}>
+        <colgroup>
+          {elements.map((element) => (
+            <col style={{ width: element.width }}></col>
+          ))}
+        </colgroup>
+        <tr style={{ padding: '4px 4px' }}>
+          {elements.map((element, index) => {
+            return <th key={index}>{element.component}</th>;
+          })}
+        </tr>
         <tbody>
           {telemetry &&
-            telemetry.length > 0 &&
+            telemetry?.length > 0 &&
             telemetry.map((attribute, index) => {
               return (
                 <tr>
@@ -116,7 +115,9 @@ function LatestTelemetry({ deviceInfo }) {
                   </td>
                   <td>
                     <Stack direction="horizontal" gap={2}>
-                      {typeof attribute.value === 'boolean' ? (attribute.value ? 'true' : 'false') : attribute.value}
+                      <p style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                        {typeof attribute.value === 'boolean' ? (attribute.value ? 'true' : 'false') : attribute.value}
+                      </p>
                       <CustomButton.CopyButton textToCopy={attribute.value} />
                     </Stack>
                   </td>
@@ -129,11 +130,11 @@ function LatestTelemetry({ deviceInfo }) {
         </tbody>
       </Table>
 
-      {showAddModal && (
+      
         <AddModal
           deviceInfo={deviceInfo}
-          showAddModal={showAddModal}
-          setShowAddModal={setShowAddModal}
+          isVisible={isVisible}
+          setVisible={setVisible}
           title="telemetry"
           onSubmit={async (values) => {
             const telemetry = {
@@ -146,10 +147,10 @@ function LatestTelemetry({ deviceInfo }) {
             };
             postTelemetry(telemetryObject);
 
-            setShowAddModal(false);
+            setVisible(false);
           }}
         />
-      )}
+      
     </CustomContainer>
   );
 }

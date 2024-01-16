@@ -12,6 +12,8 @@ import { deviceRequest, devicesInfoRequest } from '~/services/requests';
 import { useCheckboxItems, useDevicesInfo } from '~/hooks';
 import { getLocalStorageItems } from '~/utils';
 import MultiSelectPanel from '../MultiSelectPanel';
+import CustomContainer from '../CustomContainer';
+import PaginationHandle from '../PaginationHandle';
 
 const cx = classNames.bind(styles);
 
@@ -23,7 +25,7 @@ function DevicesPage() {
   const { devicesInfo, setDevicesInfo } = useDevicesInfo();
 
   const { checkedItems, setCheckedItems, handleCheckboxChange, checkAll, setCheckAll, handleCheckAll } =
-    useCheckboxItems(devicesInfo ? devicesInfo.length : 0);
+    useCheckboxItems(devicesInfo ? devicesInfo?.length : 0);
   const { getDevicesInfo } = devicesInfoRequest();
   const { deleteDevice } = deviceRequest();
 
@@ -34,7 +36,7 @@ function DevicesPage() {
   };
 
   const handleDeleteDevice = async (index) => {
-    if (checkedItems.length === 0) {
+    if (checkedItems?.length === 0) {
       const deviceId = devicesInfo[index].id.id;
       setShowModals((values) => ({ ...values, loading: true }));
       const response = await deleteDevice({ platform, token, deviceId });
@@ -58,7 +60,6 @@ function DevicesPage() {
         }
       });
       setShowModals((values) => ({ ...values, loading: true }));
-      const deletionResults = await Promise.all(deletePromises);
       setShowModals((values) => ({ ...values, loading: false }));
       const newDevicesInfo = await getDevicesInfo({});
       setDevicesInfo(newDevicesInfo);
@@ -66,19 +67,18 @@ function DevicesPage() {
   };
 
   return (
-    <Container>
-      {checkedItems.length === 0 ? (
+    <CustomContainer>
+      {checkedItems?.length === 0 ? (
         <Header onNewDeviceAdded={handleNewDeviceAdded} />
       ) : (
         <div className={cx('header-wrapper')}>
           <MultiSelectPanel
             onDeleteItems={handleDeleteDevice}
-            title={`${checkedItems.length} ${checkedItems.length === 1 ? 'device' : 'devices'} selected`}
+            title={`${checkedItems?.length} ${checkedItems?.length === 1 ? 'device' : 'devices'} selected`}
           />
         </div>
       )}
       <div className={cx('divider')}></div>
-
       <DevicesTable
         devicesInfo={devicesInfo}
         handleDeleteDevice={handleDeleteDevice}
@@ -92,13 +92,15 @@ function DevicesPage() {
         bodyText="Delete device succesfully!"
         onHide={() => setShowModals((values) => ({ ...values, status: false }))}
       />
-      {showCanvas.show && (
-        <DeviceInfoCanvas
-          deviceInfo={devicesInfo[showCanvas.index]}
-          onHide={() => setShowCanvas((values) => ({ ...values, show: false }))}
-        />
-      )}
-    </Container>
+
+      <DeviceInfoCanvas
+        deviceInfo={devicesInfo[showCanvas.index]}
+        onHide={() => setShowCanvas((values) => ({ ...values, show: false }))}
+        show={showCanvas.show}
+      />
+
+      <PaginationHandle />
+    </CustomContainer>
   );
 }
 

@@ -1,14 +1,26 @@
-import { MainLayout, LoginLayout } from './layouts';
-import Home from '~/components/Home';
-import { routes } from './routes';
-import { useAuth } from '~/contexts/AuthContext';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Fragment } from 'react';
+import { useAuth } from './contexts/AuthContext';
+import { privateRoutes, publicRoutes } from './routes';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { Fragment, useEffect, useState } from 'react';
+import { ToastContainer } from 'react-toastify';
+import './App.css';
+import { LoadingModal } from './components/Modal';
+
 function App() {
+  const { isAuthenticated } = useAuth();
+  const [showLoading, setShowLoading] = useState(true);
+
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      setShowLoading(false);
+    }, 1000);
+    return () => clearTimeout(delay);
+  }, []);
+
   return (
-    <Router>
+    <div style={{ height: '100px' }}>
       <Routes>
-        {routes.map((route, index) => {
+        {publicRoutes.map((route, index) => {
           const Page = route.component;
           const Layout = route.layout === null ? Fragment : route.layout;
 
@@ -24,8 +36,44 @@ function App() {
             />
           );
         })}
+        {privateRoutes.map((route, index) => {
+          const Page = route.component;
+          const Layout = route.layout === null ? Fragment : route.layout;
+
+          return (
+            <Route
+              isAuthenticated={isAuthenticated}
+              key={index}
+              path={route.path}
+              element={
+                isAuthenticated ? (
+                  <Layout>
+                    <Page />
+                  </Layout>
+                ) : (
+                  <Navigate to="/auth"></Navigate>
+                )
+              }
+            />
+          );
+        })}
       </Routes>
-    </Router>
+
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+
+      <LoadingModal show={showLoading} />
+    </div>
   );
 }
 

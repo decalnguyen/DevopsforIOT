@@ -41,7 +41,7 @@ const Sidebar = () => {
     //     </Col>
     //   </Row>
     // </Tab.Container>
-    <Container style={{ backgroundColor: '', width: '100%', height: '100vh' }} className={`col-3 ${cx('sidebar')}`}>
+    <Container style={{ backgroundColor: '', width: '100%', height: '100%' }} className={`col-3 ${cx('sidebar')}`}>
       <Nav className="flex-column">
         {navItems.map((item, index) => (
           <Nav.Item

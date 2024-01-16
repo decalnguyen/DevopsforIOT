@@ -2,26 +2,31 @@ import { LoginLayout, MainLayout } from '~/layouts';
 import { DevicesPage } from '~/components/DevicesPage';
 import config from '~/config';
 import Home from '~/components/Home';
-import Dashboard from '~/components/Dashboard';
-export const routes = [
+import DashboardPage from '~/components/pages/DashboardPage';
+
+export const privateRoutes = [
   {
-    path: config.routes.home,
+    path: config.privateRoutes.home,
     component: Home,
     layout: null,
   },
   {
-    path: config.routes.devices,
+    path: config.privateRoutes.devices,
     component: DevicesPage,
     layout: MainLayout,
   },
   {
-    path: config.routes.login,
-    component: LoginLayout,
-    layout: null,
-  },
-  {
-    path: config.routes.dashboard,
-    component: Dashboard,
+    path: config.privateRoutes.dashboard,
+    component: DashboardPage,
     layout: MainLayout,
   },
 ];
+
+export const publicRoutes = [
+  {
+    path: config.publicRoutes.login,
+    component: LoginLayout,
+    layout: null,
+  },
+
+]

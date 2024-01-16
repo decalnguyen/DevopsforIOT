@@ -1,6 +1,6 @@
 import { Button, Form, Stack, Table } from 'react-bootstrap';
 import CustomContainer from '~/components/CustomContainer';
-
+import global from '~/components/GlobalStyles/GlobalStyles.module.scss';
 import styles from './DeviceInfoOffcanvas.module.scss';
 import classNames from 'classnames/bind';
 import { CustomButton } from '~/components/CustomButton';
@@ -10,6 +10,8 @@ import { formatTimestamp } from '~/utils';
 import AddModal from './AddModal';
 import MultiSelectPanel from '~/components/MultiSelectPanel';
 import { useCheckboxItems } from '~/hooks';
+import { transform } from '../../../utils';
+import { useFade } from '../../../hooks';
 
 const cx = classNames.bind(styles);
 
@@ -21,8 +23,9 @@ function Attributes({ deviceInfo }) {
     scope,
   });
   const { checkedItems, setCheckedItems, handleCheckboxChange, checkAll, setCheckAll, handleCheckAll } =
-    useCheckboxItems(attributes ? attributes.length : 0);
-  const [showAddModal, setShowAddModal] = useState(false);
+    useCheckboxItems(attributes ? attributes?.length : 0);
+  // const [showAddModal, setShowAddModal] = useState(false);
+  const [isVisible, setVisible] = useState(false);
   const elements = useMemo(() => {
     return [
       {
@@ -62,7 +65,7 @@ function Attributes({ deviceInfo }) {
   return (
     <CustomContainer>
       <Stack direction="horizontal">
-        {checkedItems.length === 0 ? (
+        {checkedItems?.length === 0 ? (
           <>
             <span className={cx('header-title')}>{getScopeName()} attributes</span>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -75,20 +78,25 @@ function Attributes({ deviceInfo }) {
             </div>
             <Stack direction="horizontal" className="ms-auto" gap={3}>
               {scope !== 'CLIENT_SCOPE' && (
-                <CustomButton.AddButton className={cx('header-icon')} onClick={() => setShowAddModal(true)} />
+                <CustomButton.AddButton className={cx('header-icon')} onClick={() => setVisible(true)} />
               )}
               <CustomButton.SearchButton className={cx('header-icon')} />
             </Stack>
           </>
         ) : (
           <MultiSelectPanel
-            title={`${checkedItems.length} ${checkedItems.length === 1 ? 'attribute' : 'attributes'} selected`}
+            title={`${checkedItems?.length} ${checkedItems?.length === 1 ? 'attribute' : 'attributes'} selected`}
             onDeleteItems={handleDeleteItems}
           />
         )}
       </Stack>
 
-      <Table>
+      <Table style={{ tableLayout: 'fixed' }}>
+        <colgroup>
+          {elements.map((element) => (
+            <col style={{ width: element.width }}></col>
+          ))}
+        </colgroup>
         <thead>
           {elements.map((element, index) => {
             return (
@@ -100,7 +108,7 @@ function Attributes({ deviceInfo }) {
         </thead>
         <tbody>
           {attributes &&
-            attributes.length > 0 &&
+            attributes?.length > 0 &&
             attributes.map((attribute, index) => {
               console.log('attribute: ' + attribute);
               return (
@@ -121,7 +129,9 @@ function Attributes({ deviceInfo }) {
                   </td>
                   <td>
                     <Stack direction="horizontal" gap={2}>
-                      {typeof attribute.value === 'boolean' ? (attribute.value ? 'true' : 'false') : attribute.value}
+                      <p className={global['text-overflow']}>
+                        {transform(attribute.value)}
+                      </p>
                       <CustomButton.CopyButton textToCopy={attribute.value} />
                     </Stack>
                   </td>
@@ -130,11 +140,9 @@ function Attributes({ deviceInfo }) {
             })}
         </tbody>
       </Table>
-      {showAddModal && (
+      
         <AddModal
           deviceInfo={deviceInfo}
-          showAddModal={showAddModal}
-          setShowAddModal={setShowAddModal}
           scope={scope}
           title="attributes"
           onSubmit={async (values) => {
@@ -148,11 +156,13 @@ function Attributes({ deviceInfo }) {
               scope,
             };
             handleAddAttribute(telemetryObject);
-            setShowAddModal(false);
+            setVisible(false);
             // handleAddAttribute(telemetryObject);
           }}
+          isVisible={isVisible}
+          setVisible={setVisible}
         />
-      )}
+      
     </CustomContainer>
   );
 }

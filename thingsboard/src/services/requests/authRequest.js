@@ -13,7 +13,7 @@ function AuthRequest() {
           'Content-Type': 'application/json',
         },
       });
-      const { token, refreshToken } = response.data;
+      const { token, refreshToken } = response?.data;
       console.log('refresh token: ' + refreshToken);
       // return response.data.token;
       return { token, refreshToken };

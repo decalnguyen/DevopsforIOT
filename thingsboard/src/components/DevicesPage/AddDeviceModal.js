@@ -13,7 +13,7 @@ const cx = classNames.bind(styles);
 
 function AddDeviceModal({ showModal, setShowModal, onNewDeviceAdded }) {
   const [inputs, setInputs] = useState({});
-  const { platform, token } = useAuth();
+  const { platform } = useAuth();
   const [showModals, setShowModals] = useState({});
   const [status, setStatus] = useState('');
   const [suggestions, setSuggestions] = useAddDeviceModal();
@@ -30,6 +30,7 @@ function AddDeviceModal({ showModal, setShowModal, onNewDeviceAdded }) {
     e.preventDefault();
     console.log('input:', inputs);
     setShowModals((values) => ({ ...values, loading: true }));
+    const token = localStorage.getItem('token');
     const data = {
       deviceInfo: {
         name: inputs.name,
@@ -111,7 +112,7 @@ function AddDeviceModal({ showModal, setShowModal, onNewDeviceAdded }) {
                 <AutoComplete
                   suggestions={
                     suggestions.devicesProfileInfo &&
-                    suggestions.devicesProfileInfo.length > 0 &&
+                    suggestions.devicesProfileInfo?.length > 0 &&
                     suggestions.devicesProfileInfo.map((profile) => profile.name)
                   }
                   show={showSuggestions.devicesProfileInfo}
@@ -149,7 +150,7 @@ function AddDeviceModal({ showModal, setShowModal, onNewDeviceAdded }) {
                   <AutoComplete
                     suggestions={
                       suggestions.ownersInfo &&
-                      suggestions.ownersInfo.length > 0 &&
+                      suggestions.ownersInfo?.length > 0 &&
                       suggestions.ownersInfo.map((owner) => owner.name)
                     }
                     show={showSuggestions.ownersInfo}
@@ -173,7 +174,7 @@ function AddDeviceModal({ showModal, setShowModal, onNewDeviceAdded }) {
                   <AutoComplete
                     suggestions={
                       suggestions.groupsInfo &&
-                      suggestions.groupsInfo.length > 0 &&
+                      suggestions.groupsInfo?.length > 0 &&
                       suggestions.groupsInfo.map((group) => group.name)
                     }
                     show={showSuggestions.groupsInfo}

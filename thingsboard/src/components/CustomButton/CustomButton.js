@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-
+import {Edit2} from 'react-feather'
 function CustomButton({ children, onClick, toolTip, placement = 'top', ...props }) {
   return (
     <OverlayTrigger placement={placement} overlay={<Tooltip>{toolTip}</Tooltip>}>
@@ -76,3 +76,9 @@ export function SearchButton({ onClick, ...props }) {
   );
 }
 export default CustomButton;
+
+export function EditButton({onClick, ...props}) {
+  return <CustomButton toolTip="Toggle Edit Mode" onClick={onClick} {...props}>
+      <Edit2 color='white'/>
+    </CustomButton>
+}

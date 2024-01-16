@@ -11,7 +11,7 @@ function AutoComplete({ show, field, suggestions, onHide, onItemClick }) {
   useOutsideAlerter(autoCompleteRef, onHide);
   return (
     <div style={{ position: 'relative' }} ref={autoCompleteRef}>
-      {show && suggestions && suggestions.length > 0 && (
+      {show && suggestions && suggestions?.length > 0 && (
         <div className={cx('wrapper')}>
           {suggestions.map((fruit, index) => (
             <div
