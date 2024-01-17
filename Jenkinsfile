@@ -20,7 +20,6 @@ pipeline {
                 script {
                     sh''' 
                     cd thingsboard
-                        npm install
                     '''
                 }
             }
