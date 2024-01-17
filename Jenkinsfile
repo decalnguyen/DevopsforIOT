@@ -20,7 +20,7 @@ pipeline {
                 script {
                     git credentialsId: 'server_gat_2', url: 'https://github.com/decalnguyen/DevopsforIOT.git'
                     sh''' 
-                    cd thingsboard
+                    git pull origin master 
                     '''
                 }
             }
