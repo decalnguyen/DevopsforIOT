@@ -3,11 +3,10 @@ import { useAuth } from '~/contexts/AuthContext';
 
 const useBusPosition = ({ devicesInfo }) => {
   // const [position, setPosition] = useState([]);
-  const { token } = useAuth();
+  const token = localStorage.getItem('accessToken');
   const [position, setPosition] = useState([]);
 
   const onPositionUpdate = useCallback(({ subscriptionId, latitude, longitude }) => {
-    console.log('onPositionUpdate');
     setPosition((prev) => {
       const copy = [...prev];
       const hasPositionExisted = copy.some((current) => current.index === subscriptionId);
@@ -23,13 +22,12 @@ const useBusPosition = ({ devicesInfo }) => {
     });
   }, []);
   useEffect(() => {
-    console.log('useEffect', devicesInfo);
     const webSocket = new WebSocket('wss://thingsboard.cloud/api/ws/plugins/telemetry?token=' + token);
     webSocket.onopen = () => {
       const object = {
         tsSubCmds:
           devicesInfo &&
-          devicesInfo.length > 0 &&
+          devicesInfo?.length > 0 &&
           devicesInfo.map((device, index) => ({
             entityType: device.id.entityType,
             entityId: device.id.id,
@@ -41,13 +39,11 @@ const useBusPosition = ({ devicesInfo }) => {
       };
 
       const data = JSON.stringify(object);
-      console.log(data);
       webSocket.send(data);
     };
 
     webSocket.onmessage = (event) => {
       const received_msg = event.data;
-      console.log('Received message: ' + received_msg.toString());
       const parsedResponse = JSON.parse(received_msg);
 
       if (parsedResponse.data && parsedResponse.data.latitude) {

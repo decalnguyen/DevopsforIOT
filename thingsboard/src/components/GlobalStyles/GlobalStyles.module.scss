@@ -1,0 +1,204 @@
+:root {
+  --tb-login-primary-50: #e0f2f1;
+  --tb-login-primary-100: #b2dfdb;
+  --tb-login-primary-200: #00c3b6;
+  --tb-login-primary-300: #4db6ac;
+  --tb-login-primary-400: #26a69a;
+  --tb-login-primary-500: #00695c;
+  --tb-login-primary-600: #00897b;
+  --tb-login-primary-700: #00796b;
+  --tb-login-primary-800: #00695c;
+  --tb-login-primary-900: #004d40;
+  --tb-login-primary-A100: #a7ffeb;
+  --tb-login-primary-A200: #64ffda;
+  --tb-login-primary-A400: #1de9b6;
+  --tb-login-primary-A700: #00bfa5;
+  --tb-login-primary-contrast-50: rgba(0, 0, 0, 0.87);
+  --tb-login-primary-contrast-100: rgba(0, 0, 0, 0.87);
+  --tb-login-primary-contrast-200: rgba(0, 0, 0, 0.87);
+  --tb-login-primary-contrast-300: rgba(0, 0, 0, 0.87);
+  --tb-login-primary-contrast-400: rgba(0, 0, 0, 0.87);
+  --tb-login-primary-contrast-500: white;
+  --tb-login-primary-contrast-600: white;
+  --tb-login-primary-contrast-700: white;
+  --tb-login-primary-contrast-800: white;
+  --tb-login-primary-contrast-900: white;
+  --tb-login-primary-contrast-A100: rgba(0, 0, 0, 0.87);
+  --tb-login-primary-contrast-A200: rgba(0, 0, 0, 0.87);
+  --tb-login-primary-contrast-A400: rgba(0, 0, 0, 0.87);
+  --tb-login-primary-contrast-A700: rgba(0, 0, 0, 0.87);
+  --tb-login-accent-50: #fbe9e7;
+  --tb-login-accent-100: #ffccbc;
+  --tb-login-accent-200: #ffab91;
+  --tb-login-accent-300: #ff8a65;
+  --tb-login-accent-400: #ff7043;
+  --tb-login-accent-500: #ff5722;
+  --tb-login-accent-600: #f4511e;
+  --tb-login-accent-700: #e64a19;
+  --tb-login-accent-800: #d84315;
+  --tb-login-accent-900: #bf360c;
+  --tb-login-accent-A100: #ff9e80;
+  --tb-login-accent-A200: #ff6e40;
+  --tb-login-accent-A400: #ff3d00;
+  --tb-login-accent-A700: #dd2c00;
+  --tb-login-accent-contrast-50: rgba(0, 0, 0, 0.87);
+  --tb-login-accent-contrast-100: rgba(0, 0, 0, 0.87);
+  --tb-login-accent-contrast-200: rgba(0, 0, 0, 0.87);
+  --tb-login-accent-contrast-300: rgba(0, 0, 0, 0.87);
+  --tb-login-accent-contrast-400: rgba(0, 0, 0, 0.87);
+  --tb-login-accent-contrast-500: white;
+  --tb-login-accent-contrast-600: white;
+  --tb-login-accent-contrast-700: white;
+
+  --tb-primary-50: #e0f2f1;
+  --tb-primary-contrast-50: rgba(0, 0, 0, 0.87);
+  --tb-primary-100: #b2dfdb;
+  --tb-primary-contrast-100: rgba(0, 0, 0, 0.87);
+  --tb-primary-200: #80cbc4;
+  --tb-primary-contrast-200: rgba(0, 0, 0, 0.87);
+  --tb-primary-300: #4db6ac;
+  --tb-primary-contrast-300: rgba(0, 0, 0, 0.87);
+  --tb-primary-400: #26a69a;
+  --tb-primary-contrast-400: rgba(0, 0, 0, 0.87);
+  --tb-primary-500: #00695c;
+  --tb-primary-contrast-500: rgb(255, 255, 255);
+  --tb-primary-600: #00897b;
+  --tb-primary-contrast-600: rgb(255, 255, 255);
+  --tb-primary-700: #00796b;
+  --tb-primary-contrast-700: rgb(255, 255, 255);
+  --tb-primary-800: #00695c;
+  --tb-primary-contrast-800: rgba(255, 255, 255, 0.87);
+  --tb-primary-900: #004d40;
+  --tb-primary-contrast-900: rgba(255, 255, 255, 0.87);
+  --tb-primary-A100: #a7ffeb;
+  --tb-primary-contrast-A100: rgba(0, 0, 0, 0.87);
+  --tb-primary-A200: #64ffda;
+  --tb-primary-contrast-A200: rgba(0, 0, 0, 0.87);
+  --tb-primary-A400: #1de9b6;
+  --tb-primary-contrast-A400: rgba(0, 0, 0, 0.87);
+  --tb-primary-A700: #00bfa5;
+  --tb-primary-contrast-A700: rgba(0, 0, 0, 0.87);
+  --tb-accent-50: #fbe9e7;
+  --tb-accent-contrast-50: rgba(0, 0, 0, 0.87);
+  --tb-accent-100: #ffccbc;
+  --tb-accent-contrast-100: rgba(0, 0, 0, 0.87);
+  --tb-accent-200: #ffab91;
+  --tb-accent-contrast-200: rgba(0, 0, 0, 0.87);
+  --tb-accent-300: #ff8a65;
+  --tb-accent-contrast-300: rgba(0, 0, 0, 0.87);
+  --tb-accent-400: #ff7043;
+  --tb-accent-contrast-400: rgba(0, 0, 0, 0.87);
+  --tb-accent-500: #ff5722;
+  --tb-accent-contrast-500: rgb(255, 255, 255);
+  --tb-accent-600: #f4511e;
+  --tb-accent-contrast-600: rgb(255, 255, 255);
+  --tb-accent-700: #e64a19;
+  --tb-accent-contrast-700: rgb(255, 255, 255);
+  --tb-accent-800: #d84315;
+  --tb-accent-contrast-800: rgb(255, 255, 255);
+  --tb-accent-900: #bf360c;
+  --tb-accent-contrast-900: rgb(255, 255, 255);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+input {
+  /* ... your styles ... */
+  border: none;
+  outline: none; /* Add this to remove the default focus outline */
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  background-color: transparent;
+  border-radius: 50%;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  &:active,
+  &:hover {
+    // background-color: #e5e5e5 !important;
+  }
+  // &:hover {
+  //   background-color: #e0e0e0 !important;
+  // }
+}
+
+th,
+td {
+  padding: 32px 0;
+  font-size: 1.6rem;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+}
+
+.modal {
+  opacity: 0;
+  width: 30%;
+  position: fixed;
+  background-color: #fff;
+  height: 320px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  &.fade {
+    animation: fadeOut 0.3s ease;
+  }
+}
+
+.fade {
+  display: none;
+  animation: fadeOut 1s ease;
+}
+
+.show {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.sr-only {
+  display: none;
+}
+
+.text-overflow {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

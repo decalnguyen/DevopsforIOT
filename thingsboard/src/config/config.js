@@ -1,8 +1,11 @@
-const routes = {
+const privateRoutes = {
   home: '/',
-  login: '/auth',
   devices: '/devices',
   dashboard: '/dashboard',
 };
 
-export { routes };
+const publicRoutes = {
+  login: '/auth',
+}
+
+export { privateRoutes,publicRoutes };
