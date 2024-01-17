@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { createNewDevice, getDeviceProfiles, getOwnerInfos } from '~/services/request';
 import { useAuth } from '~/contexts/AuthContext';
 import { LoadingModal, StatusModal } from '~/components/Modal';
-import AutoComplete from '../AutoComplete';
+import AutoComplete from '~/components/AutoComplete';
 import { useAddDeviceModal } from '~/hooks/useAddDeviceModalSuggestions';
 import { deviceRequest } from '~/services/requests';
 

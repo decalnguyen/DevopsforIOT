@@ -5,15 +5,15 @@ import { Container } from 'react-bootstrap';
 
 import styles from './DevicesPage.module.scss';
 import classNames from 'classnames/bind';
-import { LoadingModal, StatusModal } from '../Modal';
+import { LoadingModal, StatusModal } from '~/components/Modal';
 import DevicesTable from './DevicesTable';
 import DeviceInfoCanvas from './DeviceInfoOffcanvas/DeviceInfoCanvas';
 import { deviceRequest, devicesInfoRequest } from '~/services/requests';
-import { useCheckboxItems, useDevicesInfo } from '~/hooks';
+import { useCheckboxItems, useDevicesInfo, usePagination } from '~/hooks';
 import { getLocalStorageItems } from '~/utils';
-import MultiSelectPanel from '../MultiSelectPanel';
-import CustomContainer from '../CustomContainer';
-import PaginationHandle from '../PaginationHandle';
+import MultiSelectPanel from '~/components/MultiSelectPanel';
+import CustomContainer from '~/components/CustomContainer';
+import PaginationHandle from '~/components/PaginationHandle';
 
 const cx = classNames.bind(styles);
 
@@ -23,7 +23,10 @@ function DevicesPage() {
   const [showCanvas, setShowCanvas] = useState({});
   const [status, setStatus] = useState('');
   const { devicesInfo, setDevicesInfo } = useDevicesInfo();
-
+  const { totalPages, currentPage, setCurrentPage, startIndex, endIndex } = usePagination(
+    devicesInfo ? devicesInfo.length : 0,
+    10,
+  );
   const { checkedItems, setCheckedItems, handleCheckboxChange, checkAll, setCheckAll, handleCheckAll } =
     useCheckboxItems(devicesInfo ? devicesInfo?.length : 0);
   const { getDevicesInfo } = devicesInfoRequest();
@@ -99,7 +102,12 @@ function DevicesPage() {
         show={showCanvas.show}
       />
 
-      <PaginationHandle />
+      <PaginationHandle
+        currentPage={currentPage}
+        show={devicesInfo && devicesInfo.length > 0}
+        setCurrentPage={setCurrentPage}
+        maxNum={totalPages}
+      />
     </CustomContainer>
   );
 }

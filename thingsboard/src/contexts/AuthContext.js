@@ -7,7 +7,6 @@ export const AuthProvider = ({ children }) => {
   const [username, setUsername] = useState('');
   const [platform, setPlatform] = useState('');
   const [devicesInfo, setDevicesInfo] = useState([]);
-  const [showLoadingModal, setShowLoadingModal] = useState(false);
   const value = {
     isAuthenticated,
     setIsAuthenticated,
@@ -17,8 +16,6 @@ export const AuthProvider = ({ children }) => {
     setPlatform,
     devicesInfo,
     setDevicesInfo,
-    showLoadingModal,
-    setShowLoadingModal,
   };
 
   useEffect(() => {

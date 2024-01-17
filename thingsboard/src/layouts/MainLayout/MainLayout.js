@@ -1,4 +1,3 @@
-import DataExplorer from '~/components/DataExplorer';
 import Header from './Header';
 import Sidebar from '../Sidebar';
 import { Col, Row } from 'react-bootstrap';
@@ -15,7 +14,6 @@ function MainLayout({ children }) {
           {children}
         </div>
       </Row>
-      {/* <DataExplorer /> */}
     </div>
   );
 }

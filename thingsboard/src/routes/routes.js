@@ -1,5 +1,5 @@
 import { LoginLayout, MainLayout } from '~/layouts';
-import { DevicesPage } from '~/components/DevicesPage';
+import { DevicesPage } from '~/components/pages/DevicesPage';
 import config from '~/config';
 import Home from '~/components/Home';
 import DashboardPage from '~/components/pages/DashboardPage';
@@ -28,5 +28,4 @@ export const publicRoutes = [
     component: LoginLayout,
     layout: null,
   },
-
-]
+];

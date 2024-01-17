@@ -2,7 +2,7 @@ import { Pagination } from 'react-bootstrap';
 import classNames from 'classnames/bind';
 import styles from './PaginationHandle.module.scss';
 import Footer from '../Footer';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const cx = classNames.bind(styles);
 let active = 2;
@@ -15,47 +15,54 @@ for (let number = 1; number <= 5; number++) {
   );
 }
 
-function PaginationHandle({ maxNum = 5, size }) {
-  const [active, setActive] = useState(1);
-  const [items, setItems] = useState([]);
-  useEffect(() => {
-    const newItems = (
+function PaginationHandle({ currentPage, show, setCurrentPage, maxNum = 1, hr = true, footerStyle, paginationStyle }) {
+  const [items, setItems] = useState();
+  const renderItems = useCallback(() => {
+    if (!show) setItems(null);
+    return (
       <Pagination size="lg" className={cx('wrapper')}>
-        <Pagination.First disabled={active === 1} onClick={() => setActive(1)} key={-1} />
-        <Pagination.Prev disabled={active === 1} onClick={() => setActive((prev) => prev - 1)} key={0} />
-        {active - 2 >= 1 && (
-          <Pagination.Item onClick={() => setActive(active - 2)} key={active - 2}>
-            {active - 2}
+        <Pagination.First disabled={currentPage <= 1} onClick={() => setCurrentPage(1)} key={-1} />
+        <Pagination.Prev disabled={currentPage <= 1} onClick={() => setCurrentPage((prev) => prev - 1)} key={0} />
+        {currentPage - 2 >= 1 && (
+          <Pagination.Item onClick={() => setCurrentPage(currentPage - 2)} key={`first-${currentPage - 2}`}>
+            {currentPage - 2}
           </Pagination.Item>
         )}
-        {active - 1 >= 1 && (
-          <Pagination.Item onClick={() => setActive(active - 1)} key={active - 1}>
-            {active - 1}
+        {currentPage - 1 >= 1 && (
+          <Pagination.Item onClick={() => setCurrentPage(currentPage - 1)} key={`first-${currentPage - 1}`}>
+            {currentPage - 1}
           </Pagination.Item>
         )}
-        <Pagination.Item active onClick={() => setActive(active)} key={active}>
-          {active}
+        <Pagination.Item active onClick={() => setCurrentPage(currentPage)} key={`first-${currentPage}`}>
+          {currentPage}
         </Pagination.Item>
-        {active + 1 <= maxNum && (
-          <Pagination.Item onClick={() => setActive(active + 1)} key={active + 1}>
-            {active + 1}
+        {currentPage + 1 <= maxNum && (
+          <Pagination.Item onClick={() => setCurrentPage(currentPage + 1)} key={`first-${currentPage + 1}`}>
+            {currentPage + 1}
           </Pagination.Item>
         )}
-        {active + 2 <= maxNum && (
-          <Pagination.Item onClick={() => setActive(active + 2)} key={active + 2}>
-            {active + 2}
+        {currentPage + 2 <= maxNum && (
+          <Pagination.Item onClick={() => setCurrentPage(currentPage + 2)} key={`first-${currentPage + 2}`}>
+            {currentPage + 2}
           </Pagination.Item>
         )}
-        <Pagination.Next disabled={active === maxNum} onClick={() => setActive((prev) => prev + 1)} key={maxNum + 1} />
-        <Pagination.Last disabled={active === maxNum} onClick={() => setActive(maxNum)} key={maxNum + 2} />
+        <Pagination.Next
+          disabled={currentPage >= maxNum}
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+          key={maxNum + 1}
+        />
+        <Pagination.Last disabled={currentPage >= maxNum} onClick={() => setCurrentPage(maxNum)} key={maxNum + 2} />
       </Pagination>
     );
-    setItems(newItems);
-  }, [active, maxNum]);
+  }, [currentPage, maxNum, setCurrentPage]);
+  useEffect(() => {
+    setItems(renderItems());
+  }, [currentPage, maxNum, setCurrentPage, renderItems]);
+
   return (
-    <Footer style={{ height: '60px' }}>
-      <hr />
-      {items}
+    <Footer style={{ height: '60px', ...footerStyle }}>
+      {hr && <hr />}
+      <div style={{ paginationStyle }}>{items}</div>
     </Footer>
   );
 }
