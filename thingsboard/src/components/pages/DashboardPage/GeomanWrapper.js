@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { FeatureGroup, useMap } from 'react-leaflet';
+import { FeatureGroup } from 'react-leaflet';
 import { GeomanControls } from 'react-leaflet-geoman-v2';
 import { convertToGeoJSON, convertToTBJSON } from '../../../utils';
 import L from 'leaflet';
-function GeomanWrapper({ geoJSON, setGeoJSON, isEditMode, closeBusSocket, openBusSocket }) {
-  const initialRender = useRef(true);
+function GeomanWrapper({ geoJSON, setGeoJSON, isEditMode }) {
   const ref = useRef(null);
-  const handleChange = () => {
+
+  const handleChange = useCallback(() => {
     const newGeo = {
       type: 'FeatureCollection',
       features: [],
@@ -38,7 +38,7 @@ function GeomanWrapper({ geoJSON, setGeoJSON, isEditMode, closeBusSocket, openBu
       });
     }
     setGeoJSON(convertToTBJSON(newGeo));
-  };
+  }, [setGeoJSON]);
 
   useEffect(() => {
     console.log(geoJSON);
@@ -66,18 +66,7 @@ function GeomanWrapper({ geoJSON, setGeoJSON, isEditMode, closeBusSocket, openBu
       });
       console.log('line 26:', geoJSON);
     }
-  }, [geoJSON]);
-
-  useEffect(() => {
-    if (initialRender.current === true) {
-      initialRender.current = false;
-      return;
-    }
-    if (isEditMode) closeBusSocket();
-    else openBusSocket();
-  }, [isEditMode, closeBusSocket, openBusSocket]);
-
-  console.log(ref.current);
+  }, [geoJSON, handleChange]);
   return (
     <FeatureGroup ref={ref}>
       {isEditMode && (
