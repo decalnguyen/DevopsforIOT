@@ -26,6 +26,7 @@
     "leaflet-control-geocoder": "^2.4.0",
     "leaflet-draw": "^1.0.4",
     "leaflet-geosearch": "^3.11.0",
+    "mqtt": "^5.3.4",
     "react": "^18.2.0",
     "react-app-rewired": "^2.2.1",
     "react-bootstrap": "^2.9.1",
