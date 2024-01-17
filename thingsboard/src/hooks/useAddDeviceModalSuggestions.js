@@ -9,7 +9,7 @@ export const useAddDeviceModal = (initialSuggestions = []) => {
   useEffect(() => {
     const fetchOwnersInfo = async () => {
       const response = await getOwnerInfos({ token, platform });
-      return response.data.data;
+      return response?.data?.data;
     };
     const getDevicesProfileInfo = async () => {
       const response = await getDeviceProfiles({ token, platform });

@@ -3,12 +3,10 @@ import { createContext, useContext, useEffect, useState } from 'react';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [username, setUsername] = useState('');
   const [platform, setPlatform] = useState('');
   const [devicesInfo, setDevicesInfo] = useState([]);
-  const [token, setToken] = useState('');
-  const [showLoadingModal, setShowLoadingModal] = useState(false);
   const value = {
     isAuthenticated,
     setIsAuthenticated,
@@ -16,17 +14,13 @@ export const AuthProvider = ({ children }) => {
     setUsername,
     platform,
     setPlatform,
-    token,
-    setToken,
     devicesInfo,
     setDevicesInfo,
-    showLoadingModal,
-    setShowLoadingModal,
   };
 
   useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken');
-    setToken(accessToken);
+    const token = localStorage.getItem('accessToken');
+    setIsAuthenticated(token ? true : false);
   }, []);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

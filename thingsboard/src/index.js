@@ -4,12 +4,20 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import GlobalStyles from '~/components/GlobalStyles';
 import { AuthProvider } from './contexts/AuthContext';
+import { CustomBrowserRouter } from './CustomBrowserRouter';
+import { LoadingProvider } from './contexts';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>
     <GlobalStyles>
-      <AuthProvider><App /></AuthProvider>
+      <AuthProvider>
+        <LoadingProvider>
+          <CustomBrowserRouter>
+            <App />
+          </CustomBrowserRouter>
+        </LoadingProvider>
+      </AuthProvider>
     </GlobalStyles>
   </React.StrictMode>,
 );

@@ -21,7 +21,6 @@ function StatusModal(modalInfo) {
         <Button variant="secondary" onClick={onHide}>
           Close
         </Button>
-        <Button variant="primary">Understood</Button>
       </Modal.Footer>
     </Modal>
   );

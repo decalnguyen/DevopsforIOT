@@ -1,0 +1,139 @@
+.header-wrapper {
+  background-color: var(--tb-login-primary-900);
+  padding: 12px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-left: 12px;
+  color: #fff;
+}
+
+.close-btn {
+  font-size: 1.6rem;
+  margin-right: 8px;
+  color: #fff;
+}
+
+.transport-wrapper {
+  margin-top: 12px;
+}
+
+.instruction-text {
+  font-size: 1.4rem;
+  color: black;
+  margin-top: 12px;
+}
+
+.os-wrapper {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 1.6rem;
+  padding: 4px 0;
+  color: #666666;
+  &:hover {
+    cursor: pointer;
+  }
+  &:hover {
+    background-color: var(--tb-login-primary-50);
+  }
+  &.active {
+    border-bottom: 1px solid var(--tb-login-primary-800);
+    color: var(--tb-login-primary-800);
+    font-weight: 600;
+  }
+}
+
+.tab-wrapper {
+  text-align: center;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #cfcfcf;
+  background-color: #f0f0f0;
+  &:hover {
+    cursor: pointer;
+  }
+  &.active {
+    background-color: var(--tb-login-primary-800);
+    color: #f2f7f7;
+    font-weight: 600;
+    &:hover {
+      background-color: var(--tb-login-primary-900);
+    }
+  }
+}
+
+.content-wrapper {
+  width: 95%;
+  //   display: flex;
+  //   flex-direction: row;
+  justify-content: center;
+}
+
+.hidden-text {
+  display: none;
+  transition: opacity 0.3s ease;
+
+  &.active {
+    display: block;
+  }
+}
+
+.command-container {
+  white-space: nowrap;
+  overflow-x: auto;
+  background-color: var(--tb-login-primary-50);
+  margin-top: 12px;
+  &:hover {
+    cursor: pointer;
+  }
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+}
+
+.command-text {
+  font-size: 1.6rem;
+}
+
+.install-text {
+  font-size: 1.6rem;
+}
+
+.install-guide {
+  margin-top: 12px;
+  padding-bottom: 12px;
+}
+
+.copy-container {
+  position: fixed;
+  right: 0;
+  margin-top: -24px;
+  margin-right: 16px;
+  background-color: var(--tb-login-primary-50);
+  display: flex;
+  color: green;
+}
+
+.close-btn {
+  position: absolute;
+  right: 0;
+}
