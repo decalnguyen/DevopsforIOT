@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '~/contexts/AuthContext';
 
-const useBusPosition = ({ devicesInfo }) => {
+const useBusPosition = ({ devicesInfo, isEditMode }) => {
   // const [position, setPosition] = useState([]);
   const token = localStorage.getItem('accessToken');
   const [position, setPosition] = useState([]);
@@ -24,6 +23,7 @@ const useBusPosition = ({ devicesInfo }) => {
   useEffect(() => {
     const webSocket = new WebSocket('wss://thingsboard.cloud/api/ws/plugins/telemetry?token=' + token);
     webSocket.onopen = () => {
+      console.log('connection is opned');
       const object = {
         tsSubCmds:
           devicesInfo &&
@@ -43,6 +43,7 @@ const useBusPosition = ({ devicesInfo }) => {
     };
 
     webSocket.onmessage = (event) => {
+      if (isEditMode) return;
       const received_msg = event.data;
       const parsedResponse = JSON.parse(received_msg);
 
@@ -65,7 +66,7 @@ const useBusPosition = ({ devicesInfo }) => {
     return () => {
       webSocket.close();
     };
-  }, [token, devicesInfo, onPositionUpdate]);
+  }, [token, devicesInfo, onPositionUpdate, isEditMode]);
 
   return { position };
 };

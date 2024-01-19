@@ -15,9 +15,9 @@ const cx = classNames.bind(styles);
 
 function DashBoard() {
   const { devicesInfo } = useDevicesInfo();
-  const { position } = useBusPosition({ devicesInfo });
   const [isEditMode, setIsEditMode] = useState(false);
-  const geoJsonData = useGeoJSON({devicesInfo});
+  const { position } = useBusPosition({ devicesInfo, isEditMode });
+  const geoJsonData = useGeoJSON({ devicesInfo });
   const { message } = useGeofenceNotification();
 
   useEffect(() => {
@@ -30,17 +30,21 @@ function DashBoard() {
 
   return (
     <div style={{ marginTop: '16px' }} className="container-fluid">
-      <Header isEditMode={isEditMode} setIsEditMode={setIsEditMode} onSave={async() => {
-        const {handleSave} = geoJsonData;
-        const promise = async(deviceInfo) => {
-          const data = await handleSave(deviceInfo);
-          console.log(data);
-        }
-        
-        const promises = devicesInfo && devicesInfo?.length > 0 && devicesInfo.map(promise);
-        const results = await Promise.all(promises);
-        console.log(results);
-        }} />
+      <Header
+        isEditMode={isEditMode}
+        setIsEditMode={setIsEditMode}
+        onSave={async () => {
+          const { handleSave } = geoJsonData;
+          const promise = async (deviceInfo) => {
+            const data = await handleSave(deviceInfo);
+            console.log(data);
+          };
+
+          const promises = devicesInfo && devicesInfo?.length > 0 && devicesInfo.map(promise);
+          const results = await Promise.all(promises);
+          console.log(results);
+        }}
+      />
 
       <Map
         isEditMode={isEditMode}

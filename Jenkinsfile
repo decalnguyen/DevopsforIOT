@@ -18,9 +18,9 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
+                    git credentialsId: 'server_gat_2', url: 'https://github.com/decalnguyen/DevopsforIOT.git'
                     sh''' 
-                    cd thingsboard
-                        npm install
+                    git pull origin master 
                     '''
                 }
             }
