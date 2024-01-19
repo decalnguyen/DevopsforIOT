@@ -8,7 +8,7 @@ var client = mqtt.connect('mqtt://thingsboard.cloud', {
 client.on('connect', function () {
   console.log('Client connected!');
   console.log('Uploading gps data once per second...');
-  setInterval(publishTelemetry, 1000);
+  setInterval(publishTelemetry, 500);
   publishTelemetry();
 });
 

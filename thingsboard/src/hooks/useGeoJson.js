@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getLocalStorageItems } from '~/utils';
 import L from 'leaflet';
-import { Circle, Polygon, Rectangle, useMap } from 'react-leaflet';
+import { Circle, Polygon, Rectangle } from 'react-leaflet';
 import TelemetryRequest from '../services/requests/telemetryRequest';
 
 const { getAttributesByScope, postAttributes } = TelemetryRequest();
