@@ -15,7 +15,7 @@ pipeline {
            //     sh 'mvn clean install'
            // }
       //  }
-        stage('Install Dependencies') {
+      /*  stage('Install Dependencies') {
             steps {
                 script {
                     git credentialsId: 'server_gat_2', url: 'https://github.com/decalnguyen/DevopsforIOT.git'
@@ -24,7 +24,7 @@ pipeline {
                     '''
                 }
             }
-        }
+        }*/
        /* stage('Build') {
             steps {
                 script {
