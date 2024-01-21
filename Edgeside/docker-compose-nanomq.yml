@@ -1,0 +1,16 @@
+version: '3'
+networks:
+  Edgeside:
+services:
+  nanomq:
+    image: emqx/nanomq:latest
+    container_name: nanomq
+    ports:
+    - 1883:1883
+    - 8083:8083
+    - 8883:8883
+    env_file:
+    - edge_envs.env
+    networks:
+    - Edgeside
+    restart: always
