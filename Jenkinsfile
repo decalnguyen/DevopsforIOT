@@ -15,31 +15,25 @@ pipeline {
            //     sh 'mvn clean install'
            // }
       //  }
-      /*  stage('Install Dependencies') {
+        stage('Install Dependencies') {
             steps {
-                script {
-                    git credentialsId: 'server_gat_2', url: 'https://github.com/decalnguyen/DevopsforIOT.git'
-                    sh''' 
-                    git pull origin master 
-                    '''
-                }
+                     git branch: 'master', url: 'https://github.com/decalnguyen/DevopsforIOT.git'
             }
-        }*/
-       /* stage('Build') {
+        }
+        stage('Build') {
             steps {
                 script {
                     sh '''
-                        docker build -t decalnguyen/devopsforiot/webapp .
+                        docker build -t decalnguyen/webapp:1.2 .
                         '''
                 }
             }
-        }*/
+        }
         stage('Push') {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'docker_act2') {
                             sh '''
-                             docker build -t decalnguyen/webapp:1.0 .
                             docker push decalnguyen/webapp:1.0
                         '''
                         }
