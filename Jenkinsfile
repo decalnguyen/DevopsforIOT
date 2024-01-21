@@ -17,7 +17,7 @@ pipeline {
       //  }
         stage('Install Dependencies') {
             steps {
-                     git branch: 'master', url: 'https://github.com/decalnguyen/DevopsforIOT.git'
+                     git credentialsId: 'github_act_server_1', branch: 'master', url: 'https://github.com/decalnguyen/DevopsforIOT.git'
             }
         }
         stage('Build') {
