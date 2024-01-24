@@ -26,11 +26,12 @@ pipeline {
                     sh '''
                         cd thingsboard
                         docker build -t decalnguyen/webapp:1.2 .
+                          docker push decalnguyen/webapp:1.2
                         '''
                 }
             }
         }
-        stage('Push') {
+       /* stage('Push') {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'docker_act2') {
@@ -40,7 +41,7 @@ pipeline {
                         }
                     }
                 }
-            }
+            }*/
         stage('Deploy') {
             steps {
                /* when {
