@@ -1,0 +1,31 @@
+.container{
+    height: 50rem;
+    width: 100wh;
+}
+.Row{
+    height: 100%;
+    width: 100%;
+}
+.Col{
+    height: 100%;
+}
+h2{
+    padding-top: 30px;
+    padding-left: 30px;
+    margin-bottom:50px ;
+    font-size: 4rem;
+    color: #209b0e;
+}
+p{
+    padding: 30px;
+    font-size: 2rem;
+    color:#718096
+}
+img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+.containerImage{
+    height: 100%;
+}
