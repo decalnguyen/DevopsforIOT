@@ -33,12 +33,13 @@ pipeline {
         stage('Push') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'docker_cre', url: 'https://hub.docker.com/repository/docker/decalnguyen/webapp/general') {
-                        sh '''
+                    withCredentials([string(credentialsId: 'docker_cre3', variable: 'docker_cre')]) {
+                           sh '''
+                           docker login -u decalnguyen -p ${docker_cre}
                             docker push decalnguyen/webapp:1.2
                         '''
-}
-                    }
+                            }
+                        }
                 }
             }
         stage('Deploy') {
