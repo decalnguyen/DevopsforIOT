@@ -8,7 +8,7 @@ RUN npm install
 
 RUN npm add customize-cra react-app-rewired --dev
 
-COPY . . 
+COPY . .
 
 RUN npm run build 
 
