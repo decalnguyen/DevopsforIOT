@@ -1,0 +1,17 @@
+NAT(Network Address Translator)
+NAT traversal: Two things:
+First, Protocol nên được dựa trên UDP. có thể thực hiện NAT traversal với TCP, nhưng nó sẽ thêm layer phức tạp nào đó khác vào 1 cái vấn đề mà vốn nó đã phức tạp sẵn rồi, and may even require kernel customizations depending on how deep you want to go
+If you’re reaching for TCP because you want a stream-oriented connection when the NAT traversal is done, consider using QUIC instead
+- Hầu hết các NAT devices bao gồm a stateful firewall, nên cần giải quyết cái này trước. Tất cả chúng đều có thể cấu hình được, nhưng hầu hết các điều chỉnh đều cho kết nối "ra" và chặn tất cả các kết nối vào. 
+How does the firewall know what's inbound và what's outbound? 
+Stateful firewalls nhớ tất cả các packets chúng từng thấy trong quá khứ và có thể  sử dụng kiến thức đó khi quyết định những gì làm với những packets mới xuất hiện
+Đối với UDP, luật rất đơn giản. Firwall cho phép an inbound UDP packet nếu chúng đã gặp a matching outbound packet. Ví dụ, nếu a UDP packet của laptop từ 2.2.2.2:1234 tới 7.7.7.7:5678. thì incoming packets từ 7.7.7.7:5678 tới 2.2.2.2:1234 sẽ được cho phép.
+Có 1 vấn đề. KHi chúng ta giao tiếp với server trên internet. Hạn chế duy nhất là machine thứ mà ở sau tường lửa phải là thứ tạo ra các kết nối( không ai có thể giao tiếp với nó, trừ khi nó giao tiếp trước)
+Case: Reinvented client/server communication:
+- Khi mà 2 trong số các clients muốn giao tiếp trực tiếp. Khi mà những firewalls đối diện với nhau. Theo như rule thì cả 2 bên phải giao tiếp trước, nhưng cũng có nghĩa không gì có thể giao tiếp trước. bởi vì phía bên còn lại phải giao tiếp trước.
+Solution:
+- The peers phải biết trước ip:port their counterpart đang sử dụng. chúng ta sẽ build a coordination server để lưu trữ thông tin về ip:port được đồng hóa một cách linh hoạt và an toàn. Sau đó, the peers bắt đầu gửi UDP packets tới each other. Chúng ta mong muốn những packets này thất lạc, nếu những gói này không thể mang theo những thông tin quan trọng trừ khi chung ta muốn truyền lại chúng. 
+Our laptop and workstation are now listening on fixed ports, so that they both know exactly what ip:port to talk to. Let’s take a look at what happens.
+Khi mà client 1 gửi từ 2.2.2.2:1234(client 1) tới 7.7.7.7:5678(client 2), thì chúng không thể vượt qua tưởng lửa của 7.7.7.7:5678 nhưng đồng thời tưởng lửa của client 1 ghi nhận chúng mong đợi responses từ client 2 từ đó clients 2 sẽ gửi được tới clients 1 và mong đợi nhận được từ clients 1 . Thế là đã thiết lập được two-way communications
+
+Statrfull firewalls chúng có limited memory thường là 30s đối với UDP, để giữ connections alive. Chúng ta cần có bộ đếm và phải gửi các packets thường xuyên để reset timers.

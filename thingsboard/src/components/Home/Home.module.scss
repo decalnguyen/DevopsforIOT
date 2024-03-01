@@ -1,0 +1,81 @@
+.wrapper{
+    padding: 20px;
+    justify-content: center;
+    height: 10rem;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.navName{
+    color: #209c0e;
+    font-size: 4rem;
+    font-weight: 400;
+    margin: 0 50px;
+    height: 5rem;
+    text-align: center;
+    text-decoration: none;
+}
+.container{
+    display: flex;
+    justify-content: space-between;
+    margin: 0 20px;
+    align-items: center;
+    align-content: center;
+}
+.navList{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+.button{
+    height: 5rem;
+    font-size: 1.5rem;
+    background-color: var(--tb-primary-A700);
+    border-color: var(--tb-primary-A400);
+    color: white;
+}
+.navItem{
+    color: #343a40;
+    margin: 0px 100px;
+    font-size: 2rem;
+    font-weight: 700;
+}
+.logoImage{
+    width: 50px;
+    height: 50px;
+}
+.logoImageItem{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.page1{
+    padding: 50px;
+    padding-right: 0px;
+    justify-content: space-around;
+    margin-top: 50px;
+
+}
+.image1{
+    width:614px;
+    height:600px;
+    margin-right: 100px;
+    object-fit: cover;
+}
+.Slogan{
+    padding: 100px;
+    display: flex;
+    text-align:left;
+    flex-direction: column;
+}
+.span1{
+    font-size: 5rem;
+    color:#75ab70 ;
+}
+.span2{
+    font-size: 5rem;
+    color: #1a202c;
+}
+.p1{
+    font-size: 2rem;
+}
