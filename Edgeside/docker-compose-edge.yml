@@ -7,7 +7,6 @@ networks:
 services:
   mytbedge:
     container_name: mytbedge
-    restart: always
     image: "thingsboard/tb-edge:3.6.1EDGE"
     ports:
       - "18080:8080"
@@ -15,22 +14,24 @@ services:
       - "15683-15688:5683-5688/udp"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tb_edge
-      CLOUD_ROUTING_KEY: c957a2dd-27fc-fb32-5849-abf95b9d1c7e
-      CLOUD_ROUTING_SECRET: hnmf1ww0sxmhz4pc135n
-      CLOUD_RPC_HOST: mytb.greenstreamvision
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
+      CLOUD_ROUTING_KEY: f472825a-57ba-f2d4-f7c5-df7a58ab3819
+      CLOUD_ROUTING_SECRET: 57v1nfkcwck4npi1bijw
+      CLOUD_RPC_HOST: host.docker.internal
+      CLOUD_RPC_PORT: 7070
+      CLOUD_RPC_SSL_ENABLED: 'false'
     volumes:
       - ~/.mytb-edge-data:/data
       - ~/.mytb-edge-logs:/var/log/tb-edge
     networks:
      - edgeside
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   postgres:
-    container_name: postgres
+    container_name: postgres1
     restart: always
     image: postgres:15
     ports:
-      - 5432:5432
+      - 5433:5432
     environment:
       POSTGRES_DB: tb_edge
       POSTGRES_PASSWORD: postgres
