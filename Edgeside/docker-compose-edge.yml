@@ -2,6 +2,8 @@ version: '3.0'
 networks:
   edgeside:
     name: edgeside
+    external: true
+
 services:
   mytbedge:
     container_name: mytbedge
@@ -13,18 +15,16 @@ services:
       - "15683-15688:5683-5688/udp"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tb_edge
-      CLOUD_ROUTING_KEY: 3af7ad22-a90b-8aae-4a99-533074041923
-      CLOUD_ROUTING_SECRET: zks1n5r9okcqqhf70l0g
-      CLOUD_RPC_HOST: mytb.greenstreamvision.com
-      CLOUD_RPC_PORT: 7070
-      CLOUD_RPC_SSL_ENABLED: "true"
+      CLOUD_ROUTING_KEY: c957a2dd-27fc-fb32-5849-abf95b9d1c7e
+      CLOUD_ROUTING_SECRET: hnmf1ww0sxmhz4pc135n
+      CLOUD_RPC_HOST: mytb.greenstreamvision
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
     volumes:
       - ~/.mytb-edge-data:/data
       - ~/.mytb-edge-logs:/var/log/tb-edge
     networks:
      - edgeside
-    depends_on:
-     - postgres
   postgres:
     container_name: postgres
     restart: always
@@ -38,3 +38,4 @@ services:
       - ~/.mytb-edge-data/db:/var/lib/postgresql/data
     networks:
      - edgeside
+
