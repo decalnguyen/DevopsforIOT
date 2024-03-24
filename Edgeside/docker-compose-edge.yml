@@ -1,59 +1,42 @@
 version: '3.0'
-#networks:
- # Edgeside:
-  #  external: true
+networks:
+  edgeside:
+    name: edgeside
+    external: true
+
 services:
   mytbedge:
-    restart: always
     container_name: mytbedge
-    image: thingsboard/tb-edge:3.6.1EDGE
+    image: "thingsboard/tb-edge:3.6.1EDGE"
     ports:
-    - 18080:8080
-    - 11883:1883
-    - 15683-15688:5683-5688/udp
+      - "18080:8080"
+      - "11883:1883"
+      - "15683-15688:5683-5688/udp"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres2:5432/tb_edge
-      CLOUD_ROUTING_KEY: 6766a491-ffad-4806-9a2f-a63f4a559089
-      CLOUD_ROUTING_SECRET: 1hgljusiyc49dngr6nsh
-      CLOUD_RPC_HOST: mytb.greenstreamvision.com
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tb_edge
+      CLOUD_ROUTING_KEY: f472825a-57ba-f2d4-f7c5-df7a58ab3819
+      CLOUD_ROUTING_SECRET: 57v1nfkcwck4npi1bijw
+      CLOUD_RPC_HOST: host.docker.internal
       CLOUD_RPC_PORT: 7070
-      CLOUD_RPC_SSL_ENABLED: 'true'
+      CLOUD_RPC_SSL_ENABLED: 'false'
     volumes:
-    #- tb-edge-data:/data
-    #- tb-edge-logs:/var/log/tb-edge
-    #- extensions:/var/lib/thingsboard_edge/extensions
       - ~/.mytb-edge-data:/data
       - ~/.mytb-edge-logs:/var/log/tb-edge
-    #networks:
-    #- Edgeside
-    #depends_on:
-    #- postgres2
-    #links:
-    #- postgres2
-  postgres2:
-    container_name: postgres2
+    networks:
+     - edgeside
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  postgres:
+    container_name: postgres1
     restart: always
     image: postgres:15
     ports:
-    - 5433:5432
+      - 5433:5432
     environment:
-     POSTGRES_DB: tb_edge
-     POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tb_edge
+      POSTGRES_PASSWORD: postgres
     volumes:
-   # - tb-edge-postgres-data:/var/lib/postgresql/data
-    - ~/.mytb-edge-data/db:/var/lib/postgresql/data
-    #networks:
-    #- Edgeside
-#volumes:  
-  #tb-edge-data:
-  #  name: tb-edge-data
-   # external: true
-  #tb-edge-logs:
-  #  name: tb-edge-logs
-  #  external: true
-  #tb-edge-postgres-data:
-  #  name: tb-edge-postgres-data
-   # external: true
-  #extensions:
-  #  name: extensions
-   # external: true
+      - ~/.mytb-edge-data/db:/var/lib/postgresql/data
+    networks:
+     - edgeside
+
