@@ -49,11 +49,8 @@ services:
     - IOT-DMS
     restart: on-failure
   webserver:
-    image: server:latest
     container_name: webserver
     build: .
-    ports:
-    - 8081:8081
     depends_on:
     - emqx
     - postgres
@@ -81,7 +78,7 @@ services:
     build: ./prometheus
     container_name: prometheus
     ports:
-    - 9093:9090
+    - 9090:9090
     command:
     - --config.file=/etc/prometheus/prometheus.yml
     - '--storage.tsdb.path=/prometheus'
@@ -96,7 +93,6 @@ services:
     depends_on:
     - cadvisor
     - postgres
-    - webserver
     - emqx
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
@@ -112,7 +108,7 @@ services:
     - IOT-DMS
     depends_on:
     - postgres
-    - webserver
+  
   #alertmanager:
    # image: prom/alertmanager
     #container_name: alertmanger
@@ -122,26 +118,26 @@ services:
     #- /prometheus/alertmanager.yml:/etc/alertmanager/alermanage.yml 
     #networks: 
    # - IOT-DMS
-  mytb: 
-   # restart: always
-    image: thingsboard/tb-postgres
-    container_name: mytb
-    ports:
-    - 9090:9090
-    - 1885:1883
-    - 7070:7070
-    - 5683-5688:5683-5688/udp
-    environment:
-     TB_QUEUE_TYPE: in-memory
-    volumes:
-    - mytb-data:/data
-    - mytb-logs:/var/log/thingsboard
-    networks:
-    - IOT-DMS
-    depends_on:
-    - postgres
-    links:
-    - postgres
+  # mytb: 
+  #  # restart: always
+  #   image: thingsboard/tb-postgres
+  #   container_name: mytb
+  #   ports:
+  #   - 9090:9090
+  #   - 1885:1883
+  #   - 7070:7070
+  #   - 5683-5688:5683-5688/udp
+  #   environment:
+  #    TB_QUEUE_TYPE: in-memory
+  #   volumes:
+  #   - mytb-data:/data
+  #   - mytb-logs:/var/log/thingsboard
+  #   networks:
+  #   - IOT-DMS
+  #   depends_on:
+  #   - postgres
+  #   links:
+  #   - postgres
 volumes:
   grafana-storage: {}
   progresDB_data: {}

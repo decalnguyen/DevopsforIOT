@@ -4,18 +4,22 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
+	http "net/http"
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 const (
-	mqttBroker = "tcp://emqx:1883"
-	mqttTopic  = "home/device/status"
+	mqttBroker    = "tcp://emqx:1883"
+	mqttTopicSub  = "nckh/temperature"
+	mqttTopicSub2 = "nckh/humidity"
+	mqttTopicSub3 = "nckh/atmosphere"
 )
 
 type Device struct {
@@ -27,6 +31,28 @@ type Device struct {
 	Name      string    `gorm:"<-:create"json:"Name"`
 	Status    bool      `gorm:"<-"json:"Status"`
 	Location  string
+}
+
+var (
+	iotData = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "iot_data_temp",
+			Help: "IOT devices temperature data",
+		},
+		[]string{"device_id", "metric"},
+	)
+)
+
+func initProm() {
+	prometheus.MustRegister(iotData)
+}
+
+func processDataProme(payload []byte) {
+	var deviceID, metric string
+	var value float64
+
+	fmt.Sscanf(string(payload), "%s:%s:%f", &deviceID, &metric, &value)
+	iotData.With(prometheus.Labels{"device_id": deviceID, "metric": metric}).Set(value)
 }
 
 type DeviceRegistration struct {
@@ -83,7 +109,6 @@ func (s *APIServer) handleDevices(w http.ResponseWriter, r *http.Request) error 
 	case "DELETE":
 		return s.handleDeleteDevices(w, r)
 	}
-
 	return fmt.Errorf("Method not allowed ", r.Method)
 }
 func (s *APIServer) handleGetDevices(w http.ResponseWriter, r *http.Request) error {
@@ -110,24 +135,30 @@ var (
 		log.Println("Connected")
 	}
 )
+
+func HandleMessage(client mqtt.Client, message mqtt.Message) {
+	processDataProme(message.Payload())
+	data := string(message.Payload())
+
+	log.Println(data)
+}
+
 var (
 	messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, message mqtt.Message) {
-		dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
+		/*dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
 		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 		if err != nil {
 			log.Println("Cannot open Database", err)
 
 		} else {
 			log.Println("Successful openning database")
-		}
-		var decodedMess Device
-		mss := message.Payload()
-		json.Unmarshal(mss, &decodedMess)
-		//	fmt.Println(decodedMess.id)
-		//	fmt.Println(decodedMess.name)
-		//fmt.Println(1)
-		db.AutoMigrate(&Device{})
-		db.Select("createat", "updateat", "deleteat", "id", "name", "status", "location").Create(&decodedMess)
+		}*/
+		//Server*/
+		//var decodedMess Deviceopts.SetUsername(user)
+		//.SetPassword(pass)
+		/*	db.AutoMigrate(&Device{})
+			db.Select("createat", "updateat", "deleteat", "id", "name", "status", "location").Create(&decodedMess)*/
+		HandleMessage(client, message)
 
 	}
 )
@@ -162,7 +193,7 @@ func pub(client mqtt.Client, topic string, qos byte, sendPayload Device) {
 	log.Println("Sucessful publishing to mqtt Topic")
 }
 func PersistDevicesInfo(device DeviceRegistration) {
-	dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
+	dsn := "host=postgres user=nhattoan password=test123 dbnam	/*sub(client_server, mqttTopic, 1)e=iot_dms port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Println("Persist devices info fail")
@@ -173,8 +204,19 @@ func PersistDevicesInfo(device DeviceRegistration) {
 	db.Select("persistat", "id", "name", "firmwareversion", "ownershipinfo").Create(&device)
 
 }
+func InitalizeClientMQTT(ClientID string, user string, pass string) mqtt.Client {
+	opts := mqtt.NewClientOptions()
+	opts.AddBroker(mqttBroker)
+	opts.SetClientID(ClientID)
+	opts.SetUsername(user)
+	opts.SetPassword(pass)
+	opts.SetDefaultPublishHandler(messagePubHandler)
+	opts.OnConnect = connectHandler
+	opts.OnConnectionLost = connectLostHandler
+	return mqtt.NewClient(opts)
+}
 func main() {
-	fmt.Println("Welcome to my project")
+	/*fmt.Println("Welcome to my project")
 	//Database o day
 	dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -192,32 +234,28 @@ func main() {
 		fmt.Println("Success ping Database")
 	}
 	//MQTT o day
-	//Server
-	opts := mqtt.NewClientOptions()
-	opts.AddBroker(mqttBroker)
-	opts.SetClientID("iot-dms_client_1")
-	opts.SetUsername("admin")
-	opts.SetPassword("test1234")
-	opts.SetDefaultPublishHandler(messagePubHandler)
-	opts.OnConnect = connectHandler
-	opts.OnConnectionLost = connectLostHandler
+	//Server*/
+
 	//Device
-	opts2 := mqtt.NewClientOptions()
-	opts2.AddBroker(mqttBroker)
-	opts2.SetClientID("iot-dms_device_1")
-	opts2.SetUsername("admin")
-	opts2.SetPassword("test1234")
-	client_server := mqtt.NewClient(opts)
-	client_device := mqtt.NewClient(opts2)
-	datas := Device{CreateAt: time.Now(), UpdateAt: time.Now(), DeletedAt: time.Now(), Id: 1234, Name: "camera", Status: true, Location: "Viet Nam"}
-	sub(client_server, mqttTopic, 1)
-	pub(client_device, mqttTopic, 1, datas)
-	for i := 11; i <= 30; i++ {
+	client_server := InitalizeClientMQTT("iot_dms_server_1", "server", "server")
+	sub(client_server, mqttTopicSub, 1)
+	sub(client_server, mqttTopicSub2, 1)
+	sub(client_server, mqttTopicSub3, 1)
+	//client_device := mqtt.NewClient(opts2)
+	//	datas := Device{CreateAt: time.Now(), UpdateAt: time.Now(), DeletedAt: time.Now(), Id: 1234, Name: "camera", Status: true, Location: "Viet Nam"}
+	/*sub(client_server, mqttTopic, 1)
+	pub(client_device, mqttTopic, 1, datas)*/
+	/*for i := 11; i <= 30; i++ {
 		datas := Device{CreateAt: time.Now(), UpdateAt: time.Now(), DeletedAt: time.Now(), Id: i, Name: "camera", Status: true, Location: "Viet Nam"}
 		info := DeviceRegistration{PersistAt: time.Now(), Id: i, Name: "camera", FirmwareVersion: "esp32", OwnershipInfo: "Nhat Toan", Protocal: "MQTT"}
 		pub(client_device, mqttTopic, 1, datas)
 		PersistDevicesInfo(info)
+	}*/
+	//server := NewAPIServer(":8081")
+	//server.Run()
+	http.Handle("/metrics", promhttp.Handler())
+	http.ListenAndServe(":2112", nil)
+	for {
+		time.Sleep(1 * time.Second)
 	}
-	server := NewAPIServer(":8081")
-	server.Run()
 }
