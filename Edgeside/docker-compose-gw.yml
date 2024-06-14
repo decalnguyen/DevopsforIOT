@@ -1,0 +1,14 @@
+version: '3.0'
+services:
+  gateways:
+    container_name: Gateway
+    restart: always
+    image: thingsboard/tb-gateway
+    volumes:
+    - ~/.tb-gateway/logs:/thingsboard_gateway/logs
+    - ~/.tb-gateway/extensions:/thingsboard_gateway/extensions
+    - ~/.tb-gateway/config:/thingsboard_gateway/config
+    environment:
+    - host: 'localhost'
+    - port: 1883
+    - accessToken: jPVYQX3nfgcOJ8Tuxdlx

@@ -1,17 +1,19 @@
-FROM golang:latest
-
-RUN mkdir app
-
-ADD . /app
+FROM golang:latest as builder
 
 WORKDIR /app
 
-RUN go mod init github.com/decalnguyen/DevopsforIOT
+COPY go.mod go.sum ./
 
-RUN go mod tidy
+RUN go mod download
 
-#RUN go build -o app
+COPY . .
 
-CMD ["go", "run", "main.go"]
+RUN go build -o build .
 
-EXPOSE 8081
+FROM ubuntu
+
+WORKDIR /app
+
+COPY --from=builder /app/build .
+
+ENTRYPOINT ["/app/build"]
