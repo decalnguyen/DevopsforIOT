@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	http "net/http"
+	"strconv"
+	"strings"
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -48,11 +50,12 @@ func initProm() {
 }
 
 func processDataProme(payload []byte) {
-	var deviceID, metric string
-	var value float64
-
-	fmt.Sscanf(string(payload), "%s:%s:%f", &deviceID, &metric, &value)
-	iotData.With(prometheus.Labels{"device_id": deviceID, "metric": metric}).Set(value)
+	input := string(payload)
+	parts := strings.Split(input, ":")
+	//log.Println(deviceID)
+	floatValue, err := strconv.ParseFloat(parts[2], 64)
+	log.Println("ParseFloat error", err)
+	iotData.With(prometheus.Labels{"device_id": parts[0], "metric": parts[1]}).Set(floatValue)
 }
 
 type DeviceRegistration struct {
@@ -138,9 +141,9 @@ var (
 
 func HandleMessage(client mqtt.Client, message mqtt.Message) {
 	processDataProme(message.Payload())
-	data := string(message.Payload())
+	//data := string(message.Payload())
 
-	log.Println(data)
+	//log.Println(data)
 }
 
 var (
@@ -237,7 +240,8 @@ func main() {
 	//Server*/
 
 	//Device
-	client_server := InitalizeClientMQTT("iot_dms_server_1", "server", "server")
+	initProm()
+	client_server := InitalizeClientMQTT("iot_dms_server_1", "server", "Server1,")
 	sub(client_server, mqttTopicSub, 1)
 	sub(client_server, mqttTopicSub2, 1)
 	sub(client_server, mqttTopicSub3, 1)

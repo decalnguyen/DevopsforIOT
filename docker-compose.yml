@@ -51,6 +51,8 @@ services:
   webserver:
     container_name: webserver
     build: .
+    ports: 
+    - 2112:2112
     depends_on:
     - emqx
     - postgres

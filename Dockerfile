@@ -10,10 +10,10 @@ COPY . .
 
 RUN go build -o build .
 
-FROM alpine
+FROM ubuntu
 
 WORKDIR /app
 
 COPY --from=builder /app/build .
 
-ENTRYPOINT ["ls","-l"]
+ENTRYPOINT ["/app/build"]
