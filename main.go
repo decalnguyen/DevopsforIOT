@@ -41,7 +41,7 @@ var (
 			Name: "iot_data_temp",
 			Help: "IOT devices temperature data",
 		},
-		[]string{"device_id", "metric"},
+		[]string{"device_id", "metric", "status"},
 	)
 )
 
@@ -53,9 +53,9 @@ func processDataProme(payload []byte) {
 	input := string(payload)
 	parts := strings.Split(input, ":")
 	//log.Println(deviceID)
-	floatValue, err := strconv.ParseFloat(parts[2], 64)
+	floatValue, err := strconv.ParseFloat(parts[3], 64)
 	log.Println("ParseFloat error", err)
-	iotData.With(prometheus.Labels{"device_id": parts[0], "metric": parts[1]}).Set(floatValue)
+	iotData.With(prometheus.Labels{"device_id": parts[0], "metric": parts[1], "status": parts[2]}).Set(floatValue)
 }
 
 type DeviceRegistration struct {
