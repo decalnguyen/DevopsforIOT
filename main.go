@@ -74,7 +74,11 @@ func (s *serverMetric) processDataProme(payload []byte, topic string) {
 	input := string(payload)
 	parts := strings.Split(input, ":")
 	if topic == mqttConfig {
-		s.HandleAddDevices(parts)
+		if len(parts) == 1 {
+			s.HandleDeleteDevices(parts[0])
+		} else {
+			s.HandleAddDevices(parts)
+		}
 	} else if len(parts) == 3 {
 		s.HandleDataDevices(parts)
 	} else if len(parts) == 4 {
@@ -83,6 +87,9 @@ func (s *serverMetric) processDataProme(payload []byte, topic string) {
 		log.Println("Recieved a wrong format message")
 	}
 
+}
+func (s *serverMetric) HandleDeleteDevices(topic string) {
+	s.client.Unsubscribe(topic)
 }
 func (s *serverMetric) HandleAddDevices(message []string) {
 	sub(s.client, message[3], 1)
