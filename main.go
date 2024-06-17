@@ -22,6 +22,8 @@ const (
 	mqttTopicSub  = "nckh/temperature"
 	mqttTopicSub2 = "nckh/humidity"
 	mqttTopicSub3 = "nckh/atmosphere"
+	mqttTopicSub4 = "nckh/listdevices"
+	mqttConfig    = "nckh/config"
 )
 
 type Device struct {
@@ -35,6 +37,7 @@ type Device struct {
 	Location  string
 }
 
+var server serverMetric
 var (
 	iotData = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -43,19 +46,62 @@ var (
 		},
 		[]string{"device_id", "metric"},
 	)
+	listDevices = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "iot_device",
+			Help: "The number of devices",
+		},
+		[]string{"device_id", "typeofdevice", "location"},
+	)
 )
 
-func initProm() {
-	prometheus.MustRegister(iotData)
+type serverMetric struct {
+	client mqtt.Client
 }
 
-func processDataProme(payload []byte) {
+func newServer() *serverMetric {
+	return &serverMetric{}
+}
+func (s *serverMetric) Run() {
+	http.Handle("/metrics", promhttp.Handler())
+	http.ListenAndServe(":2112", nil)
+}
+func (s *serverMetric) initProm() {
+	prometheus.MustRegister(iotData)
+	prometheus.MustRegister(listDevices)
+}
+func (s *serverMetric) processDataProme(payload []byte, topic string) {
 	input := string(payload)
 	parts := strings.Split(input, ":")
-	//log.Println(deviceID)
-	floatValue, err := strconv.ParseFloat(parts[2], 64)
+	if topic == mqttConfig {
+		s.HandleAddDevices(parts)
+	} else if len(parts) == 3 {
+		s.HandleDataDevices(parts)
+	} else if len(parts) == 4 {
+		s.HandleStatusDevices(parts)
+	} else {
+		log.Println("Recieved a wrong format message")
+	}
+
+}
+func (s *serverMetric) HandleAddDevices(message []string) {
+	sub(s.client, message[3], 1)
+
+}
+func (s *serverMetric) HandleStatusDevices(message []string) {
+	if message[3] == "on" {
+		listDevices.With(prometheus.Labels{"device_id": message[0], "typeofdevice": message[1], "location": message[2]}).Set(1)
+	} else {
+		listDevices.With(prometheus.Labels{"device_id": message[0], "typeofdevice": message[1], "location": message[2]}).Set(0)
+	}
+
+}
+func (s *serverMetric) HandleDataDevices(message []string) {
+	floatValue, err := strconv.ParseFloat(message[2], 64)
 	log.Println("ParseFloat error", err)
-	iotData.With(prometheus.Labels{"device_id": parts[0], "metric": parts[1]}).Set(floatValue)
+	iotData.With(prometheus.Labels{"device_id": message[0], "metric": message[1]}).Set(floatValue)
+}
+func (s *serverMetric) AddSubTopic(data string) {
 }
 
 type DeviceRegistration struct {
@@ -140,31 +186,27 @@ var (
 )
 
 func HandleMessage(client mqtt.Client, message mqtt.Message) {
-	processDataProme(message.Payload())
-	//data := string(message.Payload())
-
-	//log.Println(data)
+	server.processDataProme(message.Payload(), message.Topic())
 }
 
-var (
-	messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, message mqtt.Message) {
-		/*dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
-		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-		if err != nil {
-			log.Println("Cannot open Database", err)
+// var (
+// 	messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, message mqtt.Message) {
+// 		/*dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
+// 		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+// 		if err != nil {
+// 			log.Println("Cannot open Database", err)
 
-		} else {
-			log.Println("Successful openning database")
-		}*/
-		//Server*/
-		//var decodedMess Deviceopts.SetUsername(user)
-		//.SetPassword(pass)
-		/*	db.AutoMigrate(&Device{})
-			db.Select("createat", "updateat", "deleteat", "id", "name", "status", "location").Create(&decodedMess)*/
-		HandleMessage(client, message)
-
-	}
-)
+// 		} else {
+// 			log.Println("Successful openning database")
+// 		}*/
+// 		//Server*/
+// 		//var decodedMess Deviceopts.SetUsername(user)
+// 		//.SetPassword(pass)
+// 		/*	db.AutoMigrate(&Device{})
+// 			db.Select("createat", "updateat", "deleteat", "id", "name", "status", "location").Create(&decodedMess)*/
+// 		HandleMessage(client, message)
+// 	}
+// )
 var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err error) {
 	log.Println("connect lost ", err)
 }
@@ -176,7 +218,9 @@ func sub(client mqtt.Client, topic string, qos byte) {
 		log.Println("Server connected succesfully to MQTT Broker")
 	}
 	fmt.Println(client.IsConnected())
-	token := client.Subscribe(topic, qos, messagePubHandler)
+	token := client.Subscribe(topic, qos, func(client mqtt.Client, message mqtt.Message) {
+		HandleMessage(client, message)
+	})
 	token.Wait()
 	log.Println("Sucessful subcribing to mqtt Topic")
 }
@@ -213,7 +257,8 @@ func InitalizeClientMQTT(ClientID string, user string, pass string) mqtt.Client 
 	opts.SetClientID(ClientID)
 	opts.SetUsername(user)
 	opts.SetPassword(pass)
-	opts.SetDefaultPublishHandler(messagePubHandler)
+	opts.SetDefaultPublishHandler(func(client mqtt.Client, message mqtt.Message) {
+	})
 	opts.OnConnect = connectHandler
 	opts.OnConnectionLost = connectLostHandler
 	return mqtt.NewClient(opts)
@@ -230,21 +275,23 @@ func main() {
 		log.Println("Success open Database")
 	}
 	db.AutoMigrate(&Device{})
-	if err != nil {
-		log.Println("Cannoct ping to Database ", err)
-		fmt.Println("Cannot ping Database: ", err)
-	} else {
-		fmt.Println("Success ping Database")
+	if err != nil {http.Handle("/metrics", promhttp.Handler())
+	http.ListenAndServe(":2112", nil)
+	for {
+		time.Sleep(1 * time.Second)
 	}
 	//MQTT o day
 	//Server*/
 
 	//Device
-	initProm()
+	server.initProm()
 	client_server := InitalizeClientMQTT("iot_dms_server_1", "server", "Server1,")
-	sub(client_server, mqttTopicSub, 1)
-	sub(client_server, mqttTopicSub2, 1)
-	sub(client_server, mqttTopicSub3, 1)
+	server.client = client_server
+	sub(server.client, mqttTopicSub, 1)
+	sub(server.client, mqttTopicSub2, 1)
+	sub(server.client, mqttTopicSub3, 1)
+	sub(server.client, mqttTopicSub4, 1)
+	sub(server.client, mqttConfig, 1)
 	//client_device := mqtt.NewClient(opts2)
 	//	datas := Device{CreateAt: time.Now(), UpdateAt: time.Now(), DeletedAt: time.Now(), Id: 1234, Name: "camera", Status: true, Location: "Viet Nam"}
 	/*sub(client_server, mqttTopic, 1)
@@ -257,8 +304,7 @@ func main() {
 	}*/
 	//server := NewAPIServer(":8081")
 	//server.Run()
-	http.Handle("/metrics", promhttp.Handler())
-	http.ListenAndServe(":2112", nil)
+	server.Run()
 	for {
 		time.Sleep(1 * time.Second)
 	}
