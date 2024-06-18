@@ -53,9 +53,9 @@ services:
     build: .
     ports: 
     - 2112:2112
-    depends_on:
-    - emqx
-    - postgres
+    # depends_on:
+    # - emqx
+    # #- postgres
     env_file:
     - local_envs.env
     networks:
