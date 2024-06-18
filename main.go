@@ -74,9 +74,9 @@ func (s *serverMetric) processDataProme(payload []byte, topic string) {
 	input := string(payload)
 	parts := strings.Split(input, ":")
 	if topic == mqttConfig {
-		if len(parts) == 1 {
-			s.HandleDeleteDevices(parts[0])
-		} else {
+		if parts[0] == "delete" {
+			s.HandleDeleteDevices(parts[1])
+		} else if parts[0] == "create" {
 			s.HandleAddDevices(parts)
 		}
 	} else if len(parts) == 3 {
@@ -92,7 +92,7 @@ func (s *serverMetric) HandleDeleteDevices(topic string) {
 	s.client.Unsubscribe(topic)
 }
 func (s *serverMetric) HandleAddDevices(message []string) {
-	sub(s.client, message[3], 1)
+	sub(s.client, message[1], 1)
 
 }
 func (s *serverMetric) HandleStatusDevices(message []string) {
