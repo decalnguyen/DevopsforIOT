@@ -61,12 +61,26 @@ func PersistDevicesInfo(device *Device) {
 	dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Println("Persist devices info fail")
+		log.Println("Connect database fail")
 	} else {
-		log.Println("Persist succesfully")
+		log.Println("Connect database succesfully")
 	}
-	db.AutoMigrate(&Device{})
-	db.Select("device_id", "device_type", "location").Create(&device)
+	if CheckExists(device, db) == true {
+		log.Println("Persist devices")
+		db.AutoMigrate(&Device{})
+		db.Select("device_id", "device_type", "location").Create(&device)
+	}
+
+}
+func CheckExists(device *Device, db *gorm.DB) bool {
+	var device1 Device
+	exists := db.Where("device_id = ?", device.Device_id).Find(&device1)
+	if exists.RowsAffected > 0 {
+		log.Println("Device exists", device.Device_id)
+		return false
+	} else {
+		return true
+	}
 
 }
 func newServer() *serverMetric {
