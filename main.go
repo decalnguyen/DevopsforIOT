@@ -28,13 +28,9 @@ const (
 
 type Device struct {
 	//gorm.Model
-	CreateAt  time.Time `gorm:"->;<-:create"json:"CreateAt"`
-	UpdateAt  time.Time `gorm:"<-"json:"UpdateAt"`
-	DeletedAt time.Time `json:"DeleteAt`
-	Id        int       `json:"id"`
-	Name      string    `gorm:"<-:create"json:"Name"`
-	Status    bool      `gorm:"<-"json:"Status"`
-	Location  string
+	Device_id   string `json:"id"`
+	Device_type string
+	Location    string
 }
 
 var server serverMetric
@@ -58,7 +54,35 @@ var (
 type serverMetric struct {
 	client mqtt.Client
 }
+type database struct {
+}
 
+func PersistDevicesInfo(device *Device) {
+	dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Println("Connect database fail")
+	} else {
+		log.Println("Connect database succesfully")
+	}
+	if CheckExists(device, db) == true {
+		log.Println("Persist devices")
+		db.AutoMigrate(&Device{})
+		db.Select("device_id", "device_type", "location").Create(&device)
+	}
+
+}
+func CheckExists(device *Device, db *gorm.DB) bool {
+	var device1 Device
+	exists := db.Where("device_id = ?", device.Device_id).Find(&device1)
+	if exists.RowsAffected > 0 {
+		log.Println("Device exists", device.Device_id)
+		return false
+	} else {
+		return true
+	}
+
+}
 func newServer() *serverMetric {
 	return &serverMetric{}
 }
@@ -93,6 +117,8 @@ func (s *serverMetric) HandleDeleteDevices(topic string) {
 }
 func (s *serverMetric) HandleAddDevices(message []string) {
 	sub(s.client, message[1], 1)
+	status := &Device{Device_id: message[2], Device_type: message[3], Location: message[4]}
+	PersistDevicesInfo(status)
 
 }
 func (s *serverMetric) HandleStatusDevices(message []string) {
@@ -245,18 +271,6 @@ func pub(client mqtt.Client, topic string, qos byte, sendPayload Device) {
 	token.Wait()
 	time.Sleep(time.Second)
 	log.Println("Sucessful publishing to mqtt Topic")
-}
-func PersistDevicesInfo(device DeviceRegistration) {
-	dsn := "host=postgres user=nhattoan password=test123 dbnam	/*sub(client_server, mqttTopic, 1)e=iot_dms port=5432 sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Println("Persist devices info fail")
-	} else {
-		log.Println("Persist succesfully")
-	}
-	db.AutoMigrate(&DeviceRegistration{})
-	db.Select("persistat", "id", "name", "firmwareversion", "ownershipinfo").Create(&device)
-
 }
 func InitalizeClientMQTT(ClientID string, user string, pass string) mqtt.Client {
 	opts := mqtt.NewClientOptions()
