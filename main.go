@@ -24,6 +24,7 @@ const (
 	mqttTopicSub3 = "nckh/atmosphere"
 	mqttTopicSub4 = "nckh/listdevices"
 	mqttConfig    = "nckh/config"
+	mqttConsumed  = "nckh/consumed"
 )
 
 type Device struct {
@@ -49,22 +50,27 @@ var (
 		},
 		[]string{"device_id", "typeofdevice", "location"},
 	)
+	powerConsumed = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "Power_Consumed",
+			Help: "Electric consumption",
+		},
+		[]string{"device_id"},
+	)
 )
 
 type serverMetric struct {
 	client mqtt.Client
 }
+
+type ElectricConsumption struct {
+	Device_id   string `gorm:"index"`
+	Consumption float64
+}
 type database struct {
 }
 
-func PersistDevicesInfo(device *Device) {
-	dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Println("Connect database fail")
-	} else {
-		log.Println("Connect database succesfully")
-	}
+func PersistDevicesInfo(device *Device, db *gorm.DB) {
 	if CheckExists(device, db) == true {
 		log.Println("Persist devices")
 		db.AutoMigrate(&Device{})
@@ -72,6 +78,17 @@ func PersistDevicesInfo(device *Device) {
 	}
 
 }
+
+func (s *serverMetric) HandleElecCon(message []string, db *gorm.DB) {
+	var existsMetric ElectricConsumption
+	results := db.Where("device_id = ?", message[0]).Last(&existsMetric)
+	if results.RowsAffected > 0 {
+		value, _ := strconv.ParseFloat(message[1], 64)
+		value += existsMetric.Consumption
+		db.Model(&existsMetric).Update("consumption", value)
+	}
+}
+
 func CheckExists(device *Device, db *gorm.DB) bool {
 	var device1 Device
 	exists := db.Where("device_id = ?", device.Device_id).Find(&device1)
@@ -93,15 +110,25 @@ func (s *serverMetric) Run() {
 func (s *serverMetric) initProm() {
 	prometheus.MustRegister(iotData)
 	prometheus.MustRegister(listDevices)
+	prometheus.MustRegister(powerConsumed)
 }
 func (s *serverMetric) processDataProme(payload []byte, topic string) {
+	dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Println("Connect database fail")
+	} else {
+		log.Println("Connect database succesfully")
+	}
 	input := string(payload)
 	parts := strings.Split(input, ":")
-	if topic == mqttConfig {
+	if topic == mqttConsumed {
+		s.HandleElecCon(parts, db)
+	} else if topic == mqttConfig {
 		if parts[0] == "delete" {
 			s.HandleDeleteDevices(parts[1])
 		} else if parts[0] == "create" {
-			s.HandleAddDevices(parts)
+			s.HandleAddDevices(parts, db)
 		}
 	} else if len(parts) == 3 {
 		s.HandleDataDevices(parts)
@@ -112,13 +139,14 @@ func (s *serverMetric) processDataProme(payload []byte, topic string) {
 	}
 
 }
+
 func (s *serverMetric) HandleDeleteDevices(topic string) {
 	s.client.Unsubscribe(topic)
 }
-func (s *serverMetric) HandleAddDevices(message []string) {
+func (s *serverMetric) HandleAddDevices(message []string, db *gorm.DB) {
 	sub(s.client, message[1], 1)
 	status := &Device{Device_id: message[2], Device_type: message[3], Location: message[4]}
-	PersistDevicesInfo(status)
+	PersistDevicesInfo(status, db)
 
 }
 func (s *serverMetric) HandleStatusDevices(message []string) {
