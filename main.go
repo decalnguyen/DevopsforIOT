@@ -17,6 +17,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var db *gorm.DB
+
 const (
 	mqttBroker    = "tcp://emqx:1883"
 	mqttTopicSub  = "nckh/temperature"
@@ -63,19 +65,19 @@ type serverMetric struct {
 	client mqtt.Client
 }
 type TopicSub struct {
+	gorm.Model
 	Device_id string
 	Topic     string
 }
 type ElectricConsumption struct {
+	gorm.Model
 	Device_id   string `gorm:"index"`
 	Consumption float64
 	Location    string
 }
-type database struct {
-}
 
-func PersistDevicesInfo(device *Device, db *gorm.DB) {
-	if CheckExists(device, db) == true {
+func PersistDevicesInfo(device *Device) {
+	if CheckExists(device) == true {
 		log.Println("Persist devices")
 		db.AutoMigrate(&Device{})
 		db.Select("device_id", "device_type", "location").Create(&device)
@@ -83,7 +85,7 @@ func PersistDevicesInfo(device *Device, db *gorm.DB) {
 
 }
 
-func (s *serverMetric) HandleElecCon(message []string, db *gorm.DB) {
+func (s *serverMetric) HandleElecCon(message []string) {
 	var existsMetric ElectricConsumption
 	results := db.Where("device_id = ?", message[0]).Last(&existsMetric)
 	log.Println(results)
@@ -102,7 +104,7 @@ func (s *serverMetric) HandleElecCon(message []string, db *gorm.DB) {
 	}
 }
 
-func CheckExists(device *Device, db *gorm.DB) bool {
+func CheckExists(device *Device) bool {
 	var device1 Device
 	exists := db.Where("device_id = ?", device.Device_id).Find(&device1)
 	if exists.RowsAffected > 0 {
@@ -120,38 +122,39 @@ func (s *serverMetric) Run() {
 	http.Handle("/metrics", promhttp.Handler())
 	http.ListenAndServe(":2112", nil)
 }
-func (s *serverMetric) initProm(db *gorm.DB) {
-	var topics []TopicSub
-	result := db.Find(&topics)
-	if result.Error != nil {
-		log.Print("Error retrieve mqtt topic", result.Error)
-	} else {
-		for _, topic := range topics {
-			sub(s.client, topic.Topic, 1)
-		}
+func (s *serverMetric) initProm() {
+	topics := s.getstoreTopic()
+	for _, topic := range topics {
+		temp := string(topic)
+		sub(s.client, temp, 1)
 	}
 	prometheus.MustRegister(iotData)
 	prometheus.MustRegister(listDevices)
 	prometheus.MustRegister(powerConsumed)
 }
-func (s *serverMetric) processDataProme(payload []byte, topic string) {
-	dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Println("Connect database fail")
-	} else {
-		log.Println("Connect database succesfully")
+func (s *serverMetric) getstoreTopic() []string {
+	var topics []TopicSub
+	result := db.Find(&topics)
+	if result.Error != nil {
+		log.Println(result.Error)
 	}
+	temp := make([]string, len(topics))
+	for i, topic := range topics {
+		temp[i] = topic.Topic
+	}
+	return temp
+}
+func (s *serverMetric) processDataProme(payload []byte, topic string) {
 	input := string(payload)
 	parts := strings.Split(input, ":")
 	log.Println(topic)
 	if topic == mqttConsumed {
-		s.HandleElecCon(parts, db)
+		s.HandleElecCon(parts)
 	} else if topic == mqttConfig {
 		if parts[0] == "delete" {
-			s.HandleDeleteDevices(parts[1], db)
+			s.HandleDeleteDevices(parts[1])
 		} else if parts[0] == "create" {
-			s.HandleAddDevices(parts, db)
+			s.HandleAddDevices(parts)
 		}
 	} else if len(parts) == 3 {
 		s.HandleDataDevices(parts)
@@ -163,17 +166,18 @@ func (s *serverMetric) processDataProme(payload []byte, topic string) {
 
 }
 
-func (s *serverMetric) HandleDeleteDevices(topic string, db *gorm.DB) {
+func (s *serverMetric) HandleDeleteDevices(topic string) {
 	s.client.Unsubscribe(topic)
-	db.Delete(&TopicSub{Topic: topic})
+	var topic1 TopicSub
+	db.Where("topic = ?", topic).Delete(&topic1)
 }
-func (s *serverMetric) HandleAddDevices(message []string, db *gorm.DB) {
+func (s *serverMetric) HandleAddDevices(message []string) {
 	sub(s.client, message[1], 1)
 	db.AutoMigrate(&TopicSub{})
-	db.Select("Topic").Create(&TopicSub{Topic: message[1]})
-	if len(message) > 2 {
+	db.Create(&TopicSub{Device_id: message[2], Topic: message[1]})
+	if len(message) > 3 {
 		status := &Device{Device_id: message[2], Device_type: message[3], Location: message[4]}
-		PersistDevicesInfo(status, db)
+		PersistDevicesInfo(status)
 	}
 
 }
@@ -341,24 +345,14 @@ func InitalizeClientMQTT(ClientID string, user string, pass string) mqtt.Client 
 }
 func main() {
 	dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db1, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Println("Connect database fail")
 	} else {
 		log.Println("Connect database succesfully")
 	}
-	/*
-		db.AutoMigrate(&Device{})
-		if err != nil {http.Handle("/metrics", promhttp.Handler())
-		http.ListenAndServe(":2112", nil)
-		for {
-			time.Sleep(1 * time.Second)
-		}
-		//MQTT o day
-		//Server*/
-
-	//Device
-	server.initProm(db)
+	db = db1
+	server.initProm()
 	client_server := InitalizeClientMQTT("iot_dms_server_1", "server", "Server1,")
 	server.client = client_server
 	sub(server.client, mqttTopicSub, 1)
@@ -366,16 +360,6 @@ func main() {
 	sub(server.client, mqttTopicSub3, 1)
 	sub(server.client, mqttTopicSub4, 1)
 	sub(server.client, mqttConfig, 1)
-	//client_device := mqtt.NewClient(opts2)
-	//	datas := Device{CreateAt: time.Now(), UpdateAt: time.Now(), DeletedAt: time.Now(), Id: 1234, Name: "camera", Status: true, Location: "Viet Nam"}
-	/*sub(client_server, mqttTopic, 1)
-	pub(client_device, mqttTopic, 1, datas)*/
-	/*for i := 11; i <= 30; i++ {
-		datas := Device{CreateAt: time.Now(), UpdateAt: time.Now(), DeletedAt: time.Now(), Id: i, Name: "camera", Status: true, Location: "Viet Nam"}
-		info := DeviceRegistration{PersistAt: time.Now(), Id: i, Name: "camera", FirmwareVersion: "esp32", OwnershipInfo: "Nhat Toan", Protocal: "MQTT"}
-		pub(client_device, mqttTopic, 1, datas)
-		PersistDevicesInfo(info)
-	}*/
 	//server := NewAPIServer(":8081")
 	//server.Run()
 	server.Run()
