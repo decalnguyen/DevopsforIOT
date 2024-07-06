@@ -66,6 +66,7 @@ type serverMetric struct {
 type ElectricConsumption struct {
 	Device_id   string `gorm:"index"`
 	Consumption float64
+	Location    string
 }
 type database struct {
 }
@@ -82,10 +83,19 @@ func PersistDevicesInfo(device *Device, db *gorm.DB) {
 func (s *serverMetric) HandleElecCon(message []string, db *gorm.DB) {
 	var existsMetric ElectricConsumption
 	results := db.Where("device_id = ?", message[0]).Last(&existsMetric)
+	log.Println(results)
 	if results.RowsAffected > 0 {
 		value, _ := strconv.ParseFloat(message[1], 64)
 		value += existsMetric.Consumption
-		db.Model(&existsMetric).Update("consumption", value)
+		db.Model(&existsMetric).Where("device_id = ?", message[0]).Update("consumption", value)
+	} else {
+		value, _ := strconv.ParseFloat(message[1], 64)
+		db.AutoMigrate(&ElectricConsumption{})
+		db.Create(&ElectricConsumption{
+			Device_id:   message[0],
+			Consumption: value,
+			Location:    message[2],
+		})
 	}
 }
 
@@ -122,6 +132,7 @@ func (s *serverMetric) processDataProme(payload []byte, topic string) {
 	}
 	input := string(payload)
 	parts := strings.Split(input, ":")
+	log.Println(topic)
 	if topic == mqttConsumed {
 		s.HandleElecCon(parts, db)
 	} else if topic == mqttConfig {
@@ -145,8 +156,10 @@ func (s *serverMetric) HandleDeleteDevices(topic string) {
 }
 func (s *serverMetric) HandleAddDevices(message []string, db *gorm.DB) {
 	sub(s.client, message[1], 1)
-	status := &Device{Device_id: message[2], Device_type: message[3], Location: message[4]}
-	PersistDevicesInfo(status, db)
+	if len(message) > 2 {
+		status := &Device{Device_id: message[2], Device_type: message[3], Location: message[4]}
+		PersistDevicesInfo(status, db)
+	}
 
 }
 func (s *serverMetric) HandleStatusDevices(message []string) {
