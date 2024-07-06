@@ -124,8 +124,9 @@ func (s *serverMetric) Run() {
 }
 func (s *serverMetric) initProm() {
 	topics := s.getstoreTopic()
-	for _, topic := range topics {
-		temp := string(topic)
+	for i := 0; i < len(topics); i++ {
+		temp := string(topics[i])
+		log.Println(temp)
 		sub(s.client, temp, 1)
 	}
 	prometheus.MustRegister(iotData)
@@ -134,11 +135,8 @@ func (s *serverMetric) initProm() {
 }
 func (s *serverMetric) getstoreTopic() []string {
 	var topics []TopicSub
-	result := db.Find(&topics)
-	if result.Error != nil {
-		log.Println(result.Error)
-	}
-	temp := make([]string, len(topics))
+	db.Find(&topics)
+	temp := make([]string, len(topics)+1)
 	for i, topic := range topics {
 		temp[i] = topic.Topic
 	}
@@ -168,8 +166,8 @@ func (s *serverMetric) processDataProme(payload []byte, topic string) {
 
 func (s *serverMetric) HandleDeleteDevices(topic string) {
 	s.client.Unsubscribe(topic)
-	var topic1 TopicSub
-	db.Where("topic = ?", topic).Delete(&topic1)
+	result := db.Where("topic = ?", topic).Delete(&TopicSub{Topic: topic})
+	log.Println(result.Error)
 }
 func (s *serverMetric) HandleAddDevices(message []string) {
 	sub(s.client, message[1], 1)
@@ -352,7 +350,6 @@ func main() {
 		log.Println("Connect database succesfully")
 	}
 	db = db1
-	server.initProm()
 	client_server := InitalizeClientMQTT("iot_dms_server_1", "server", "Server1,")
 	server.client = client_server
 	sub(server.client, mqttTopicSub, 1)
@@ -360,6 +357,7 @@ func main() {
 	sub(server.client, mqttTopicSub3, 1)
 	sub(server.client, mqttTopicSub4, 1)
 	sub(server.client, mqttConfig, 1)
+	server.initProm()
 	//server := NewAPIServer(":8081")
 	//server.Run()
 	server.Run()
