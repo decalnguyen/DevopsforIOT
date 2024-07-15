@@ -1,8 +1,11 @@
 package main
 
 import (
+	//"bytes"
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	http "net/http"
 	"strconv"
@@ -18,15 +21,18 @@ import (
 )
 
 var db *gorm.DB
+var (
+	deviceLastSeen = make(map[string]time.Time)
+)
 
 const (
 	mqttBroker    = "tcp://emqx:1883"
-	mqttTopicSub  = "nckh/temperature"
-	mqttTopicSub2 = "nckh/humidity"
-	mqttTopicSub3 = "nckh/atmosphere"
 	mqttTopicSub4 = "nckh/listdevices"
 	mqttConfig    = "nckh/config"
 	mqttConsumed  = "nckh/consumed"
+	url           = "https://api.telegram.org/bot7328130688:AAES6kUd0FQKkVOH7YIs9H_zq3_E4-029qI/sendMessage"
+	checkInterval = 10 * time.Second
+	deviceTimeout = 30 * time.Second
 )
 
 type Device struct {
@@ -43,7 +49,7 @@ var (
 			Name: "iot_data_temp",
 			Help: "IOT devices temperature data",
 		},
-		[]string{"device_id", "metric"},
+		[]string{"device_id", "metric", "location"},
 	)
 	listDevices = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -63,6 +69,10 @@ var (
 
 type serverMetric struct {
 	client mqtt.Client
+}
+type Message struct {
+	ChatID int64  `json:"chat_id"`
+	Text   string `json:"text"`
 }
 type TopicSub struct {
 	gorm.Model
@@ -154,10 +164,8 @@ func (s *serverMetric) processDataProme(payload []byte, topic string) {
 		} else if parts[0] == "create" {
 			s.HandleAddDevices(parts)
 		}
-	} else if len(parts) == 3 {
+	} else if len(parts) == 5 {
 		s.HandleDataDevices(parts)
-	} else if len(parts) == 4 {
-		s.HandleStatusDevices(parts)
 	} else {
 		log.Println("Recieved a wrong format message")
 	}
@@ -180,7 +188,7 @@ func (s *serverMetric) HandleAddDevices(message []string) {
 
 }
 func (s *serverMetric) HandleStatusDevices(message []string) {
-	if message[3] == "on" {
+	if message[4] == "on" {
 		listDevices.With(prometheus.Labels{"device_id": message[0], "typeofdevice": message[1], "location": message[2]}).Set(1)
 	} else {
 		listDevices.With(prometheus.Labels{"device_id": message[0], "typeofdevice": message[1], "location": message[2]}).Set(0)
@@ -188,9 +196,42 @@ func (s *serverMetric) HandleStatusDevices(message []string) {
 
 }
 func (s *serverMetric) HandleDataDevices(message []string) {
-	floatValue, err := strconv.ParseFloat(message[2], 64)
+	floatValue, err := strconv.ParseFloat(message[3], 64)
 	log.Println("ParseFloat error", err)
-	iotData.With(prometheus.Labels{"device_id": message[0], "metric": message[1]}).Set(floatValue)
+	iotData.With(prometheus.Labels{"device_id": message[0], "metric": message[1], "location": message[2]}).Set(floatValue)
+	deviceLastSeen[message[0]] = time.Now()
+	s.HandleStatusDevices(message)
+}
+func (s *serverMetric) CheckDeviceStatus() {
+	log.Println("Checking")
+	time.Sleep(checkInterval)
+	now := time.Now()
+	for deviceID, lastSeen := range deviceLastSeen {
+		if now.Sub(lastSeen) > deviceTimeout {
+			mes := "Device is offline" + deviceID
+			message := &Message{ChatID: 1565755457, Text: string(mes)}
+			s.HandleSendNoti(url, message)
+			//delete(deviceLastSeen, deviceID)
+		}
+	}
+	//break
+}
+func (s *serverMetric) HandleSendNoti(urll string, message *Message) bool {
+
+	payload, _ := json.Marshal(message)
+
+	response, _ := http.Post(urll, "application/json", bytes.NewBuffer(payload))
+
+	log.Println(response)
+	defer func(body io.ReadCloser) {
+		if err := body.Close(); err != nil {
+			log.Println("failed to close response body")
+		}
+	}(response.Body)
+	if response.StatusCode != http.StatusOK {
+		return false
+	}
+	return false
 }
 func (s *serverMetric) AddSubTopic(data string) {
 }
@@ -279,24 +320,24 @@ func HandleMessage(client mqtt.Client, message mqtt.Message) {
 	server.processDataProme(message.Payload(), message.Topic())
 }
 
-// var (
-// 	messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, message mqtt.Message) {
-// 		/*dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
-// 		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-// 		if err != nil {
-// 			log.Println("Cannot open Database", err)
+var (
+	messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, message mqtt.Message) {
+		/*dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
+		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		if err != nil {
+			log.Println("Cannot open Database", err)
 
-// 		} else {
-// 			log.Println("Successful openning database")
-// 		}*/
-// 		//Server*/
-// 		//var decodedMess Deviceopts.SetUsername(user)
-// 		//.SetPassword(pass)
-// 		/*	db.AutoMigrate(&Device{})
-// 			db.Select("createat", "updateat", "deleteat", "id", "name", "status", "location").Create(&decodedMess)*/
-// 		HandleMessage(client, message)
-// 	}
-// )
+		} else {
+			log.Println("Successful openning database")
+		}*/
+		//Server*/
+		//var decodedMess Deviceopts.SetUsername(user)
+		//.SetPassword(pass)
+		/*	db.AutoMigrate(&Device{})
+			db.Select("createat", "updateat", "deleteat", "id", "name", "status", "location").Create(&decodedMess)*/
+		HandleMessage(client, message)
+	}
+)
 var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err error) {
 	log.Println("connect lost ", err)
 }
@@ -352,16 +393,13 @@ func main() {
 	db = db1
 	client_server := InitalizeClientMQTT("iot_dms_server_1", "server", "Server1,")
 	server.client = client_server
-	sub(server.client, mqttTopicSub, 1)
-	sub(server.client, mqttTopicSub2, 1)
-	sub(server.client, mqttTopicSub3, 1)
 	sub(server.client, mqttTopicSub4, 1)
 	sub(server.client, mqttConfig, 1)
 	server.initProm()
 	//server := NewAPIServer(":8081")
 	//server.Run()
 	server.Run()
-	for {
-		time.Sleep(1 * time.Second)
-	}
+	simulation.run()
+	// message := &Message{ChatID: 1565755457, Text: string("Device is offline")}
+	// server.HandleSendNoti(url, message)
 }
