@@ -6,6 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"strconv"
+	"time"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -88,5 +89,10 @@ func run() {
 	}
 }
 func main() {
-	run()
+	for {
+		time.Sleep(30 * time.Second) // Check every 30 seconds
+		// Add logic here to check if devices are offline and send a message
+		run()
+	}
+	//run()
 }
