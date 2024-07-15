@@ -198,6 +198,7 @@ func (s *serverMetric) HandleStatusDevices(message []string) {
 func (s *serverMetric) HandleDataDevices(message []string) {
 	floatValue, err := strconv.ParseFloat(message[3], 64)
 	log.Println("ParseFloat error", err)
+	log.Println(message[4])
 	iotData.With(prometheus.Labels{"device_id": message[0], "metric": message[1], "location": message[2]}).Set(floatValue)
 	deviceLastSeen[message[0]] = time.Now()
 	s.HandleStatusDevices(message)
@@ -399,7 +400,6 @@ func main() {
 	//server := NewAPIServer(":8081")
 	//server.Run()
 	server.Run()
-	simulation.run()
 	// message := &Message{ChatID: 1565755457, Text: string("Device is offline")}
 	// server.HandleSendNoti(url, message)
 }
