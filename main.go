@@ -27,9 +27,6 @@ var (
 
 const (
 	mqttBroker    = "tcp://emqx:1883"
-	mqttTopicSub  = "nckh/temperature"
-	mqttTopicSub2 = "nckh/humidity"
-	mqttTopicSub3 = "nckh/atmosphere"
 	mqttTopicSub4 = "nckh/listdevices"
 	mqttConfig    = "nckh/config"
 	mqttConsumed  = "nckh/consumed"
@@ -52,7 +49,7 @@ var (
 			Name: "iot_data_temp",
 			Help: "IOT devices temperature data",
 		},
-		[]string{"device_id", "metric"},
+		[]string{"device_id", "metric", "location"},
 	)
 	listDevices = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -201,23 +198,23 @@ func (s *serverMetric) HandleStatusDevices(message []string) {
 func (s *serverMetric) HandleDataDevices(message []string) {
 	floatValue, err := strconv.ParseFloat(message[3], 64)
 	log.Println("ParseFloat error", err)
-	iotData.With(prometheus.Labels{"device_id": message[0], "metric": message[1]}).Set(floatValue)
+	iotData.With(prometheus.Labels{"device_id": message[0], "metric": message[1], "location": message[2]}).Set(floatValue)
 	deviceLastSeen[message[0]] = time.Now()
 	s.HandleStatusDevices(message)
 }
 func (s *serverMetric) CheckDeviceStatus() {
-	for {
-		time.Sleep(checkInterval)
-		now := time.Now()
-		for deviceID, lastSeen := range deviceLastSeen {
-			if now.Sub(lastSeen) > deviceTimeout {
-				mes := "Device is offline" + deviceID
-				message := &Message{ChatID: 1565755457, Text: string(mes)}
-				s.HandleSendNoti(url, message)
-				//delete(deviceLastSeen, deviceID)
-			}
+	log.Println("Checking")
+	time.Sleep(checkInterval)
+	now := time.Now()
+	for deviceID, lastSeen := range deviceLastSeen {
+		if now.Sub(lastSeen) > deviceTimeout {
+			mes := "Device is offline" + deviceID
+			message := &Message{ChatID: 1565755457, Text: string(mes)}
+			s.HandleSendNoti(url, message)
+			//delete(deviceLastSeen, deviceID)
 		}
 	}
+	//break
 }
 func (s *serverMetric) HandleSendNoti(urll string, message *Message) bool {
 
@@ -396,17 +393,12 @@ func main() {
 	db = db1
 	client_server := InitalizeClientMQTT("iot_dms_server_1", "server", "Server1,")
 	server.client = client_server
-	sub(server.client, mqttTopicSub, 1)
-	sub(server.client, mqttTopicSub2, 1)
-	sub(server.client, mqttTopicSub3, 1)
 	sub(server.client, mqttTopicSub4, 1)
 	sub(server.client, mqttConfig, 1)
 	server.initProm()
 	//server := NewAPIServer(":8081")
 	//server.Run()
-	go server.CheckDeviceStatus()
 	server.Run()
 	// message := &Message{ChatID: 1565755457, Text: string("Device is offline")}
 	// server.HandleSendNoti(url, message)
-	select {}
 }
