@@ -399,6 +399,7 @@ func main() {
 	//server := NewAPIServer(":8081")
 	//server.Run()
 	server.Run()
+	simulation.run()
 	// message := &Message{ChatID: 1565755457, Text: string("Device is offline")}
 	// server.HandleSendNoti(url, message)
 }
