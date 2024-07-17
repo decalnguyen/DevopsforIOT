@@ -1,7 +1,8 @@
 version: '3'
 networks: 
   IOT-DMS:
-    external: true
+    #external: true
+    driver: bridge
 services:
   emqx:
     image: emqx/emqx

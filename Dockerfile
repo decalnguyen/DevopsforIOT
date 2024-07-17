@@ -12,6 +12,8 @@ RUN go build -o build .
 
 FROM ubuntu
 
+RUN apt-get update && apt-get install -y curl
+
 WORKDIR /app
 
 COPY --from=builder /app/build .

@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
+//	"io"
 	"log"
 	http "net/http"
 	"strconv"
@@ -31,7 +31,7 @@ const (
 	mqttConfig    = "nckh/config"
 	mqttConsumed  = "nckh/consumed"
 	url           = "https://api.telegram.org/bot7328130688:AAES6kUd0FQKkVOH7YIs9H_zq3_E4-029qI/sendMessage"
-	checkInterval = 10 * time.Second
+	checkInterval = 30 * time.Second
 	deviceTimeout = 30 * time.Second
 )
 
@@ -156,6 +156,13 @@ func (s *serverMetric) processDataProme(payload []byte, topic string) {
 	input := string(payload)
 	parts := strings.Split(input, ":")
 	log.Println(topic)
+	log.Println(parts)
+	if parts[0][0] == '"' {
+		parts[0] = parts[0][1:]
+	}
+	if parts[4][len(parts[4])-1] == '"' {
+		parts[4] = parts[4][:len(parts[4])-1]
+	}
 	if topic == mqttConsumed {
 		s.HandleElecCon(parts)
 	} else if topic == mqttConfig {
@@ -178,6 +185,7 @@ func (s *serverMetric) HandleDeleteDevices(topic string) {
 	log.Println(result.Error)
 }
 func (s *serverMetric) HandleAddDevices(message []string) {
+	log.Println(message)
 	sub(s.client, message[1], 1)
 	db.AutoMigrate(&TopicSub{})
 	db.Create(&TopicSub{Device_id: message[2], Topic: message[1]})
@@ -188,6 +196,9 @@ func (s *serverMetric) HandleAddDevices(message []string) {
 
 }
 func (s *serverMetric) HandleStatusDevices(message []string) {
+	if message[4][len(message[4])-1] == '"' {
+		message[4] = message[4][:len(message[4])-1]
+	}
 	if message[4] == "on" {
 		listDevices.With(prometheus.Labels{"device_id": message[0], "typeofdevice": message[1], "location": message[2]}).Set(1)
 	} else {
@@ -198,40 +209,50 @@ func (s *serverMetric) HandleStatusDevices(message []string) {
 func (s *serverMetric) HandleDataDevices(message []string) {
 	floatValue, err := strconv.ParseFloat(message[3], 64)
 	log.Println("ParseFloat error", err)
+	if message[0][0] == '"' {
+		message[0] = message[0][1:]
+	}
 	log.Println(message[4])
 	iotData.With(prometheus.Labels{"device_id": message[0], "metric": message[1], "location": message[2]}).Set(floatValue)
 	deviceLastSeen[message[0]] = time.Now()
+	log.Println(deviceLastSeen[message[1]])
 	s.HandleStatusDevices(message)
 }
 func (s *serverMetric) CheckDeviceStatus() {
-	log.Println("Checking")
-	time.Sleep(checkInterval)
-	now := time.Now()
-	for deviceID, lastSeen := range deviceLastSeen {
-		if now.Sub(lastSeen) > deviceTimeout {
-			mes := "Device is offline" + deviceID
-			message := &Message{ChatID: 1565755457, Text: string(mes)}
-			s.HandleSendNoti(url, message)
-			//delete(deviceLastSeen, deviceID)
+	for {
+		log.Println("Checking")
+		if len(deviceLastSeen) == 0 {
+			log.Println("No message received yet")
+		} else {
+			now := time.Now()
+			for deviceID, lastSeen := range deviceLastSeen {
+				if now.Sub(lastSeen) > deviceTimeout {
+					mes := "Device "+ deviceID+ " is offline"
+					message := &Message{ChatID: 1565755457, Text: string(mes)}
+					HandleSendNoti(url, message)
+					//delete(deviceLastSeen, deviceID)
+				}
+			}
 		}
+		//break
+		time.Sleep(checkInterval)
 	}
-	//break
 }
-func (s *serverMetric) HandleSendNoti(urll string, message *Message) bool {
+func HandleSendNoti(urll string, message *Message) bool {
 
 	payload, _ := json.Marshal(message)
 
 	response, _ := http.Post(urll, "application/json", bytes.NewBuffer(payload))
 
 	log.Println(response)
-	defer func(body io.ReadCloser) {
-		if err := body.Close(); err != nil {
-			log.Println("failed to close response body")
-		}
-	}(response.Body)
-	if response.StatusCode != http.StatusOK {
-		return false
-	}
+	// defer func(body io.ReadCloser) {
+	// 	if err := body.Close(); err != nil {
+	// 		log.Println("failed to close response body")
+	// 	}
+	// }(response.Body)
+	// if response.StatusCode != http.StatusOK {
+	// 	return false
+	// }
 	return false
 }
 func (s *serverMetric) AddSubTopic(data string) {
@@ -399,7 +420,14 @@ func main() {
 	server.initProm()
 	//server := NewAPIServer(":8081")
 	//server.Run()
+	// log.Println("123")
+	// mes := "Device is offline"
+	// message := &Message{ChatID: 1565755457, Text: string(mes)}
+	// HandleSendNoti(url, message)
+	// log.Println("123")
+	go server.CheckDeviceStatus()
 	server.Run()
+	select {}
 	// message := &Message{ChatID: 1565755457, Text: string("Device is offline")}
 	// server.HandleSendNoti(url, message)
 }
