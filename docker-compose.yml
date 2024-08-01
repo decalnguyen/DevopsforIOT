@@ -25,6 +25,14 @@ services:
     networks:
     - IOT-DMS
     restart: on-failure
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    restart: unless-stopped
+    networks:
+    - IOT-DMS
+    ports:
+      - 9100:9100
   pushgateway:
     image: prom/pushgateway
     container_name: pushgateway
