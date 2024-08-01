@@ -87,7 +87,7 @@ type ElectricConsumption struct {
 }
 
 func PersistDevicesInfo(device *Device) {
-	if CheckExists(device) == true {
+	if CheckExists(device.Device_id) == true {
 		log.Println("Persist devices")
 		db.AutoMigrate(&Device{})
 		db.Select("device_id", "device_type", "location").Create(&device)
@@ -114,11 +114,11 @@ func (s *serverMetric) HandleElecCon(message []string) {
 	}
 }
 
-func CheckExists(device *Device) bool {
+func CheckExists(device_id string ) bool {
 	var device1 Device
-	exists := db.Where("device_id = ?", device.Device_id).Find(&device1)
+	exists := db.Where("device_id = ?", device_id).Find(&device1)
 	if exists.RowsAffected > 0 {
-		log.Println("Device exists", device.Device_id)
+		log.Println("Device exists", device_id)
 		return false
 	} else {
 		return true
@@ -191,7 +191,10 @@ func (s *serverMetric) HandleAddDevices(message []string) {
 	db.Create(&TopicSub{Device_id: message[2], Topic: message[1]})
 	if len(message) > 3 {
 		status := &Device{Device_id: message[2], Device_type: message[3], Location: message[4]}
-		PersistDevicesInfo(status)
+		if CheckExists(message[2]) {
+			PersistDevicesInfo(status)
+		}
+
 	}
 
 }

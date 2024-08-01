@@ -46,14 +46,6 @@ type MessageSimulate struct{
 	Status string 
 }
 func run() {
-	dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
-	db1, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Println("Connect database fail")
-	} else {
-		log.Println("Connect database successfully")
-	}
-	db = db1
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker("tcp://emqx:1883")
 	opts.SetClientID("go_mqtt_client")
@@ -96,30 +88,41 @@ func persist() {
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
 		log.Println("failed to connect to MQTT broker: %v", token.Error())
 	}
-	temp := 0
+	dsn := "host=postgres user=nhattoan password=test123 dbname=iot_dms port=5432 sslmode=disable"
+	db1, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Println("Connect database fail")
+	} else {
+		log.Println("Connect database successfully")
+	}
+	db = db1
+	//temp := 0
 	temp2 := 0 
 	arr := []string {"humidity","temperature","gas"}
 	//var mess string
-	for j:=1;j<=12;j++{
-		temp++
-		temp1 := strconv.Itoa(temp)
-		for i:=0;i<3;i++{
-			time.Sleep(3 * time.Second)
-			mess := "create:nckh/sensor/buildinge/floor" + temp1 +"/room" + temp1 + ".1/"
-			temp2 ++
-			temp3 := strconv.Itoa(temp2)
-			mess += arr[i] + ":" + "device" + temp3 + ":" + arr[i] + ":floor" + temp1 +"/room" +temp1 + ".1"
-			log.Println(mess)
-			encodedMes, err := json.Marshal(mess)
-			fmt.Println("Marshal error ", err)
-			client.Publish("nckh/config", 1, false, encodedMes)
+	for fl:=1;fl<=4;fl++{
+		for j:=1;j<=12;j++{
+			temp5 := strconv.Itoa(j)
+			temp4 := strconv.Itoa(fl)
+			for i:=0;i<3;i++{
+				time.Sleep(1 * time.Second)
+				mess := "create:nckh/sensor/buildinge/floor" + temp5 +"/room" + temp5 + "." + temp4 + "/"
+				temp2 ++
+				temp3 := strconv.Itoa(temp2)
+				mess += arr[i] + ":" + "device" + temp3 + ":" + arr[i] + ":floor" + temp5 +"/room" +temp5 + "." + temp4 
+				log.Println(mess)
+				encodedMes, err := json.Marshal(mess)
+				fmt.Println("Marshal error ", err)
+				client.Publish("nckh/config", 1, false, encodedMes)
+			}
 		}
 	}
 }
 func main() {
 	for {
-		time.Sleep(10 * time.Second) // Check every 30 seconds
+		time.Sleep(2 * time.Second) // Check every 30 seconds
 		// Add logic here to check if devices are offline and send a message
+		//persist()
 		run()
 	}
 	//persist()
